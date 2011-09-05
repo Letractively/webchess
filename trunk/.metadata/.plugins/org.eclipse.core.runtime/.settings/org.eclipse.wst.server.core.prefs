@@ -1,0 +1,4 @@
+#Wed Aug 31 13:50:41 CST 2011
+module-start-timeout=300000
+runtimes=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<runtimes>\r\n  <runtime id\="HTTP Server" location\="F\:/Study/publish" name\="HTTP Server" runtime-type-id\="org.eclipse.wst.server.http.runtime" timestamp\="0"/>\r\n  <runtime id\="HTTP Preview" name\="HTTP Preview" runtime-type-id\="org.eclipse.wst.server.preview.runtime" timestamp\="0"/>\r\n  <runtime id\="Apache Tomcat v7.0" location\="F\:/down load or tools/eclipse/tomcat/apache-tomcat-7.0.20" name\="Apache Tomcat v7.0" runtime-type-id\="org.eclipse.jst.server.tomcat.runtime.70" timestamp\="0" vm-install-id\="1314761499875" vm-install-type-id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"/>\r\n</runtimes>\r\n
+eclipse.preferences.version=1

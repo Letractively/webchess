@@ -1,0 +1,6 @@
+INDEX VERSION 1.122+F:\Study\webchess\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+622011332.index
+365927966.index
+1015882085.index
+3556601613.index
+1110364036.index
