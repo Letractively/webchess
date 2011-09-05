@@ -1,3 +1,0 @@
-INDEX VERSION 1.126
-F:\Study\Eclipse_indigo\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2646518889.index
-\XQGame\src

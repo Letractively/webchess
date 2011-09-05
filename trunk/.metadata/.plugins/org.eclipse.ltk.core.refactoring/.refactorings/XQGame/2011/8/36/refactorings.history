@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring accessors="true" comment="Delete element from project &apos;XQGame&apos;&#x0D;&#x0A;- Original project: &apos;XQGame&apos;&#x0D;&#x0A;- Original element: &apos;web.xml&apos;" description="Delete element" element1="WebContent/WEB-INF/web.xml" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="1" stamp="1314785730479" subPackages="false" version="1.0"/>&#x0A;<refactoring comment="Move 1 resources to &apos;WEB-INF&apos;" description="Move 1 resources to &apos;WEB-INF&apos;" destination="WebContent/WEB-INF" element1="web.xml" flags="7" id="org.eclipse.ltk.core.refactoring.move.resources" resources="1" stamp="1314786110120" updateReferences="true"/>
-</session>
