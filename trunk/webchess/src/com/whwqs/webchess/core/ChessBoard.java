@@ -1,5 +1,7 @@
 package com.whwqs.webchess.core;
 
+import java.util.*;
+
 public class ChessBoard {
 	private ChessType[][] boardData = new ChessType[][]{
 		{ChessType.车,ChessType.马,ChessType.相,ChessType.士,ChessType.帅,ChessType.士,ChessType.相,ChessType.马,ChessType.车},
@@ -21,22 +23,51 @@ public class ChessBoard {
 	
 	public String ToString()
 	{
+		return GetString(boardData);
+	}
+	
+	private String GetString(ChessType[][] board)
+	{
 		String s = "";
-		for(ChessType[] row :boardData)
+		for(ChessType[] row :board)
 		{
 			for(ChessType col:row)
 			{
-				s+=col.GetS();
+				s+=col.getName();
 			}
 		}
 		return s;
 	}
 	
-	public void InitBoard(String data)
+	public void SetBoard(String data)
 	{
 		for(int i=0;i<90;i++)
 		{
-			boardData[i/9][i%10]=ChessType.Get(data.substring(i, i));
+			boardData[i/9][i%9]=ChessType.Get(data.substring(i, i+1));
+		}
+	}
+	
+	public void Play(int from,int to)
+	{
+		
+	}
+	
+	private Stack<PlayAction> ReDoStack = new Stack<PlayAction>();
+	private Stack<PlayAction> UnDoStack = new Stack<PlayAction>();
+	
+	
+	private class PlayAction
+	{
+		private ChessType fromT;
+		private ChessType ToT;
+		private int from;
+		private int to;
+		PlayAction(int from,int to)
+		{
+			this.from = from;
+			this.to = to;
+			this.fromT = boardData[from/9][from%9];
+			this.ToT = boardData[to/9][to%9];
 		}
 	}
 }
