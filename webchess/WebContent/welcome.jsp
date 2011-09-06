@@ -11,8 +11,11 @@
 <body>
 <% 
 ChessBoard b = new ChessBoard();
-b.InitBoard(b.ToString());
-out.print(b.ToString());
+b.SetBoard(b.ToString().replace('空', '相'));
+out.print(b.ToString()+"<br/>");
+ChessType t = b.getBoardData()[0][0];
+b.getBoardData()[0][0] = ChessType.Get("将");
+out.print(t.getName()+" "+b.getBoardData()[0][0].getName());
 %>
 </body>
 </html>

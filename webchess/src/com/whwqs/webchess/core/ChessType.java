@@ -26,11 +26,11 @@ public enum ChessType {
 		this.v = v;
 		this.s = s;
 	}
-	public int GetI()
+	public int getIndex()
 	{
 		return v;
 	}
-	public String GetS()
+	public String getName()
 	{
 		return s;
 	}
@@ -39,7 +39,7 @@ public enum ChessType {
 	static{
 		for(ChessType item:EnumSet.allOf(ChessType.class))
 		{
-			map.put(item.GetS(), item);
+			map.put(item.getName(), item);
 		}
 	}
 	
