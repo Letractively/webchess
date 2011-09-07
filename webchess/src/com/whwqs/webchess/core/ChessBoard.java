@@ -18,6 +18,23 @@ public class ChessBoard implements IPublisher {
 		{ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空},
 		{ChessType.車,ChessType.馬,ChessType.象,ChessType.仕,ChessType.将,ChessType.仕,ChessType.象,ChessType.馬,ChessType.車}
 	};
+	
+	public static final String EVENT_DAPU = "打谱摆棋";
+	public static final String EVENT_PLAY = "下了一步";
+	public static final String EVENT_UNDO = "悔棋";
+	public static final String EVENT_REDO = "不悔了";
+	
+	
+	private Boolean isRedGoAhead = true;
+
+	public Boolean getIsRedGoAhead() {
+		return isRedGoAhead;
+	}
+	
+	public Boolean IsRedToGo(){
+		return (isRedGoAhead && UnDoStack.size()%2==0);
+	}
+	
 
 	public ChessType[][] getBoardData() {
 		return boardData;
@@ -26,7 +43,7 @@ public class ChessBoard implements IPublisher {
 	public String ToString()
 	{
 		return GetString(boardData);
-	}
+	}	
 	
 	private String GetString(ChessType[][] board)
 	{
@@ -41,20 +58,23 @@ public class ChessBoard implements IPublisher {
 		return s;
 	}
 	
-	public void SetBoard(String data)
+	public void SetBoard(String data,Boolean isRedGoAhead)
 	{
 		for(int i=0;i<90;i++)
 		{
 			boardData[i/9][i%9]=ChessType.Get(data.substring(i, i+1));
 		}
-		Notify(null);
+		this.isRedGoAhead = isRedGoAhead;
+		ReDoStack.clear();
+		UnDoStack.clear();
+		Notify(new EventBase(ChessBoard.EVENT_DAPU,ToString()));
 	}
 	
 	public void Play(int from,int to)
 	{
 		ReDoStack.clear();
 		UnDoStack.push(new PlayAction(from,to));
-		Notify(null);
+		Notify(new EventBase(ChessBoard.EVENT_PLAY,ToString()));
 	}
 	
 	public void UnDo()
@@ -62,7 +82,7 @@ public class ChessBoard implements IPublisher {
 		if(!UnDoStack.isEmpty())
 		{
 			ReDoStack.push(UnDoStack.pop()).UnDo();
-			Notify(null);
+			Notify(new EventBase(ChessBoard.EVENT_UNDO,ToString()));
 		}
 	}
 	
@@ -71,7 +91,7 @@ public class ChessBoard implements IPublisher {
 		if(!ReDoStack.isEmpty())
 		{
 			UnDoStack.push(ReDoStack.pop()).ReDo();
-			Notify(null);
+			Notify(new EventBase(ChessBoard.EVENT_REDO,ToString()));
 		}
 	}
 	
@@ -126,10 +146,9 @@ public class ChessBoard implements IPublisher {
 	@Override
 	public void Notify(EventBase eventArg) {
 		// TODO Auto-generated method stub
-		EventBase evt = new EventBase(ToString());
 		for(ISubscriber subscr :subscriberList)
 		{
-			subscr.Update(evt);
+			subscr.Update(eventArg);
 		}
 	}
 }
