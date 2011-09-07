@@ -23,7 +23,16 @@ public class ChessBoard implements IPublisher {
 	public static final String EVENT_PLAY = "下了一步";
 	public static final String EVENT_UNDO = "悔棋";
 	public static final String EVENT_REDO = "不悔了";
+	public static final String EVENT_END = "下完了";
 	
+	private ChessRules rule = new ChessRules(this);
+	
+	public void AcceptClicked(int nodeClicked,Boolean isRed)
+	{
+		if(rule.AcceptClicked(nodeClicked, isRed)){
+			
+		}
+	}
 	
 	private Boolean isRedGoAhead = true;
 
