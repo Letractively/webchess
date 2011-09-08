@@ -30,9 +30,7 @@ public class ChessBoard implements IPublisher {
 	
 	public void HandleClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard)
 	{
-		//if(rule.AcceptClicked(nodeClicked, isRedClicked,clickManCurrentBoard)){
-			
-		//}
+		rule.AcceptClicked(nodeClicked, isRedClicked,clickManCurrentBoard);
 	}
 	
 	private Boolean isRedGoAhead = true;
@@ -42,7 +40,7 @@ public class ChessBoard implements IPublisher {
 	}
 	
 	public Boolean IsRedToGo(){
-		return (isRedGoAhead && UnDoStack.size()%2==0);
+		return (isRedGoAhead && UnDoStack.size()%2==0)||(!isRedGoAhead && UnDoStack.size()%2==1);
 	}
 	
 
