@@ -27,11 +27,12 @@ public class ChessBoard implements IPublisher {
 	
 	private ChessRules rule = new ChessRules(this);
 	
-	public void AcceptClicked(int nodeClicked,Boolean isRed)
+	
+	public void HandleClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard)
 	{
-		if(rule.AcceptClicked(nodeClicked, isRed)){
+		//if(rule.AcceptClicked(nodeClicked, isRedClicked,clickManCurrentBoard)){
 			
-		}
+		//}
 	}
 	
 	private Boolean isRedGoAhead = true;
