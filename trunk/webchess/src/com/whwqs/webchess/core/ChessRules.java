@@ -7,7 +7,8 @@ public class ChessRules {
 	public static final String CHECKRESULT_NEEDUPDATE = "需要更新棋盘先";
 	public static final String CHECKRESULT_NEEDWAITOPPANENT_RED = "红方等待黑方中...";
 	public static final String CHECKRESULT_NEEDWAITOPPANENT_BLACK = "黑方等待红方中...";
-	public static final String CHECKRESULT_CLICKWRONGNODE = "瞎点中...";
+	public static final String CHECKRESULT_CLICKWRONGNODE_RED = "红方瞎点中...";
+	public static final String CHECKRESULT_CLICKWRONGNODE_BLACK = "黑方瞎点中...";
 	public static final String CHECKRESULT_FIRSTHOLDNODE_RED ="红方拿棋了";
 	public static final String CHECKRESULT_FIRSTHOLDNODE_BLACK ="黑方拿棋了";
 	public static final String CHECKRESULT_CHANGEHOLDNODE_RED ="红方换棋了";
@@ -50,6 +51,23 @@ public class ChessRules {
 	public ChessRules(ChessBoard qp){
 		this.chessBoard = qp;
 		//组装责任链
+		Rule r1 = new CheckIfBoardDataExpired();
+		Rule r2 = new CheckIfClickWrongNode();
+		Rule r3 = new CheckIfNeedWait();		
+		Rule r4 = new CheckIfFirstHoldNode();
+		Rule r5 = new CheckIfChangeHoldNode();
+		Rule r6 = new CoreCheck();
+		Rule r7 = new CheckIfIsDogFall();
+		Rule r8 = new CheckIfGameOver();
+		
+		r1.SetSuccessorRule(r2);
+		r2.SetSuccessorRule(r3);
+		r3.SetSuccessorRule(r4);
+		r4.SetSuccessorRule(r5);
+		r5.SetSuccessorRule(r6);
+		r6.SetSuccessorRule(r7);
+		r7.SetSuccessorRule(r8);
+		firstRule = r1;
 	}
 	
 	private int holdNode = -1;
@@ -98,6 +116,23 @@ public class ChessRules {
 		public abstract void Apply(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard);
 	}
 	
+	private class CheckIfBoardDataExpired extends Rule
+	{
+
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
+			// TODO Auto-generated method stub
+			if(clickManCurrentBoard!=chessBoard.ToString())
+			{
+				message = CHECKRESULT_NEEDUPDATE;
+				return;
+			}
+			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+		}
+		
+	}
+	
 	private class CheckIfNeedWait extends Rule
 	{
 		
@@ -123,24 +158,8 @@ public class ChessRules {
 			
 		}
 		
-	}
+	}	
 	
-	private class CheckIfBoardDataExpired extends Rule
-	{
-
-		@Override
-		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
-			if(clickManCurrentBoard!=chessBoard.ToString())
-			{
-				message = CHECKRESULT_NEEDUPDATE;
-				return;
-			}
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
-		}
-		
-	}
 	
 	private class CheckIfClickWrongNode extends Rule
 	{
@@ -151,15 +170,19 @@ public class ChessRules {
 			// TODO Auto-generated method stub
 			ChessType clickT = GetNodeType(nodeClicked);
 			
-			if(holdNode==-1)
+			if((isRedClicked&&NodeType(nodeClicked)!=1&&!chessBoard.IsRedToGo())
+					||(!isRedClicked&&NodeType(nodeClicked)!=2&&chessBoard.IsRedToGo()))
 			{
-				if(clickT==ChessType.空)
+				if(isRedClicked)
 				{
-					message = CHECKRESULT_CLICKWRONGNODE;
-					return;
+					message = CHECKRESULT_CLICKWRONGNODE_RED;
 				}
-				else if()
-			}
+				else
+				{
+					message = CHECKRESULT_CLICKWRONGNODE_BLACK;
+				}
+				return;
+			}		
 			
 			
 			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);		
@@ -177,7 +200,10 @@ public class ChessRules {
 			// TODO Auto-generated method stub
 			if(holdNode==-1)
 			{
+				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
+						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo()))
 				isSuccessHold = true;
+				moveToNode = -1;
 				if(isRedClicked)
 				{
 					message = CHECKRESULT_FIRSTHOLDNODE_RED;
@@ -201,7 +227,23 @@ public class ChessRules {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			// TODO Auto-generated method stub
-			if(holdNode)
+			if(holdNode!=-1)
+			{
+				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
+						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo()))
+				isSuccessHold = true;
+				moveToNode = -1;
+				if(isRedClicked)
+				{
+					message = CHECKRESULT_CHANGEHOLDNODE_RED;
+				}
+				else
+				{
+					message = CHECKRESULT_CHANGEHOLDNODE_BLACK;
+				}
+				holdNode = nodeClicked;
+				return;
+			}
 			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 		}
 		
