@@ -13,6 +13,8 @@ public class ChessRules {
 	public static final String CHECKRESULT_FIRSTHOLDNODE_BLACK ="黑方拿棋了";
 	public static final String CHECKRESULT_CHANGEHOLDNODE_RED ="红方换棋了";
 	public static final String CHECKRESULT_CHANGEHOLDNODE_BLACK ="黑方换棋了";
+	public static final String CHECKRESULT_HOLDSAMENODE_RED ="红方还在拿棋";
+	public static final String CHECKRESULT_HOLDSAMENODE_BLACK ="黑方还在拿棋";
 	public static final String CHECKRESULT_PLAYOK_RED = "红方已下棋";
 	public static final String CHECKRESULT_PLAYOK_BLACK = "黑方已下棋";
 	public static final String CHECKRESULT_WIN_RED ="红方胜";
@@ -24,7 +26,18 @@ public class ChessRules {
 	private Boolean isSuccessMove = false;	
 	private Boolean isSuccessHold = false;
 	
-	private Boolean isGameOver = false;
+	private Boolean isRedWin = false;
+	private Boolean isBlackWin = false;
+	public Boolean getIsRedWin() {
+		return isRedWin;
+	}
+
+	public Boolean getIsBlackWin() {
+		return isBlackWin;
+	}
+
+
+
 	private String message = "";
 	
 	public String getMessage(){
@@ -40,16 +53,11 @@ public class ChessRules {
 		return isSuccessHold;
 	}
 	
-	
-
-	public Boolean getIsGameOver() {
-		return isGameOver;
-	}
 
 
 	private Rule firstRule ;
 	public ChessRules(ChessBoard qp){
-		this.chessBoard = qp;
+		chessBoard = qp;
 		//组装责任链
 		Rule r1 = new CheckIfBoardDataExpired();
 		Rule r2 = new CheckIfClickWrongNode();
@@ -84,6 +92,8 @@ public class ChessRules {
 	public void AcceptClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard){
 		isSuccessMove = false;
 		isSuccessHold = false;
+		isRedWin = false;
+		isBlackWin = false;
 		message = "";
 		firstRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 	}
@@ -99,6 +109,7 @@ public class ChessRules {
 		{
 			return chessBoard.getBoardData()[i/9][i%9];
 		}
+		
 		protected int NodeType(int i)
 		{
 			ChessType t = GetNodeType(i);
@@ -113,33 +124,69 @@ public class ChessRules {
 			return 2;
 		}
 		
+		protected String GetTypePosition(ChessType target,int i0,int j0,int i1,int j1)
+		{
+			int n=0;
+			String s = "";
+			if(i0>i1)
+			{
+				i0 = i0^i1;
+				i1 = i0^i1;
+				i0 = i0^i1;
+			}
+			if(j0>j1)
+			{
+				j0 = j0^j1;
+				j1 = j0^j1;
+				j0 = j0^j1;
+			}
+			for(int i=i0;i<=i1;i++)
+			{
+				for(int j=j0;j<=j1;j++)
+				{
+					if(chessBoard.getBoardData()[i][j]==target)
+					{
+						s+=i+","+j+"|";
+					}
+				}
+			}
+			if(s!="")
+			{
+				s = s.replaceAll("|$", "");
+			}
+			return s;
+		}
+		
 		public abstract void Apply(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard);
 	}
-	
+	// 点击时棋盘数据是否过期了
 	private class CheckIfBoardDataExpired extends Rule
 	{
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			
 			if(clickManCurrentBoard!=chessBoard.ToString())
 			{
 				message = CHECKRESULT_NEEDUPDATE;
 				return;
 			}
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}
 		}
 		
 	}
-	
+	// 是否要等待对手
 	private class CheckIfNeedWait extends Rule
 	{
 		
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			
 			if((isRedClicked&&NodeType(nodeClicked)==1&&!chessBoard.IsRedToGo())
 					||(!isRedClicked&&NodeType(nodeClicked)==2&&chessBoard.IsRedToGo()))
 			{				
@@ -154,13 +201,16 @@ public class ChessRules {
 				return;
 			}
 			
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}
 			
 		}
 		
 	}	
 	
-	
+	// 是否在瞎点棋盘
 	private class CheckIfClickWrongNode extends Rule
 	{
 
@@ -168,7 +218,6 @@ public class ChessRules {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			// TODO Auto-generated method stub
-			ChessType clickT = GetNodeType(nodeClicked);
 			
 			if((isRedClicked&&NodeType(nodeClicked)!=1&&!chessBoard.IsRedToGo())
 					||(!isRedClicked&&NodeType(nodeClicked)!=2&&chessBoard.IsRedToGo()))
@@ -185,24 +234,28 @@ public class ChessRules {
 			}		
 			
 			
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);		
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}		
 			
 		}
 		
 	}
-	
+	// 是否在拿棋
 	private class CheckIfFirstHoldNode extends Rule
 	{
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			
 			if(holdNode==-1)
 			{
 				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
 						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo()))
 				isSuccessHold = true;
+				holdNode = nodeClicked;
 				moveToNode = -1;
 				if(isRedClicked)
 				{
@@ -211,76 +264,72 @@ public class ChessRules {
 				else
 				{
 					message = CHECKRESULT_FIRSTHOLDNODE_BLACK;
-				}
-				holdNode = nodeClicked;
+				}				
 				return;
 			}
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}
 		}
 		
 	}
-	
+	// 是否在换棋
 	private class CheckIfChangeHoldNode extends Rule
 	{
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			
 			if(holdNode!=-1)
 			{
 				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
 						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo()))
 				isSuccessHold = true;
+				holdNode = nodeClicked;
 				moveToNode = -1;
 				if(isRedClicked)
 				{
-					message = CHECKRESULT_CHANGEHOLDNODE_RED;
+					if(holdNode!=nodeClicked)
+					{
+						message = CHECKRESULT_CHANGEHOLDNODE_RED;
+					}
+					else
+					{
+						message = CHECKRESULT_HOLDSAMENODE_RED;
+					}
 				}
 				else
 				{
-					message = CHECKRESULT_CHANGEHOLDNODE_BLACK;
-				}
-				holdNode = nodeClicked;
+					if(holdNode!=nodeClicked)
+					{
+						message = CHECKRESULT_CHANGEHOLDNODE_BLACK;
+					}
+					else
+					{
+						message = CHECKRESULT_HOLDSAMENODE_BLACK;
+					}
+				}				
 				return;
 			}
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}
 		}
 		
 	}
 	
-	private class CheckIfIsDogFall extends Rule
-	{
-
-		@Override
-		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
-		}
-		
-	}
 	
-	private class CheckIfGameOver extends Rule
-	{
-
-		@Override
-		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
-			successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
-		}
-		
-	}
-	
-	//不同类型棋子工厂
+	//不同类型棋子规则工厂
 	private class CoreCheck extends Rule
 	{
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
-			ChessType fromType = chessBoard.getBoardData()[holdNode/9][holdNode%9];
+			
+			ChessType fromType = GetNodeType(holdNode);
 			int n = fromType.getIndex()/3;
 			Rule r = null;
 			switch(n)
@@ -307,13 +356,14 @@ public class ChessRules {
 					r=new ChessTypeRule6();
 					break;
 			}
-			if(r!=null)
-			{
-				r.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
-			}
+			r.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 			if(isSuccessMove)
 			{
-				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+				moveToNode = nodeClicked;
+				if(successorRule!=null)
+				{
+					successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+				}
 			}
 			else
 			{
@@ -330,6 +380,87 @@ public class ChessRules {
 		
 	}
 	
+	// 当前局面是否应该平局
+	private class CheckIfIsDogFall extends Rule
+	{
+
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
+			//人工智能建议平局
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}
+		}
+		
+	}
+	// 判断是否红胜或者黑胜
+	private class CheckIfGameOver extends Rule
+	{
+		
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
+			if(GetNodeType(moveToNode)==ChessType.帅)
+			{
+				isBlackWin = true;				
+			}
+			else if(GetNodeType(moveToNode)==ChessType.将)
+			{
+				isRedWin = true;				
+			}
+			else
+			{
+				String redKingPosition = GetTypePosition(ChessType.帅,0,2,3,5);
+				String blackKingPosition = GetTypePosition(ChessType.将,7,9,3,5);
+				String [] redTemp = redKingPosition.split(",");
+				String [] blackTemp = blackKingPosition.split(",");
+				if(redTemp[1]==blackTemp[1])
+				{
+					Boolean isKingFaceToFace = true;
+					int jTemp = Integer.parseInt(redTemp[1]);
+					int i1Temp = Integer.parseInt(redTemp[0]);
+					int i2Temp = Integer.parseInt(blackTemp[0]);
+					for(int i=i1Temp+1;i<i2Temp;i++)
+					{
+						if(chessBoard.getBoardData()[i][jTemp]!=ChessType.空)
+						{
+							isKingFaceToFace = false;
+							break;
+						}
+					}
+					if(isKingFaceToFace)
+					{
+						if(isRedClicked)
+						{
+							isBlackWin = true;	
+						}
+						else
+						{
+							isRedWin = true;
+						}
+					}
+				}
+			}
+			if(isBlackWin)
+			{
+				message = CHECKRESULT_WIN_BLACK;
+				return;
+			}
+			if(isRedWin)
+			{
+				message = CHECKRESULT_WIN_RED;
+				return;
+			}
+			if(successorRule!=null)
+			{
+				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+			}
+		}
+		
+	}
+	
 	// 帅
 	private class ChessTypeRule0 extends Rule
 	{
@@ -337,8 +468,23 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
-			
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			if(col<3 || col>5)
+			{
+				return;
+			}
+			if(row>2 && row<7)
+			{
+				return;
+			}
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if((Math.abs(row-fromRow)+Math.abs(col-fromCol))!=1)
+			{
+				return;
+			}
+			isSuccessMove=true;
 		}
 		
 	}	
