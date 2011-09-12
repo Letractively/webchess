@@ -19,8 +19,19 @@ public class ChessBoard implements IPublisher {
 		{ChessType.‹á,ChessType.ÒR,ChessType.œÛ,ChessType. À,ChessType.Ω´,ChessType. À,ChessType.œÛ,ChessType.ÒR,ChessType.‹á}
 	};
 	
-	private ChessRules rule = new ChessRules(this);
+	private ChessRules rule;
 	
+	public ChessBoard()
+	{
+		rule = new ChessRules(this);
+		AddSubscriber(ChessEvent.EVENT_PLAY,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{
+				ChessEvent ev = (ChessEvent)eventArg;
+				Play(ev.getFromNode(),ev.getToNode());
+			}
+		});
+	}
 	
 	public void HandleClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard)
 	{
@@ -78,7 +89,7 @@ public class ChessBoard implements IPublisher {
 		Notify();
 	}
 	
-	public void Play(int from,int to)
+	private void Play(int from,int to)
 	{
 		ReDoStack.clear();
 		UnDoStack.push(new PlayAction(from,to));
