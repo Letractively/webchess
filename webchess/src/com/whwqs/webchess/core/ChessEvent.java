@@ -7,6 +7,7 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	public static final String EVENT_COMPLETECHECKBOARD = "棋盘检查完成";
 	public static final String EVENT_BOARDEXPIRE = "检查到操作时棋盘数据过期";		
 	public static final String EVENT_GAME_START = "棋局开始";
+	public static final String EVENT_HOLD = "拿棋";
 	public static final String EVENT_PLAY = "落子";
 	public static final String EVENT_UNDO = "悔棋";
 	public static final String EVENT_REDO = "不悔了";
