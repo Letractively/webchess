@@ -1,12 +1,14 @@
 package com.whwqs.webchess.core;
 
+import java.util.*;
+
 public class ChessRules {
 	
 	private ChessBoard chessBoard;
 	
 	public static final String CHECKRESULT_NEEDUPDATE = "需要更新棋盘先";
-	public static final String CHECKRESULT_NEEDWAITOPPANENT_RED = "红方等待黑方中...";
-	public static final String CHECKRESULT_NEEDWAITOPPANENT_BLACK = "黑方等待红方中...";
+	public static final String CHECKRESULT_NEEDWAITOPPONENT_RED = "红方等待黑方中...";
+	public static final String CHECKRESULT_NEEDWAITOPPONENT_BLACK = "黑方等待红方中...";
 	public static final String CHECKRESULT_CLICKWRONGNODE_RED = "红方瞎点中...";
 	public static final String CHECKRESULT_CLICKWRONGNODE_BLACK = "黑方瞎点中...";
 	public static final String CHECKRESULT_FIRSTHOLDNODE_RED ="红方拿棋了";
@@ -23,9 +25,25 @@ public class ChessRules {
 	public static final String CHECKRESULT_DENYPLAY_RED = "红方违反规则";
 	public static final String CHECKRESULT_DENYPLAY_BLACK = "黑方违反规则";
 	
-	private Boolean isSuccessMove = false;	
-	private Boolean isSuccessHold = false;
+	public List<ChessEvent> EventsList = new ArrayList<ChessEvent>();
 	
+	private Boolean isRedGoAhead;
+	private Boolean isRedToGo;
+	public Boolean getIsRedGoAhead() {
+		return isRedGoAhead;
+	}
+
+	public void setIsRedGoAhead(Boolean isRedGoAhead) {
+		this.isRedGoAhead = isRedGoAhead;
+	}
+
+	public Boolean getIsRedToGo() {
+		isRedToGo = chessBoard.IsRedToGo();
+		return isRedToGo;
+	}
+
+	private Boolean isSuccessMove = false;	
+	private Boolean isSuccessHold = false;	
 	private Boolean isRedWin = false;
 	private Boolean isBlackWin = false;
 	public Boolean getIsRedWin() {
@@ -35,8 +53,6 @@ public class ChessRules {
 	public Boolean getIsBlackWin() {
 		return isBlackWin;
 	}
-
-
 
 	private String message = "";
 	
@@ -53,8 +69,6 @@ public class ChessRules {
 		return isSuccessHold;
 	}
 	
-
-
 	private Rule firstRule ;
 	public ChessRules(ChessBoard qp){
 		chessBoard = qp;
@@ -76,6 +90,7 @@ public class ChessRules {
 		r6.SetSuccessorRule(r7);
 		r7.SetSuccessorRule(r8);
 		firstRule = r1;
+		isRedGoAhead=true;
 	}
 	
 	private int holdNode = -1;
@@ -88,6 +103,12 @@ public class ChessRules {
 	public int getMoveToNode() {
 		return moveToNode;
 	}	
+	
+	// 检查初始棋盘是否符合规则
+	public String ValidateChessBoardData(ChessType[][] boardData)
+	{
+		return "";
+	}
 
 	public void AcceptClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard){
 		isSuccessMove = false;
@@ -125,8 +146,7 @@ public class ChessRules {
 		}
 		
 		protected String GetTypePosition(ChessType target,int i0,int j0,int i1,int j1)
-		{
-			int n=0;
+		{			
 			String s = "";
 			if(i0>i1)
 			{
@@ -192,11 +212,11 @@ public class ChessRules {
 			{				
 				if(isRedClicked)
 				{
-					message = CHECKRESULT_NEEDWAITOPPANENT_RED;
+					message = CHECKRESULT_NEEDWAITOPPONENT_RED;
 				}
 				else
 				{
-					message = CHECKRESULT_NEEDWAITOPPANENT_BLACK;
+					message = CHECKRESULT_NEEDWAITOPPONENT_BLACK;
 				}
 				return;
 			}
@@ -470,6 +490,8 @@ public class ChessRules {
 				String clickManCurrentBoard) {
 			int row = nodeClicked/9;
 			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
 			if(col<3 || col>5)
 			{
 				return;
@@ -477,14 +499,12 @@ public class ChessRules {
 			if(row>2 && row<7)
 			{
 				return;
-			}
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-			if((Math.abs(row-fromRow)+Math.abs(col-fromCol))!=1)
+			}			
+			if((Math.abs(row-fromRow)+Math.abs(col-fromCol))==1)
 			{
-				return;
+				isSuccessMove=true;
 			}
-			isSuccessMove=true;
+			
 		}
 		
 	}	
@@ -495,7 +515,22 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if(col<3 || col>5)
+			{
+				return;
+			}
+			if(row>2 && row<7)
+			{
+				return;
+			}
+			if(Math.abs(row-fromRow)==1&&Math.abs(col-fromCol)==1)
+			{
+				isSuccessMove=true;
+			}
 			
 		}
 		
@@ -507,7 +542,22 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if(isRedClicked&&row>4)
+			{
+				return;
+			}
+			if(!isRedClicked&&row<5)
+			{
+				return;
+			}
+			if(Math.abs(row-fromRow)==2&&Math.abs(col-fromCol)==2)
+			{
+				isSuccessMove=true;
+			}
 			
 		}
 		
@@ -519,7 +569,26 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if(Math.abs(col-fromCol)==2)
+			{
+				if(Math.abs(row-fromRow)==1
+						&&chessBoard.getBoardData()[row][col/2+fromCol/2]==ChessType.空)
+				{
+					isSuccessMove=true;
+				}
+			}
+			else if(Math.abs(row-fromRow)==2)
+			{
+				if(Math.abs(col-fromCol)==1
+						&&chessBoard.getBoardData()[row/2+fromRow/2][col]==ChessType.空)
+				{
+					isSuccessMove=true;
+				}
+			}
 			
 		}
 		
@@ -531,7 +600,61 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if(row==fromRow)
+			{
+				if(Math.abs(col-fromCol)==1)
+				{
+					isSuccessMove=true;
+				}
+				else
+				{
+					if(col>fromCol)
+					{
+						col = col^fromCol;
+						fromCol = col^fromCol;
+						col = col^fromCol;
+					}
+					isSuccessMove=true;
+					for(int i=col+1;i<fromCol;i++)
+					{
+						if(chessBoard.getBoardData()[row][i]!=ChessType.空)
+						{
+							isSuccessMove = false;
+							break;
+						}
+					}
+				}
+			}
+			else if(col==fromCol)
+			{
+				if(Math.abs(row-fromRow)==1)
+				{
+					isSuccessMove=true;
+				}
+				else
+				{
+					if(row>fromRow)
+					{
+						row = row^fromRow;
+						fromRow = row^fromRow;
+						row = row^fromRow;
+					}
+					isSuccessMove=true;
+					for(int i=row+1;i<fromRow;i++)
+					{
+						if(chessBoard.getBoardData()[i][col]!=ChessType.空)
+						{
+							isSuccessMove = false;
+							break;
+						}
+					}
+				}
+			}
+			
 			
 		}
 		
@@ -543,7 +666,66 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if(row==fromRow)
+			{
+				if(Math.abs(col-fromCol)==1)
+				{
+					return;
+				}
+				else
+				{
+					if(col>fromCol)
+					{
+						col = col^fromCol;
+						fromCol = col^fromCol;
+						col = col^fromCol;
+					}
+					int n=0;
+					for(int i=col+1;i<fromCol;i++)
+					{
+						if(chessBoard.getBoardData()[row][i]!=ChessType.空)
+						{
+							n++;
+						}
+					}
+					if(n==1)
+					{
+						isSuccessMove=true;
+					}
+				}
+			}
+			else if(col==fromCol)
+			{
+				if(Math.abs(row-fromRow)==1)
+				{
+					return;
+				}
+				else
+				{
+					if(row>fromRow)
+					{
+						row = row^fromRow;
+						fromRow = row^fromRow;
+						row = row^fromRow;
+					}
+					int n=0;
+					for(int i=row+1;i<fromRow;i++)
+					{
+						if(chessBoard.getBoardData()[i][col]!=ChessType.空)
+						{
+							n++;
+						}
+					}
+					if(n==1)
+					{
+						isSuccessMove=true;
+					}
+				}
+			}
 			
 		}
 		
@@ -555,7 +737,51 @@ public class ChessRules {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			// TODO Auto-generated method stub
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+				
+			if(!((Math.abs(row-fromRow)+Math.abs(col-fromCol))==1))
+			{
+				return;
+			}
+			if(isRedClicked)
+			{
+				if(row<fromRow)
+				{
+					return;
+				}
+				if(fromRow<5)
+				{
+					if(row>fromRow)
+					{
+						isSuccessMove=true;
+					}
+				}
+				else
+				{
+					isSuccessMove=true;
+				}
+			}
+			else
+			{
+				if(row>fromRow)
+				{
+					return;
+				}
+				if(fromRow>4)
+				{
+					if(row<fromRow)
+					{
+						isSuccessMove=true;
+					}
+				}
+				else
+				{
+					isSuccessMove=true;
+				}
+			}
 			
 		}
 		

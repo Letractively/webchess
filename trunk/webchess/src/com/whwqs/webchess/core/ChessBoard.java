@@ -19,18 +19,13 @@ public class ChessBoard implements IPublisher {
 		{ChessType.車,ChessType.馬,ChessType.象,ChessType.仕,ChessType.将,ChessType.仕,ChessType.象,ChessType.馬,ChessType.車}
 	};
 	
-	public static final String EVENT_DAPU = "打谱摆棋";
-	public static final String EVENT_PLAY = "下了一步";
-	public static final String EVENT_UNDO = "悔棋";
-	public static final String EVENT_REDO = "不悔了";
-	public static final String EVENT_END = "下完了";
-	
 	private ChessRules rule = new ChessRules(this);
 	
 	
 	public void HandleClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard)
 	{
 		rule.AcceptClicked(nodeClicked, isRedClicked,clickManCurrentBoard);
+		Notify();
 	}
 	
 	private Boolean isRedGoAhead = true;
@@ -72,25 +67,28 @@ public class ChessBoard implements IPublisher {
 		{
 			boardData[i/9][i%9]=ChessType.Get(data.substring(i, i+1));
 		}
-		this.isRedGoAhead = isRedGoAhead;
-		ReDoStack.clear();
-		UnDoStack.clear();
-		Notify(new EventBase(ChessBoard.EVENT_DAPU,ToString()));
+		String s = rule.ValidateChessBoardData(boardData);
+		if(s=="")
+		{
+			this.isRedGoAhead = isRedGoAhead;
+			rule.setIsRedGoAhead(isRedGoAhead);
+			ReDoStack.clear();
+			UnDoStack.clear();			
+		}
+		Notify();
 	}
 	
 	public void Play(int from,int to)
 	{
 		ReDoStack.clear();
 		UnDoStack.push(new PlayAction(from,to));
-		Notify(new EventBase(ChessBoard.EVENT_PLAY,ToString()));
 	}
 	
 	public void UnDo()
 	{
 		if(!UnDoStack.isEmpty())
 		{
-			ReDoStack.push(UnDoStack.pop()).UnDo();
-			Notify(new EventBase(ChessBoard.EVENT_UNDO,ToString()));
+			ReDoStack.push(UnDoStack.pop()).UnDo();			
 		}
 	}
 	
@@ -99,7 +97,6 @@ public class ChessBoard implements IPublisher {
 		if(!ReDoStack.isEmpty())
 		{
 			UnDoStack.push(ReDoStack.pop()).ReDo();
-			Notify(new EventBase(ChessBoard.EVENT_REDO,ToString()));
 		}
 	}
 	
@@ -136,27 +133,46 @@ public class ChessBoard implements IPublisher {
 			boardData[from/9][from%9] = ChessType.空;
 		}
 	}
-
-	private List<ISubscriber> subscriberList = new ArrayList<ISubscriber>();
-
+	
+	private Map<String,List<ISubscriber>> subscriberList = new Hashtable<String,List<ISubscriber>>();
+	
 	@Override
-	public void AddSubscriber(ISubscriber subscriber) {
+	public void AddSubscriber(String EventName,ISubscriber subscriber) {
 		// TODO Auto-generated method stub
-		subscriberList.add(subscriber);
-	}
-
-	@Override
-	public void RemoveSubscriber(ISubscriber subscriber) {
-		// TODO Auto-generated method stub
-		subscriberList.remove(subscriber);
-	}
-
-	@Override
-	public void Notify(EventBase eventArg) {
-		// TODO Auto-generated method stub
-		for(ISubscriber subscr :subscriberList)
+		if(!subscriberList.containsKey(EventName))
 		{
-			subscr.Update(eventArg);
+			subscriberList.put(EventName, new ArrayList<ISubscriber>());
+		}
+		subscriberList.get(EventName).add(subscriber);
+	}
+
+	@Override
+	public void RemoveSubscriber(String EventName,ISubscriber subscriber) {
+		// TODO Auto-generated method stub
+		if(!subscriberList.containsKey(EventName))
+		{
+			subscriberList.get(EventName).remove(subscriber);
+		}
+	}
+
+	@Override
+	public void Notify(String EventName,EventBase eventArg) {
+		// TODO Auto-generated method stub
+		if(!subscriberList.containsKey(EventName))
+		{
+			for(ISubscriber subscr :subscriberList.get(EventName))
+			{
+				subscr.Update(eventArg);
+			}
+		}
+	}
+	
+	private void Notify()
+	{
+		for(ChessEvent ev : rule.EventsList)
+		{
+			String eventName = ev.getEventName();
+			Notify(eventName,ev);
 		}
 	}
 }
