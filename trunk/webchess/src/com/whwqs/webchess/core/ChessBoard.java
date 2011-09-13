@@ -1,10 +1,11 @@
 package com.whwqs.webchess.core;
 
+import java.io.Serializable;
 import java.util.*;
 
 import com.whwqs.util.*;
 
-public class ChessBoard implements IPublisher {
+public class ChessBoard implements IPublisher,Serializable {
 	private ChessType[][] boardData = new ChessType[][]{
 		{ChessType.车,ChessType.马,ChessType.相,ChessType.士,ChessType.帅,ChessType.士,ChessType.相,ChessType.马,ChessType.车},
 		{ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空},
@@ -99,7 +100,15 @@ public class ChessBoard implements IPublisher {
 	{
 		if(!UnDoStack.isEmpty())
 		{
-			ReDoStack.push(UnDoStack.pop()).UnDo();			
+			PlayAction undoAction = ReDoStack.push(UnDoStack.pop());
+			undoAction.UnDo();		
+			ChessEvent ev = new ChessEvent(ChessEvent.EVENT_UNDO);
+			ev.setFromNode(undoAction.from);
+			ev.setFromType(undoAction.fromType);
+			ev.setToNode(undoAction.to);
+			ev.setToType(undoAction.ToType);
+			ev.setChessBoardData(ToString());
+			Notify(ChessEvent.EVENT_UNDO,ev);
 		}
 	}
 	
@@ -107,7 +116,15 @@ public class ChessBoard implements IPublisher {
 	{
 		if(!ReDoStack.isEmpty())
 		{
-			UnDoStack.push(ReDoStack.pop()).ReDo();
+			PlayAction redoAction = UnDoStack.push(ReDoStack.pop());
+			redoAction.ReDo();
+			ChessEvent ev = new ChessEvent(ChessEvent.EVENT_REDO);
+			ev.setFromNode(redoAction.from);
+			ev.setFromType(redoAction.fromType);
+			ev.setToNode(redoAction.to);
+			ev.setToType(redoAction.ToType);
+			ev.setChessBoardData(ToString());
+			Notify(ChessEvent.EVENT_REDO,ev);
 		}
 	}
 	
@@ -180,7 +197,7 @@ public class ChessBoard implements IPublisher {
 	
 	private void Notify()
 	{
-		for(ChessEvent ev : rule.EventsList)
+		for(ChessEvent ev : rule.getEventsList())
 		{
 			String eventName = ev.getEventName();
 			Notify(eventName,ev);

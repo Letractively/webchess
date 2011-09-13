@@ -11,7 +11,7 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	public static final String EVENT_PLAY = "落子";
 	public static final String EVENT_UNDO = "悔棋";
 	public static final String EVENT_REDO = "不悔了";
-	public static final String EVENT_END = "棋局结束";
+	public static final String EVENT_GAME_END = "棋局结束";
 	public static final String EVENT_TIMEOUT = "棋手超时";
 	public ChessEvent(String EventName)
 	{
@@ -23,6 +23,20 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	private String chessBoardData = ""; //车马相士帅...
 	private Date gameStartAt;
 	private Date gameEndAt;
+	private Boolean isRedWin;
+	private Boolean isDogfall;
+	public Boolean getIsRedWin() {
+		return isRedWin;
+	}
+	public void setIsRedWin(Boolean isRedWin) {
+		this.isRedWin = isRedWin;
+	}
+	public Boolean getIsDogfall() {
+		return isDogfall;
+	}
+	public void setIsDogfall(Boolean isDogfall) {
+		this.isDogfall = isDogfall;
+	}
 	private Date playAt;
 	private Boolean isRedToGo;
 	public Boolean getIsRedToGo() {
@@ -33,6 +47,20 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	}
 	private int fromNode = -1;
 	private int toNode = -1;
+	private ChessType fromType;
+	private ChessType toType;
+	public ChessType getFromType() {
+		return fromType;
+	}
+	public void setFromType(ChessType fromType) {
+		this.fromType = fromType;
+	}
+	public ChessType getToType() {
+		return toType;
+	}
+	public void setToType(ChessType toType) {
+		this.toType = toType;
+	}
 	private String message;
 	public String getMessage() {
 		return message;

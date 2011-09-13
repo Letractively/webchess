@@ -7,15 +7,23 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Welcome to web chess</title>
+<script src="common/js/jquery-1.5.2.min.js"></script>
+<script src="common/js/template.js"></script>
+<script>
+$(function(){
+	$("#btnTest").click(function(){
+		$.ajax({
+			type:"POST",
+			url:"HandleClickBoard",
+			data:{},
+			success:function(){alert(1);},
+			error:function(){alert(2);}
+		});
+	});
+});
+</script>
 </head>
 <body>
-<% 
-ChessBoard b = new ChessBoard();
-b.SetBoard(b.ToString().replace('空', '相'));
-out.print(b.ToString()+"<br/>");
-ChessType t = b.getBoardData()[0][0];
-b.getBoardData()[0][0] = ChessType.Get("将");
-out.print(t.getName()+" "+b.getBoardData()[0][0].getName());
-%>
+<input type="button" value="test" id="btnTest"/>
 </body>
 </html>
