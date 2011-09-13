@@ -1,9 +1,15 @@
 package com.whwqs.webchess.core;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class ChessRules {
+public class ChessRules implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private ChessBoard chessBoard;
 	
 	public static final String CHECKRESULT_NEEDUPDATE = "需要更新棋盘先";
@@ -76,25 +82,30 @@ public class ChessRules {
 	private Rule firstRule ;
 	public ChessRules(ChessBoard qp){
 		chessBoard = qp;
-		//组装责任链
-		Rule r1 = new CheckIfBoardDataExpired();
-		Rule r2 = new CheckIfClickWrongNode();
-		Rule r3 = new CheckIfNeedWait();		
-		Rule r4 = new CheckIfFirstHoldNode();
-		Rule r5 = new CheckIfChangeHoldNode();
-		Rule r6 = new CoreCheck();
-		Rule r7 = new CheckIfIsDogFall();
-		Rule r8 = new CheckIfGameOver();
-		
-		r1.SetSuccessorRule(r2);
-		r2.SetSuccessorRule(r3);
-		r3.SetSuccessorRule(r4);
-		r4.SetSuccessorRule(r5);
-		r5.SetSuccessorRule(r6);
-		r6.SetSuccessorRule(r7);
-		r7.SetSuccessorRule(r8);
-		firstRule = r1;
+		AssembleResponsibilityChain();
 		isRedGoAhead=true;
+	}
+	
+	private void AssembleResponsibilityChain()
+	{
+		//组装责任链
+			Rule r1 = new CheckIfBoardDataExpired();
+			Rule r2 = new CheckIfClickWrongNode();
+			Rule r3 = new CheckIfNeedWait();		
+			Rule r4 = new CheckIfFirstHoldNode();
+			Rule r5 = new CheckIfChangeHoldNode();
+			Rule r6 = new CoreCheck();
+			Rule r7 = new CheckIfIsDogFall();
+			Rule r8 = new CheckIfGameOver();
+			
+			r1.SetSuccessorRule(r2);
+			r2.SetSuccessorRule(r3);
+			r3.SetSuccessorRule(r4);
+			r4.SetSuccessorRule(r5);
+			r5.SetSuccessorRule(r6);
+			r6.SetSuccessorRule(r7);
+			r7.SetSuccessorRule(r8);
+			firstRule = r1;
 	}
 	
 	private int holdNode = -1;
@@ -123,8 +134,12 @@ public class ChessRules {
 		firstRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 	}
 	
-	private abstract class Rule
+	private abstract class Rule implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		protected Rule successorRule = null;
 		public void SetSuccessorRule(Rule r)
 		{
@@ -187,6 +202,11 @@ public class ChessRules {
 	private class CheckIfBoardDataExpired extends Rule
 	{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -211,6 +231,11 @@ public class ChessRules {
 	private class CheckIfNeedWait extends Rule
 	{
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -245,6 +270,11 @@ public class ChessRules {
 	// 是否在瞎点棋盘
 	private class CheckIfClickWrongNode extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
@@ -282,6 +312,11 @@ public class ChessRules {
 	private class CheckIfFirstHoldNode extends Rule
 	{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -317,6 +352,11 @@ public class ChessRules {
 	// 是否在换棋
 	private class CheckIfChangeHoldNode extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
@@ -369,6 +409,11 @@ public class ChessRules {
 	//不同类型棋子规则工厂
 	private class CoreCheck extends Rule
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -435,6 +480,11 @@ public class ChessRules {
 	private class CheckIfIsDogFall extends Rule
 	{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -450,6 +500,11 @@ public class ChessRules {
 	private class CheckIfGameOver extends Rule
 	{
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -524,6 +579,11 @@ public class ChessRules {
 	private class ChessTypeRule0 extends Rule
 	{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -550,6 +610,11 @@ public class ChessRules {
 	// 士
 	private class ChessTypeRule1 extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
@@ -578,6 +643,11 @@ public class ChessRules {
 	private class ChessTypeRule2 extends Rule
 	{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
@@ -604,6 +674,11 @@ public class ChessRules {
 	//马
 	private class ChessTypeRule3 extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
@@ -635,6 +710,11 @@ public class ChessRules {
 	//车
 	private class ChessTypeRule4 extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
@@ -701,6 +781,11 @@ public class ChessRules {
 	//炮
 	private class ChessTypeRule5 extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
@@ -772,6 +857,11 @@ public class ChessRules {
 	//兵
 	private class ChessTypeRule6 extends Rule
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
