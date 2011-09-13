@@ -25,7 +25,11 @@ public class ChessRules {
 	public static final String CHECKRESULT_DENYPLAY_RED = "红方违反规则";
 	public static final String CHECKRESULT_DENYPLAY_BLACK = "黑方违反规则";
 	
-	public List<ChessEvent> EventsList = new ArrayList<ChessEvent>();
+	private List<ChessEvent> eventsList = new ArrayList<ChessEvent>();
+	public List<ChessEvent> getEventsList()
+	{
+		return eventsList;
+	}
 	
 	private Boolean isRedGoAhead;
 	private Boolean isRedToGo;
@@ -190,6 +194,10 @@ public class ChessRules {
 			if(clickManCurrentBoard!=chessBoard.ToString())
 			{
 				message = CHECKRESULT_NEEDUPDATE;
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_BOARDEXPIRE);
+				ev.setChessBoardData(chessBoard.ToString());
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}
 			if(successorRule!=null)
@@ -212,12 +220,16 @@ public class ChessRules {
 			{				
 				if(isRedClicked)
 				{
-					message = CHECKRESULT_NEEDWAITOPPONENT_RED;
+					message = CHECKRESULT_NEEDWAITOPPONENT_RED;					
 				}
 				else
 				{
 					message = CHECKRESULT_NEEDWAITOPPONENT_BLACK;
 				}
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setFromNode(holdNode);
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}
 			
@@ -250,6 +262,10 @@ public class ChessRules {
 				{
 					message = CHECKRESULT_CLICKWRONGNODE_BLACK;
 				}
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setFromNode(holdNode);
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}		
 			
@@ -284,7 +300,11 @@ public class ChessRules {
 				else
 				{
 					message = CHECKRESULT_FIRSTHOLDNODE_BLACK;
-				}				
+				}	
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setFromNode(holdNode);
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}
 			if(successorRule!=null)
@@ -330,7 +350,11 @@ public class ChessRules {
 					{
 						message = CHECKRESULT_HOLDSAMENODE_BLACK;
 					}
-				}				
+				}	
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setFromNode(holdNode);
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}
 			if(successorRule!=null)
@@ -380,6 +404,13 @@ public class ChessRules {
 			if(isSuccessMove)
 			{
 				moveToNode = nodeClicked;
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_PLAY);
+				ev.setFromNode(holdNode);
+				ev.setFromType(GetNodeType(holdNode));
+				ev.setToNode(moveToNode);
+				ev.setToType(GetNodeType(moveToNode));
+				ev.setMessage(message);
+				eventsList.add(ev);
 				if(successorRule!=null)
 				{
 					successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
@@ -466,11 +497,19 @@ public class ChessRules {
 			if(isBlackWin)
 			{
 				message = CHECKRESULT_WIN_BLACK;
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_GAME_END);
+				ev.setIsRedWin(false);
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}
 			if(isRedWin)
 			{
 				message = CHECKRESULT_WIN_RED;
+				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_GAME_END);
+				ev.setIsRedWin(false);
+				ev.setMessage(message);
+				eventsList.add(ev);
 				return;
 			}
 			if(successorRule!=null)
