@@ -7,13 +7,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.whwqs.webchess.core.*;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
-/**
- * Servlet implementation class HandleClickBoard
- */
+
 @WebServlet("/HandleClickBoard")
 public class HandleClickBoard extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -28,20 +28,45 @@ public class HandleClickBoard extends HttpServlet {
     
     private void ProcessHandle(HttpServletRequest request, HttpServletResponse response)
     {
-    	ChessBoard board = new ChessBoard();
-    	FileOutputStream fos = null;
-	    ObjectOutputStream out = null;
-	    try
-	    {
-	    	fos = new FileOutputStream("c:/1.txt");
-	    	out = new ObjectOutputStream(fos);
-	    	out.writeObject(board);
-	    	out.close();
-		 }
-		 catch(IOException ex)
-		 {
-		     ex.printStackTrace();
-		 }
+    	if(request.getParameter("type").equals("save"))
+    	{
+	    	ChessBoard board = new ChessBoard();
+	    	FileOutputStream fos = null;
+		    ObjectOutputStream out = null;
+		    try
+		    {
+		    	fos = new FileOutputStream("c:/1.txt");
+		    	out = new ObjectOutputStream(fos);
+		    	out.writeObject(board);
+		    	out.close();
+			 }
+			 catch(IOException ex)
+			 {
+			     ex.printStackTrace();
+			 }
+    	}
+    	else
+    	{
+    		ChessBoard board = null;
+    		FileInputStream fos = null;
+	    	ObjectInputStream  in = null;
+		    try
+		    {
+		    	fos = new FileInputStream("c:/1.txt");
+		    	in = new ObjectInputStream (fos);
+		    	board = (ChessBoard)in.readObject();
+		    	response.getWriter().print(board.ToString());
+		    	in.close();
+			 }
+			 catch(IOException ex)
+			 {
+			     ex.printStackTrace();
+			 }
+		    catch(ClassNotFoundException ex)
+		    {
+		    	ex.printStackTrace();
+		    }
+    	}
     }
 
 	/**

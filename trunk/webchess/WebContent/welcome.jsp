@@ -15,8 +15,18 @@ $(function(){
 		$.ajax({
 			type:"POST",
 			url:"HandleClickBoard",
-			data:{},
-			success:function(){alert(1);},
+			data:{type:"save"},
+			success:function(d){alert(d);},
+			error:function(){alert(2);}
+		});
+	});
+	
+	$("#btnTest2").click(function(){
+		$.ajax({
+			type:"POST",
+			url:"HandleClickBoard",
+			data:{type:"get"},
+			success:function(d){alert(d);},
 			error:function(){alert(2);}
 		});
 	});
@@ -24,6 +34,7 @@ $(function(){
 </script>
 </head>
 <body>
-<input type="button" value="test" id="btnTest"/>
+<input type="button" value="serialized" id="btnTest"/>
+<input type="button" value="unserialized" id="btnTest2"/>
 </body>
 </html>

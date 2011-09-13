@@ -1,11 +1,19 @@
 package com.whwqs.webchess.core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 
 import com.whwqs.util.*;
 
 public class ChessBoard implements IPublisher,Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private ChessType[][] boardData = new ChessType[][]{
 		{ChessType.车,ChessType.马,ChessType.相,ChessType.士,ChessType.帅,ChessType.士,ChessType.相,ChessType.马,ChessType.车},
 		{ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空,ChessType.空},
@@ -25,6 +33,12 @@ public class ChessBoard implements IPublisher,Serializable {
 	public ChessBoard()
 	{
 		rule = new ChessRules(this);
+		init();
+	}
+	
+	private void init()
+	{
+		subscriberList = new Hashtable<String,List<ISubscriber>>();
 		AddSubscriber(ChessEvent.EVENT_PLAY,new ISubscriber(){
 			public void Update(EventBase eventArg)
 			{
@@ -32,6 +46,17 @@ public class ChessBoard implements IPublisher,Serializable {
 				Play(ev.getFromNode(),ev.getToNode());
 			}
 		});
+	}
+	
+	private void writeObject(ObjectOutputStream out) throws IOException
+	{
+		out.defaultWriteObject();
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+	{
+		in.defaultReadObject();
+		init();
 	}
 	
 	public void HandleClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard)
@@ -132,8 +157,12 @@ public class ChessBoard implements IPublisher,Serializable {
 	private Stack<PlayAction> UnDoStack = new Stack<PlayAction>();	
 	
 	
-	private class PlayAction
+	private class PlayAction implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private ChessType fromType;
 		private ChessType ToType;
 		private int from;
@@ -162,7 +191,7 @@ public class ChessBoard implements IPublisher,Serializable {
 		}
 	}
 	
-	private Map<String,List<ISubscriber>> subscriberList = new Hashtable<String,List<ISubscriber>>();
+	transient private Map<String,List<ISubscriber>> subscriberList = null;
 	
 	@Override
 	public void AddSubscriber(String EventName,ISubscriber subscriber) {
