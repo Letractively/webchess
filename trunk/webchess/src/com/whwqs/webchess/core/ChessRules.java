@@ -1,5 +1,8 @@
 package com.whwqs.webchess.core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 
@@ -84,6 +87,17 @@ public class ChessRules implements Serializable {
 		chessBoard = qp;
 		AssembleResponsibilityChain();
 		isRedGoAhead=true;
+	}
+	
+	private void writeObject(ObjectOutputStream out) throws IOException
+	{
+		out.defaultWriteObject();
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+	{
+		in.defaultReadObject();
+		AssembleResponsibilityChain();
 	}
 	
 	private void AssembleResponsibilityChain()
