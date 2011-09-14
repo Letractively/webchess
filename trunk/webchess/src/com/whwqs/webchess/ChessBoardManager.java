@@ -7,8 +7,20 @@ import com.whwqs.webchess.core.ChessBoard;
 
 public class ChessBoardManager {
 	private static String root = "c:/chess";	
-	private static Map<String,ChessBoard> ChessBoards = new Hashtable<String,ChessBoard>();
+	//private static Map<String,ChessBoard> ChessBoards = new Hashtable<String,ChessBoard>();
 	static{
-		java.io.f
+		java.io.File rootDir = new java.io.File(root);
+		if(!rootDir.exists())
+		{
+			rootDir.mkdirs();
+		}
+	}
+	
+	public static synchronized ChessBoard GetChessBoard(String key)
+	{
+		if(ChessBoards.containsKey(key))
+		{
+			
+		}
 	}
 }
