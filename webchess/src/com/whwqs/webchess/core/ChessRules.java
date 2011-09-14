@@ -34,7 +34,7 @@ public class ChessRules implements Serializable {
 	public static final String CHECKRESULT_DENYPLAY_RED = "红方违反规则";
 	public static final String CHECKRESULT_DENYPLAY_BLACK = "黑方违反规则";
 	
-	private List<ChessEvent> eventsList = new ArrayList<ChessEvent>();
+	private List<ChessEvent> eventsList ;
 	public List<ChessEvent> getEventsList()
 	{
 		return eventsList;
@@ -120,6 +120,7 @@ public class ChessRules implements Serializable {
 			r6.SetSuccessorRule(r7);
 			r7.SetSuccessorRule(r8);
 			firstRule = r1;
+			eventsList = new ArrayList<ChessEvent>();
 	}
 	
 	private int holdNode = -1;
