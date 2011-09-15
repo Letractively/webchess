@@ -16,7 +16,6 @@ import com.whwqs.webchess.core.ChessBoard;
 public class HandleSelectBoard extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	
        
     /**
      * @see HttpServlet#HttpServlet()
