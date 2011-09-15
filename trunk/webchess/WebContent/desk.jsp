@@ -1,20 +1,20 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<jsp:include page="commonpage.jsp"></jsp:include>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<jsp:include page="commonhead.jsp"></jsp:include>
 <title>desk</title>
-<script src="common/js/jquery-1.5.2.min.js"></script>
-<script src="common/js/template.js"></script>
 </head>
 <body>
 <% 
 
-    if(session.getAttribute("deskNum")==null)
+    if(session.getAttribute("number")!=null
+    &&session.getAttribute("isRed")!=null)
     {
-    	response.sendRedirect("welcome.jsp");
-    	return;
+    	session.removeAttribute("number");
+    }
+    else
+    {
+    	//response.sendRedirect("welcome.jsp");
     }
 %>
 </body>

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.whwqs.webchess.core.ChessBoard;
 
 /**
  * Servlet implementation class HandleSelectBoard
@@ -26,8 +25,29 @@ public class HandleSelectBoard extends HttpServlet {
     }
     
     private void ProcessHandle(HttpServletRequest request, HttpServletResponse response)
-    {
-    	
+    {    	
+    	String num = request.getParameter("number");
+    	String isRed = request.getParameter("isRed");
+    	if(num!=null && isRed!=null)
+    	{
+    		request.getSession().setAttribute("number", num);
+    		request.getSession().setAttribute("isRed", isRed);
+    		try {
+				response.getWriter().write("1");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	else
+    	{
+    		try {
+				response.getWriter().write("0");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
     }
 
 	/**
