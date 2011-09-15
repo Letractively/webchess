@@ -11,31 +11,24 @@
 <script src="common/js/jquery-1.5.2.min.js"></script>
 <script src="common/js/template.js"></script>
 <script>
-$(function(){
-	$("#btnTest").click(function(){
-		$.ajax({
-			type:"POST",
-			url:"HandleClickBoard",
-			data:{type:"save"},
-			success:function(d){alert(d);},
-			error:function(){alert(2);}
-		});
-	});
-	
-	$("#btnTest2").click(function(){
-		$.ajax({
-			type:"POST",
-			url:"HandleClickBoard",
-			data:{type:"get"},
-			success:function(d){alert(d);},
-			error:function(){alert(2);}
-		});
-	});
-});
+function SetDeskNumber(num)
+{
+	$.ajax({
+		type:"POST",
+		url:"HandleSelectBoard",
+		data:{"":},
+		success:function()
+		{
+			window.location.href = "desk.jsp";
+		}
+	});	
+}
 </script>
 </head>
 <body>
-<input type="button" value="serialized" id="btnTest"/>
-<input type="button" value="unserialized" id="btnTest2"/>
+<div style="border:1px solid blue;">
+desk:1
+</div>
+
 </body>
 </html>
