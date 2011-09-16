@@ -26,14 +26,14 @@ public class HandleSelectBoard extends HttpServlet {
     
     private void ProcessHandle(HttpServletRequest request, HttpServletResponse response)
     {    	
-    	String num = request.getParameter("number");
-    	String isRed = request.getParameter("isRed");
-    	if(num!=null && isRed!=null)
+    	String num = request.getParameter("room");
+    	String type = request.getParameter("type");
+    	if(num!=null && type!=null)
     	{
-    		request.getSession().setAttribute("number", num);
-    		request.getSession().setAttribute("isRed", isRed);
+    		request.getSession().setAttribute("room", num);
+    		request.getSession().setAttribute("type", type);
     		try {
-				response.getWriter().write("1");
+				response.getWriter().write(";window.location.href='room.jsp';");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -42,7 +42,7 @@ public class HandleSelectBoard extends HttpServlet {
     	else
     	{
     		try {
-				response.getWriter().write("0");
+				response.getWriter().write(";alert('wrong');");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
