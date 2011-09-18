@@ -1,24 +1,14 @@
-
-<jsp:include page="commonpage.jsp"></jsp:include>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<jsp:include page="commonhead.jsp"></jsp:include>
+<jsp:include page="common/jsp/commonhead.jsp"></jsp:include>
 <title>Welcome to web chess</title>
 <script>
-function SetDeskNumber(num)
-{
+function fixHref(a,num){
 	var type = $("input:radio:checked[name='qp"+num+"']").val();
-	$.ajax({
-		type:"POST",
-		url:"HandleSelectBoard",
-		data:{"room":num,"type":type},
-		success:function(d)
-		{
-			eval(d);			
-		},
-		error:function(ex)
-		{alert(ex);}
-	});	
+	a.href = "HandleSelectBoard?room="+num+"&type="+type;
 }
 function desk(num)
 {
@@ -39,8 +29,8 @@ $(function(){
 <body>
 
 </body>
-<div id="model" style="display:none">
-{for e in  arrDesk}
+<textarea id="model" style="display:none">
+{for e in arrDesk}
 	<div style="border:1px solid blue;width:80px;float:left;margin:0 0 10px 10px;">
 	room:\${e.number}
 	<br/>
@@ -50,8 +40,8 @@ $(function(){
 	<br/>
 	<input type="radio"  name="qp\${e.number}" value="0" />look
 	<br/>
-	<input type="button" onclick="SetDeskNumber(\${e.number})" value="enter" />
+	<a href=""  target="room_\${e.number}" onclick=";fixHref(this,\${e.number});">enter</a>
 	</div>
 {/for}
-</div>
+</textarea>
 </html>
