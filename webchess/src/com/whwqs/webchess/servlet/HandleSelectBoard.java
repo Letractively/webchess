@@ -24,30 +24,16 @@ public class HandleSelectBoard extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    private void ProcessHandle(HttpServletRequest request, HttpServletResponse response)
+    private void ProcessHandle(HttpServletRequest request, HttpServletResponse response) throws Exception
     {    	
     	String num = request.getParameter("room");
     	String type = request.getParameter("type");
     	if(num!=null && type!=null)
     	{
     		request.getSession().setAttribute("room", num);
-    		request.getSession().setAttribute("type", type);
-    		try {
-				response.getWriter().write(";window.location.href='room.jsp';");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
-    	else
-    	{
-    		try {
-				response.getWriter().write(";alert('wrong');");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
+    		request.getSession().setAttribute("type", type); 
+    	}  
+    	response.sendRedirect("jsp/room.jsp");	
     }
 
 	/**
@@ -55,7 +41,12 @@ public class HandleSelectBoard extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		ProcessHandle(request,response);
+		try {
+			ProcessHandle(request,response);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -63,7 +54,12 @@ public class HandleSelectBoard extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		ProcessHandle(request,response);
+		try {
+			ProcessHandle(request,response);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
