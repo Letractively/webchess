@@ -5,14 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Hashtable;
-import java.util.Map;
-
+import com.whwqs.util.LockManager;
 import com.whwqs.webchess.core.ChessBoard;
 
 public class ChessBoardManager {
 	private static String root = "c:/chess";	
-	private static Map<String,Object> Locks = new Hashtable<String,Object>();
+	
 	static{
 		java.io.File rootDir = new java.io.File(root);
 		if(!rootDir.exists())
@@ -26,24 +24,9 @@ public class ChessBoardManager {
 		return root + "/"+key;
 	}
 	
-	private static Object GetLock(String key)
-	{
-		if(!Locks.containsKey(key))
-		{
-			synchronized(ChessBoardManager.class)
-			{
-				if(!Locks.containsKey(key))
-				{
-					Locks.put(key, new Object());
-				}
-			}
-		}
-		return Locks.get(key);
-	}
-	
 	public static ChessBoard GetChessBoard(String key) 
 	{
-		synchronized(GetLock(key))
+		synchronized(LockManager.GetLock(key))
 		{
 			String file = GetFileName(key);
 			java.io.File boardFile = new java.io.File(file);
@@ -91,7 +74,7 @@ public class ChessBoardManager {
 	
 	public static Boolean SetChessBoard(String key,ChessBoard board) 
 	{
-		synchronized(GetLock(key))
+		synchronized(LockManager.GetLock(key))
 		{
 			Boolean r = false;
 			try
