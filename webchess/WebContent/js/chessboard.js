@@ -20,6 +20,8 @@ function ChessBoard(container){
 	this.enable=true;
 	this.ajaxtype="";
 	this.click = -1;
+	this.timespan = 2000;
+	this.timer = null;
 }
 
 ChessBoard.prototype.SetBoardByData = function(){
@@ -48,20 +50,36 @@ ChessBoard.prototype.Ajax = function(){
 	
 	$.ajax({
 		type:"POST",
-		url:"HandleClickBoard",
+		url:config.webroot+"/HandleClickBoard",
 		data:function(){
-			
+			if(self.ajaxtype=="click"){
+				return {type:"click",
+					room:config.room,
+					clickNode:self.click,
+					isRed:config.type==1,
+					data:self.data};
+			}
+			else if(self.ajaxtype=="timer"){
+				return {type:"timer",room:config.room};
+			}
 		},
-		success:function(){
+		success:function(json){
 			self.enable = true;
+			alert(json);
 		},
-		error:function(){
+		error:function(ex){
 			self.enable = true;
+			self.msg.text("error and try again later! Error is "+ex.responseText);
+			alert(ex.responseText)
 		}		
 	})
 }
-ChessBoard.prototype.Timer = function(){
-	
+ChessBoard.prototype.setTimer = function(){
+	var self = this;
+	this.timer = setInterval(function(){
+		self.ajaxtype="timer";
+		self.Ajax();
+	},this.timespan);
 }
 ChessBoard.prototype.HandleClick = function(id){
 	this.ajaxtype = "click";

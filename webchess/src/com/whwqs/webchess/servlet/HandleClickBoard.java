@@ -7,13 +7,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.whwqs.util.EventBase;
+import com.whwqs.util.ISubscriber;
+import com.whwqs.util.LockManager;
 import com.whwqs.webchess.ChessBoardManager;
 import com.whwqs.webchess.core.*;
-
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.FileOutputStream;
 
 
 @WebServlet("/HandleClickBoard")
@@ -28,46 +26,44 @@ public class HandleClickBoard extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    private void ProcessHandle(HttpServletRequest request, HttpServletResponse response)
+    private void ProcessHandle(HttpServletRequest request,  final HttpServletResponse response)
     {
-    	if(request.getParameter("type").equals("save"))
+    	String roomNumber = request.getParameter("room");
+    	ChessBoard board =ChessBoardManager.GetChessBoard(roomNumber);
+    	if(request.getParameter("type").equals("click"))
     	{
-	    	ChessBoard board = new ChessBoard();
-	    	FileOutputStream fos = null;
-		    ObjectOutputStream out = null;
-		    try
-		    {
-		    	fos = new FileOutputStream("c:/1.txt");
-		    	out = new ObjectOutputStream(fos);
-		    	out.writeObject(board);
-		    	out.close();
-			 }
-			 catch(IOException ex)
-			 {
-			     ex.printStackTrace();
-			 }
+	    	board.AddSubscriber(ChessEvent.EVENT_BOARDEXPIRE, new ISubscriber(){
+
+				@Override
+				public void Update(EventBase eventArg) {
+					// TODO Auto-generated method stub
+					ChessEvent chessEv = (ChessEvent)eventArg;
+					try {
+						response.getWriter().write(chessEv.ToJSON());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+	    		
+	    	});
+	    	int nodeClicked =Integer.parseInt(request.getParameter("clickNode"));
+	    	Boolean isRedClicked = Boolean.valueOf(request.getParameter("isRed"));
+	    	String clickManCurrentBoard =  request.getParameter("data");
+	    	synchronized(LockManager.GetLock(roomNumber)){
+	    		 board.HandleClicked(nodeClicked, isRedClicked, clickManCurrentBoard);
+	    	}	    	
+	    	
     	}
-    	else
+    	else if(request.getParameter("type").equals("timer"))
     	{
-    		ChessBoard board = null;
-    		FileInputStream fos = null;
-	    	ObjectInputStream  in = null;
-		    try
-		    {
-		    	fos = new FileInputStream("c:/1.txt");
-		    	in = new ObjectInputStream (fos);
-		    	board = (ChessBoard)in.readObject();
-		    	response.getWriter().print(board.ToString());
-		    	in.close();
-			 }
-			 catch(IOException ex)
-			 {
-			     ex.printStackTrace();
-			 }
-		    catch(ClassNotFoundException ex)
-		    {
-		    	ex.printStackTrace();
-		    }
+    		try {
+    			String json = "{\"chessBoardData\":\""+board.ToString()+"\"}";
+				response.getWriter().write(json);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
     }
 
