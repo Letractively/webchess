@@ -204,7 +204,7 @@ public class ChessRules implements Serializable {
 					}
 				}
 			}
-			if(s!="")
+			if(!s.isEmpty())
 			{
 				s = s.replaceAll("|$", "");
 			}
@@ -226,7 +226,7 @@ public class ChessRules implements Serializable {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			
-			if(clickManCurrentBoard!=chessBoard.ToString())
+			if(!clickManCurrentBoard.equals(chessBoard.ToString()))
 			{
 				message = CHECKRESULT_NEEDUPDATE;
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_BOARDEXPIRE);
@@ -267,6 +267,7 @@ public class ChessRules implements Serializable {
 					message = CHECKRESULT_NEEDWAITOPPONENT_BLACK;
 				}
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setFromNode(holdNode);
 				ev.setMessage(message);
 				eventsList.add(ev);
@@ -308,6 +309,7 @@ public class ChessRules implements Serializable {
 					message = CHECKRESULT_CLICKWRONGNODE_BLACK;
 				}
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setFromNode(holdNode);
 				ev.setMessage(message);
 				eventsList.add(ev);
@@ -352,6 +354,7 @@ public class ChessRules implements Serializable {
 					message = CHECKRESULT_FIRSTHOLDNODE_BLACK;
 				}	
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setFromNode(holdNode);
 				ev.setMessage(message);
 				eventsList.add(ev);
@@ -407,6 +410,7 @@ public class ChessRules implements Serializable {
 					}
 				}	
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setFromNode(holdNode);
 				ev.setMessage(message);
 				eventsList.add(ev);
@@ -465,6 +469,7 @@ public class ChessRules implements Serializable {
 			{
 				moveToNode = nodeClicked;
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_PLAY);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setFromNode(holdNode);
 				ev.setFromType(GetNodeType(holdNode));
 				ev.setToNode(moveToNode);
@@ -537,7 +542,7 @@ public class ChessRules implements Serializable {
 				String blackKingPosition = GetTypePosition(ChessType.½«,7,9,3,5);
 				String [] redTemp = redKingPosition.split(",");
 				String [] blackTemp = blackKingPosition.split(",");
-				if(redTemp[1]==blackTemp[1])
+				if(redTemp[1].equals(blackTemp[1]))
 				{
 					Boolean isKingFaceToFace = true;
 					int jTemp = Integer.parseInt(redTemp[1]);
@@ -568,6 +573,7 @@ public class ChessRules implements Serializable {
 			{
 				message = CHECKRESULT_WIN_BLACK;
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_GAME_END);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setIsRedWin(false);
 				ev.setMessage(message);
 				eventsList.add(ev);
@@ -577,6 +583,7 @@ public class ChessRules implements Serializable {
 			{
 				message = CHECKRESULT_WIN_RED;
 				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_GAME_END);
+				ev.setChessBoardData(chessBoard.ToString());
 				ev.setIsRedWin(false);
 				ev.setMessage(message);
 				eventsList.add(ev);

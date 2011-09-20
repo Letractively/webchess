@@ -215,7 +215,7 @@ public class ChessBoard implements IPublisher,Serializable {
 	@Override
 	public void Notify(String EventName,EventBase eventArg) {
 		// TODO Auto-generated method stub
-		if(!subscriberList.containsKey(EventName))
+		if(subscriberList.containsKey(EventName))
 		{
 			for(ISubscriber subscr :subscriberList.get(EventName))
 			{
