@@ -26,34 +26,113 @@ public class HandleClickBoard extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    private void ProcessHandle(HttpServletRequest request,  final HttpServletResponse response)
+    private ChessEvent chessEv = null;
+    private ChessBoard board = null;
+    
+    private void ListenAllBoardEvent(){
+    	board.AddSubscriber(ChessEvent.EVENT_BOARDEXPIRE, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_COMPLETECHECKBOARD, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_GAME_END, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_GAME_START, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_HOLD, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_PLAY, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});board.AddSubscriber(ChessEvent.EVENT_REDO, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_TIMEOUT, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    	board.AddSubscriber(ChessEvent.EVENT_UNDO, new ISubscriber(){
+
+			@Override
+			public void Update(EventBase eventArg) {
+				// TODO Auto-generated method stub
+				chessEv = (ChessEvent)eventArg;				
+			}
+    		
+    	});
+    }
+    
+    private void ProcessHandle(HttpServletRequest request,  HttpServletResponse response)
     {
     	String roomNumber = request.getParameter("room");
-    	ChessBoard board =ChessBoardManager.GetChessBoard(roomNumber);
+    	board =ChessBoardManager.GetChessBoard(roomNumber);
     	if(request.getParameter("type").equals("click"))
     	{
-	    	board.AddSubscriber(ChessEvent.EVENT_BOARDEXPIRE, new ISubscriber(){
-
-				@Override
-				public void Update(EventBase eventArg) {
-					// TODO Auto-generated method stub
-					ChessEvent chessEv = (ChessEvent)eventArg;
-					try {
-						response.getWriter().write(chessEv.ToJSON());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-	    		
-	    	});
+    		ListenAllBoardEvent();
 	    	int nodeClicked =Integer.parseInt(request.getParameter("clickNode"));
 	    	Boolean isRedClicked = Boolean.valueOf(request.getParameter("isRed"));
 	    	String clickManCurrentBoard =  request.getParameter("data");
 	    	synchronized(LockManager.GetLock(roomNumber)){
 	    		 board.HandleClicked(nodeClicked, isRedClicked, clickManCurrentBoard);
 	    	}	    	
-	    	
+	    	if(chessEv!=null){
+	    		try {
+					response.getWriter().write(chessEv.ToJSON());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	}	    	
     	}
     	else if(request.getParameter("type").equals("timer"))
     	{
