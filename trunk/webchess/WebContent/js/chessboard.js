@@ -50,6 +50,7 @@ ChessBoard.prototype.Ajax = function(){
 	var data = 
 	$.ajax({
 		type:"POST",
+		cache:false,
 		url:config.webroot+"/HandleClickBoard",
 		data:(function(){
 			if(self.ajaxtype=="click"){
@@ -64,8 +65,16 @@ ChessBoard.prototype.Ajax = function(){
 			}
 		})(),
 		success:function(json){
-			self.enable = true;
-			alert(json);
+			self.enable = true;alert(json+" "+self.data)
+			eval("var json="+json);
+			self.data = json.chessBoardData;
+			self.SetBoardByData();
+			self.container.find("img").each(function(){
+				$(this).css({border:"0px"});
+			})
+			
+			self.container.find("img[id='n"+json.toNode+"']").css({border:"1px solid red"});
+			self.container.find("img[id='n"+json.fromNode+"']").css({border:"1px solid red"});			
 		},
 		error:function(ex){
 			self.enable = true;

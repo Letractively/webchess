@@ -32,8 +32,9 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	private ChessType fromType = ChessType.Пе;
 	private ChessType toType = ChessType.Пе;
 	private String message = "";
-	public String ToJSON(){return "hello";
-		/*return "{\"eventName\":\""+eventName+"\",\"wrongNodesPositionData\":\""+wrongNodesPositionData
+	public String ToJSON(){
+		///*
+		  return "{\"eventName\":\""+eventName+"\",\"wrongNodesPositionData\":\""+wrongNodesPositionData		 
 				+"\",\"chessBoardData\":\""+chessBoardData+"\",\"gameStartAt\":\""+gameStartAt.toString()
 				+"\",\"gameEndAt\":\""+gameEndAt.toString()+"\",\"isRedWin\":\""+isRedWin.toString()
 				+"\",\"isDogfall\":\""+isDogfall.toString()+"\",\"playAt\":\""+playAt.toString()
