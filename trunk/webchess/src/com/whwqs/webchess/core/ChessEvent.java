@@ -15,32 +15,32 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	public static final String EVENT_TIMEOUT = "EVENT_TIMEOUT";//棋手超时";
 	public ChessEvent(String EventName)
 	{
-		super(EventName,null);
+		super(EventName,new Object());
 		this.eventName = EventName;
 	}
 	private String eventName = "";
 	private String wrongNodesPositionData = "";//检查棋盘是否符合规则 格式1|2|3...	
 	private String chessBoardData = ""; //cmxsj...
-	private Date gameStartAt;
-	private Date gameEndAt;
-	private Boolean isRedWin;
-	private Boolean isDogfall;
-	private Date playAt;
-	private Boolean isRedToGo;
+	private Date gameStartAt = new Date();
+	private Date gameEndAt = new Date();
+	private Boolean isRedWin = false;
+	private Boolean isDogfall = false;
+	private Date playAt = new Date();
+	private Boolean isRedToGo = true;
 	private int fromNode = -1;
 	private int toNode = -1;
-	private ChessType fromType;
-	private ChessType toType;
-	private String message;
-	public String ToJSON(){
-		return "{\"eventName\":\""+eventName+"\",\"wrongNodesPositionData\":\""+wrongNodesPositionData
+	private ChessType fromType = ChessType.空;
+	private ChessType toType = ChessType.空;
+	private String message = "";
+	public String ToJSON(){return "hello";
+		/*return "{\"eventName\":\""+eventName+"\",\"wrongNodesPositionData\":\""+wrongNodesPositionData
 				+"\",\"chessBoardData\":\""+chessBoardData+"\",\"gameStartAt\":\""+gameStartAt.toString()
 				+"\",\"gameEndAt\":\""+gameEndAt.toString()+"\",\"isRedWin\":\""+isRedWin.toString()
 				+"\",\"isDogfall\":\""+isDogfall.toString()+"\",\"playAt\":\""+playAt.toString()
 				+"\",\"isRedToGo\":\""+isRedToGo.toString()+"\",\"fromNode\":"+fromNode
 				+",\"toNode\":\""+toNode+"\",\"fromType\":\""+fromType.getName()
 				+"\",\"toType\":\""+toType.getName()+"\",\"message\":\""+message
-				+"\"}";
+				+"\"}";//*/
 	}
 	public Boolean getIsRedWin() {
 		return isRedWin;

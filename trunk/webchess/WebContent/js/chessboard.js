@@ -47,30 +47,30 @@ ChessBoard.prototype.Ajax = function(){
 		return;
 	}
 	this.enable = false;
-	
+	var data = 
 	$.ajax({
 		type:"POST",
 		url:config.webroot+"/HandleClickBoard",
-		data:function(){
+		data:(function(){
 			if(self.ajaxtype=="click"){
-				return {type:"click",
-					room:config.room,
-					clickNode:self.click,
-					isRed:config.type==1,
-					data:self.data};
+				return {"type":"click",
+					"room":config.room,
+					"clickNode":self.click,
+					"isRed":config.type==1,
+					"data":self.data};
 			}
 			else if(self.ajaxtype=="timer"){
-				return {type:"timer",room:config.room};
+				return {"type":"timer","room":config.room};
 			}
-		},
+		})(),
 		success:function(json){
 			self.enable = true;
 			alert(json);
 		},
 		error:function(ex){
 			self.enable = true;
-			self.msg.text("error and try again later! Error is "+ex.responseText);
-			alert(ex.responseText)
+			self.msg.text("error and try again later!");
+			//alert("error:"+ex.responseText)
 		}		
 	})
 }
