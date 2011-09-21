@@ -804,21 +804,21 @@ public class ChessRules implements Serializable {
 			int col = nodeClicked%9;
 			int fromRow = holdNode/9;
 			int fromCol = holdNode%9;
+			if((chessBoard.getBoardData()[row][col].getIndex()%2
+					==chessBoard.getBoardData()[fromRow][fromCol].getIndex()%2)
+					&& chessBoard.getBoardData()[row][col]!=ChessType.Пе)
+			{
+				return;
+			}
+			int n=0;
 			if(row==fromRow)
 			{
-				if(Math.abs(col-fromCol)==1)
-				{
-					return;
-				}
-				else
-				{
 					if(col>fromCol)
 					{
 						col = col^fromCol;
 						fromCol = col^fromCol;
 						col = col^fromCol;
-					}
-					int n=0;
+					}					
 					for(int i=col+1;i<fromCol;i++)
 					{
 						if(chessBoard.getBoardData()[row][i]!=ChessType.Пе)
@@ -826,27 +826,16 @@ public class ChessRules implements Serializable {
 							n++;
 						}
 					}
-					if(n==1)
-					{
-						isSuccessMove=true;
-					}
-				}
 			}
 			else if(col==fromCol)
 			{
-				if(Math.abs(row-fromRow)==1)
-				{
-					return;
-				}
-				else
-				{
 					if(row>fromRow)
 					{
 						row = row^fromRow;
 						fromRow = row^fromRow;
 						row = row^fromRow;
 					}
-					int n=0;
+					
 					for(int i=row+1;i<fromRow;i++)
 					{
 						if(chessBoard.getBoardData()[i][col]!=ChessType.Пе)
@@ -854,13 +843,19 @@ public class ChessRules implements Serializable {
 							n++;
 						}
 					}
-					if(n==1)
-					{
-						isSuccessMove=true;
-					}
+				}
+			if(n==0){
+				if(chessBoard.getBoardData()[fromRow][fromCol]==ChessType.Пе){
+					isSuccessMove=true;
 				}
 			}
-			
+			else if(n==1){
+				if(chessBoard.getBoardData()[row][col].getIndex()%2
+						!=chessBoard.getBoardData()[fromRow][fromCol].getIndex()%2){
+					isSuccessMove=true;
+				}
+			}
+				
 		}
 		
 	}
