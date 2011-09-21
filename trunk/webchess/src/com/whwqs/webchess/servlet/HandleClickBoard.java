@@ -44,7 +44,7 @@ public class HandleClickBoard extends HttpServlet {
 			@Override
 			public void Update(EventBase eventArg) {
 				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
+				chessEv = (ChessEvent)eventArg;	
 			}
     		
     	});

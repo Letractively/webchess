@@ -55,7 +55,7 @@ public class ChessBoardManager {
 			{
 				try
 				{
-					board = new ChessBoard();
+					board = new ChessBoard(key);
 					FileOutputStream fos = null;
 				    ObjectOutputStream out = null;
 				    fos = new FileOutputStream(file);
@@ -74,6 +74,10 @@ public class ChessBoardManager {
 	
 	public static Boolean SetChessBoard(String key,ChessBoard board) 
 	{
+		if(!board.getBoardNumber().equals(key)){
+			return false;
+		}
+			
 		synchronized(LockManager.GetLock(key))
 		{
 			Boolean r = false;
