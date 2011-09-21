@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import com.whwqs.util.*;
+import com.whwqs.webchess.ChessBoardManager;
 
 public class ChessBoard implements IPublisher,Serializable {
 	/**
@@ -28,14 +29,31 @@ public class ChessBoard implements IPublisher,Serializable {
 		{ChessType.‹á,ChessType.ÒR,ChessType.œÛ,ChessType. À,ChessType.Ω´,ChessType. À,ChessType.œÛ,ChessType.ÒR,ChessType.‹á}
 	};
 	
+	private String boardNumber = null;
+	
+	public String getBoardNumber() {
+		return boardNumber;
+	}
+
+	public void setBoardNumber(String boardNumber) {
+		if(this.boardNumber==null)
+		{
+			this.boardNumber = boardNumber;
+		}
+	}
+	
 	private ChessRules rule;
 	
-	public ChessBoard()
-	{
+	public ChessBoard(String boardKey){
 		rule = new ChessRules(this);
+		this.boardNumber = boardKey;
 		init();
 	}
 	
+	private void persist(){
+		ChessBoardManager.SetChessBoard(boardNumber, this);
+	}
+
 	private void init()
 	{
 		subscriberList = new Hashtable<String,List<ISubscriber>>();
@@ -44,6 +62,35 @@ public class ChessBoard implements IPublisher,Serializable {
 			{
 				ChessEvent ev = (ChessEvent)eventArg;
 				Play(ev.getFromNode(),ev.getToNode());
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.EVENT_HOLD,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.EVENT_REDO,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.EVENT_UNDO,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.EVENT_COMPLETECHECKBOARD,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{
+				ChessEvent ev = (ChessEvent)eventArg;
+				if(!ev.getWrongNodesPositionData().isEmpty())
+				{
+					persist();
+				}
 			}
 		});
 	}

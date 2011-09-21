@@ -15,24 +15,24 @@ public class ChessRules implements Serializable {
 
 	private ChessBoard chessBoard;
 	
-	public static final String CHECKRESULT_NEEDUPDATE = "需要更新棋盘先";
-	public static final String CHECKRESULT_NEEDWAITOPPONENT_RED = "红方等待黑方中...";
-	public static final String CHECKRESULT_NEEDWAITOPPONENT_BLACK = "黑方等待红方中...";
-	public static final String CHECKRESULT_CLICKWRONGNODE_RED = "红方瞎点中...";
-	public static final String CHECKRESULT_CLICKWRONGNODE_BLACK = "黑方瞎点中...";
-	public static final String CHECKRESULT_FIRSTHOLDNODE_RED ="红方拿棋了";
-	public static final String CHECKRESULT_FIRSTHOLDNODE_BLACK ="黑方拿棋了";
-	public static final String CHECKRESULT_CHANGEHOLDNODE_RED ="红方换棋了";
-	public static final String CHECKRESULT_CHANGEHOLDNODE_BLACK ="黑方换棋了";
-	public static final String CHECKRESULT_HOLDSAMENODE_RED ="红方还在拿棋";
-	public static final String CHECKRESULT_HOLDSAMENODE_BLACK ="黑方还在拿棋";
-	public static final String CHECKRESULT_PLAYOK_RED = "红方已下棋";
-	public static final String CHECKRESULT_PLAYOK_BLACK = "黑方已下棋";
-	public static final String CHECKRESULT_WIN_RED ="红方胜";
-	public static final String CHECKRESULT_WIN_BLACK = "黑方胜";
-	public static final String CHECKRESULT_DOGFALL = "建议平局";
-	public static final String CHECKRESULT_DENYPLAY_RED = "红方违反规则";
-	public static final String CHECKRESULT_DENYPLAY_BLACK = "黑方违反规则";
+	public static final String CHECKRESULT_NEEDUPDATE = "CHECKRESULT_NEEDUPDATE";//需要更新棋盘先";
+	public static final String CHECKRESULT_NEEDWAITOPPONENT_RED = "CHECKRESULT_NEEDWAITOPPONENT_RED";//红方等待黑方中...";
+	public static final String CHECKRESULT_NEEDWAITOPPONENT_BLACK = "CHECKRESULT_NEEDWAITOPPONENT_BLACK";//黑方等待红方中...";
+	public static final String CHECKRESULT_CLICKWRONGNODE_RED = "CHECKRESULT_CLICKWRONGNODE_RED";//红方瞎点中...";
+	public static final String CHECKRESULT_CLICKWRONGNODE_BLACK = "CHECKRESULT_CLICKWRONGNODE_BLACK";//黑方瞎点中...";
+	public static final String CHECKRESULT_FIRSTHOLDNODE_RED ="CHECKRESULT_FIRSTHOLDNODE_RED";//红方拿棋了";
+	public static final String CHECKRESULT_FIRSTHOLDNODE_BLACK ="CHECKRESULT_FIRSTHOLDNODE_BLACK";//黑方拿棋了";
+	public static final String CHECKRESULT_CHANGEHOLDNODE_RED ="CHECKRESULT_CHANGEHOLDNODE_RED";//红方换棋了";
+	public static final String CHECKRESULT_CHANGEHOLDNODE_BLACK ="CHECKRESULT_CHANGEHOLDNODE_BLACK";//黑方换棋了";
+	public static final String CHECKRESULT_HOLDSAMENODE_RED ="CHECKRESULT_HOLDSAMENODE_RED";//红方还在拿棋";
+	public static final String CHECKRESULT_HOLDSAMENODE_BLACK ="CHECKRESULT_HOLDSAMENODE_BLACK";//黑方还在拿棋";
+	public static final String CHECKRESULT_PLAYOK_RED = "CHECKRESULT_PLAYOK_RED";//红方已下棋";
+	public static final String CHECKRESULT_PLAYOK_BLACK = "CHECKRESULT_PLAYOK_BLACK";//黑方已下棋";
+	public static final String CHECKRESULT_WIN_RED ="CHECKRESULT_WIN_RED";//红方胜";
+	public static final String CHECKRESULT_WIN_BLACK = "CHECKRESULT_WIN_BLACK";//黑方胜";
+	public static final String CHECKRESULT_DOGFALL = "CHECKRESULT_DOGFALL";//建议平局";
+	public static final String CHECKRESULT_DENYPLAY_RED = "CHECKRESULT_DENYPLAY_RED";//红方违反规则";
+	public static final String CHECKRESULT_DENYPLAY_BLACK = "CHECKRESULT_DENYPLAY_BLACK";//黑方违反规则";
 	
 	private List<ChessEvent> eventsList ;
 	public List<ChessEvent> getEventsList()
@@ -206,9 +206,26 @@ public class ChessRules implements Serializable {
 			}
 			if(!s.isEmpty())
 			{
-				s = s.replaceAll("|$", "");
+				s = s.substring(0, s.length()-1);
 			}
 			return s;
+		}
+		
+		protected ChessEvent createEvent(String eventName){
+			ChessEvent ev = new ChessEvent(eventName);
+			ev.setChessBoardData(chessBoard.ToString());
+			ev.setMessage(message);
+			ev.setFromNode(holdNode);
+			if(holdNode!=-1){
+				ev.setFromType(GetNodeType(holdNode));
+			}
+			ev.setToNode(moveToNode);
+			if(moveToNode!=-1){
+				ev.setToType(GetNodeType(moveToNode));
+			}
+			ev.setIsRedToGo(chessBoard.IsRedToGo());
+			eventsList.add(ev);
+			return ev;
 		}
 		
 		public abstract void Apply(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard);
@@ -227,12 +244,9 @@ public class ChessRules implements Serializable {
 				String clickManCurrentBoard) {
 			
 			if(!clickManCurrentBoard.equals(chessBoard.ToString()))
-			{
+			{		
 				message = CHECKRESULT_NEEDUPDATE;
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_BOARDEXPIRE);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setMessage(message);
-				eventsList.add(ev);
+				createEvent(ChessEvent.EVENT_BOARDEXPIRE);
 				return;
 			}
 			if(successorRule!=null)
@@ -266,11 +280,7 @@ public class ChessRules implements Serializable {
 				{
 					message = CHECKRESULT_NEEDWAITOPPONENT_BLACK;
 				}
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setFromNode(holdNode);
-				ev.setMessage(message);
-				eventsList.add(ev);
+				createEvent(ChessEvent.EVENT_HOLD);				
 				return;
 			}
 			
@@ -308,11 +318,8 @@ public class ChessRules implements Serializable {
 				{
 					message = CHECKRESULT_CLICKWRONGNODE_BLACK;
 				}
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setFromNode(holdNode);
-				ev.setMessage(message);
-				eventsList.add(ev);
+				createEvent(ChessEvent.EVENT_HOLD);	
+				
 				return;
 			}		
 			
@@ -341,24 +348,22 @@ public class ChessRules implements Serializable {
 			if(holdNode==-1)
 			{
 				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
-						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo()))
-				isSuccessHold = true;
-				holdNode = nodeClicked;
-				moveToNode = -1;
-				if(isRedClicked)
-				{
-					message = CHECKRESULT_FIRSTHOLDNODE_RED;
+						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo())){
+					isSuccessHold = true;
+					holdNode = nodeClicked;
+					moveToNode = -1;
+					if(isRedClicked)
+					{
+						message = CHECKRESULT_FIRSTHOLDNODE_RED;
+					}
+					else
+					{
+						message = CHECKRESULT_FIRSTHOLDNODE_BLACK;
+					}	
+					createEvent(ChessEvent.EVENT_HOLD);
+					
+					return;
 				}
-				else
-				{
-					message = CHECKRESULT_FIRSTHOLDNODE_BLACK;
-				}	
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setFromNode(holdNode);
-				ev.setMessage(message);
-				eventsList.add(ev);
-				return;
 			}
 			if(successorRule!=null)
 			{
@@ -383,38 +388,35 @@ public class ChessRules implements Serializable {
 			if(holdNode!=-1)
 			{
 				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
-						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo()))
-				isSuccessHold = true;
-				holdNode = nodeClicked;
-				moveToNode = -1;
-				if(isRedClicked)
-				{
-					if(holdNode!=nodeClicked)
+						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo())){
+					isSuccessHold = true;
+					holdNode = nodeClicked;
+					moveToNode = -1;
+					if(isRedClicked)
 					{
-						message = CHECKRESULT_CHANGEHOLDNODE_RED;
+						if(holdNode!=nodeClicked)
+						{
+							message = CHECKRESULT_CHANGEHOLDNODE_RED;
+						}
+						else
+						{
+							message = CHECKRESULT_HOLDSAMENODE_RED;
+						}
 					}
 					else
 					{
-						message = CHECKRESULT_HOLDSAMENODE_RED;
-					}
+						if(holdNode!=nodeClicked)
+						{
+							message = CHECKRESULT_CHANGEHOLDNODE_BLACK;
+						}
+						else
+						{
+							message = CHECKRESULT_HOLDSAMENODE_BLACK;
+						}
+					}	
+					createEvent(ChessEvent.EVENT_HOLD);
+					return;
 				}
-				else
-				{
-					if(holdNode!=nodeClicked)
-					{
-						message = CHECKRESULT_CHANGEHOLDNODE_BLACK;
-					}
-					else
-					{
-						message = CHECKRESULT_HOLDSAMENODE_BLACK;
-					}
-				}	
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_HOLD);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setFromNode(holdNode);
-				ev.setMessage(message);
-				eventsList.add(ev);
-				return;
 			}
 			if(successorRule!=null)
 			{
@@ -468,14 +470,7 @@ public class ChessRules implements Serializable {
 			if(isSuccessMove)
 			{
 				moveToNode = nodeClicked;
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_PLAY);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setFromNode(holdNode);
-				ev.setFromType(GetNodeType(holdNode));
-				ev.setToNode(moveToNode);
-				ev.setToType(GetNodeType(moveToNode));
-				ev.setMessage(message);
-				eventsList.add(ev);
+				createEvent(ChessEvent.EVENT_PLAY);
 				if(successorRule!=null)
 				{
 					successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
@@ -491,6 +486,7 @@ public class ChessRules implements Serializable {
 				{
 					message = CHECKRESULT_DENYPLAY_BLACK;
 				}
+				createEvent(ChessEvent.EVENT_HOLD);
 			}
 		}
 		
@@ -538,8 +534,8 @@ public class ChessRules implements Serializable {
 			}
 			else
 			{
-				String redKingPosition = GetTypePosition(ChessType.帅,0,2,3,5);
-				String blackKingPosition = GetTypePosition(ChessType.将,7,9,3,5);
+				String redKingPosition = GetTypePosition(ChessType.帅,0,3,2,5);
+				String blackKingPosition = GetTypePosition(ChessType.将,7,3,9,5);
 				String [] redTemp = redKingPosition.split(",");
 				String [] blackTemp = blackKingPosition.split(",");
 				if(redTemp[1].equals(blackTemp[1]))
@@ -572,21 +568,13 @@ public class ChessRules implements Serializable {
 			if(isBlackWin)
 			{
 				message = CHECKRESULT_WIN_BLACK;
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_GAME_END);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setIsRedWin(false);
-				ev.setMessage(message);
-				eventsList.add(ev);
+				createEvent(ChessEvent.EVENT_GAME_END).setIsRedWin(false);				
 				return;
 			}
 			if(isRedWin)
 			{
 				message = CHECKRESULT_WIN_RED;
-				ChessEvent ev = new ChessEvent(ChessEvent.EVENT_GAME_END);
-				ev.setChessBoardData(chessBoard.ToString());
-				ev.setIsRedWin(false);
-				ev.setMessage(message);
-				eventsList.add(ev);
+				createEvent(ChessEvent.EVENT_GAME_END).setIsRedWin(true);
 				return;
 			}
 			if(successorRule!=null)

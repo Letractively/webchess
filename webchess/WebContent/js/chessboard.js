@@ -47,7 +47,7 @@ ChessBoard.prototype.Ajax = function(){
 		return;
 	}
 	this.enable = false;
-	var data = 
+	
 	$.ajax({
 		type:"POST",
 		cache:false,
@@ -73,8 +73,25 @@ ChessBoard.prototype.Ajax = function(){
 				$(this).css({border:"0px"});
 			})
 			
-			self.container.find("img[id='n"+json.toNode+"']").css({border:"1px solid red"});
-			self.container.find("img[id='n"+json.fromNode+"']").css({border:"1px solid red"});			
+			self.from = json.fromNode;
+			self.to = json.toNode;
+			var fromNode = self.container.find("img[id='n"+json.fromNode+"']");
+			var toNode = self.container.find("img[id='n"+json.toNode+"']");
+			
+			if(json.eventName=="EVENT_HOLD"){
+				if(self.to==-1){
+					fromNode.css({border:"1px solid red"});
+				}
+				else{
+					toNode.css({border:"1px solid red"});
+				}
+			}
+			else if(json.eventName=="EVENT_PLAY"){
+				toNode.attr("src",fromNode.attr("src"));
+				fromNode.attr("src",config.imgroot + "/k.png");
+				toNode.css({border:"1px solid red"});
+			}	
+			self.msg.text(json.message);
 		},
 		error:function(ex){
 			self.enable = true;
