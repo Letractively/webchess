@@ -40,6 +40,7 @@ public class ChessBoardManager {
 			    	fis = new FileInputStream(file);
 			    	in = new ObjectInputStream (fis);
 			    	board = (ChessBoard)in.readObject();
+			    	board.setBoardNumber(key);
 			    	in.close();
 				}
 				catch(IOException ex)

@@ -40,6 +40,7 @@ $(function(){
 	chessBoard.DrawBoard();
 	chessBoard.data = '<%=board.ToString()%>';
 	chessBoard.SetBoardByData();
+	chessBoard.setTimer();
 })
 </script>
 </head>

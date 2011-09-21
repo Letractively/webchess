@@ -65,13 +65,13 @@ ChessBoard.prototype.Ajax = function(){
 			}
 		})(),
 		success:function(json){
-			self.enable = true;alert(json+" "+self.data)
+			self.enable = true;
 			eval("var json="+json);
 			self.data = json.chessBoardData;
 			self.SetBoardByData();
 			self.container.find("img").each(function(){
 				$(this).css({border:"0px"});
-			})
+			});
 			
 			self.from = json.fromNode;
 			self.to = json.toNode;
@@ -148,6 +148,22 @@ ChessBoard.prototype.DrawBoard = function(){
                  strokewidth: "1px", strokecolor: this.strokecolor
              }).style.zIndex = 1;
          }
+         drawObj.line(drawObj.drawing, {
+             x1: 4*bc + "px", y1: bc  + "px", x2: 6 * bc + "px", y2: 3* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
+         drawObj.line(drawObj.drawing, {
+             x1: 6*bc + "px", y1: bc  + "px", x2: 4 * bc + "px", y2: 3* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
+         drawObj.line(drawObj.drawing, {
+             x1: 4*bc + "px", y1:8* bc  + "px", x2: 6 * bc + "px", y2: 10* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
+         drawObj.line(drawObj.drawing, {
+             x1: 6*bc + "px", y1: 8*bc  + "px", x2: 4 * bc + "px", y2: 10* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
      }
      else {
          for (var x = 0; x < 10; x++) {
@@ -168,6 +184,22 @@ ChessBoard.prototype.DrawBoard = function(){
                  strokewidth: "1px", strokecolor: this.strokecolor
              }).style.zIndex = 1;
          }
+         drawObj.line(drawObj.drawing, {
+             x1: bc + "px", y1: 4*bc  + "px", x2: 3 * bc + "px", y2: 6* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
+         drawObj.line(drawObj.drawing, {
+             x1: bc + "px", y1:6*bc  + "px", x2: 3* bc + "px", y2: 4* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
+         drawObj.line(drawObj.drawing, {
+             x1:8* bc + "px", y1: 4*bc  + "px", x2: 10 * bc + "px", y2: 6* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
+         drawObj.line(drawObj.drawing, {
+             x1: 8*bc + "px", y1:6*bc  + "px", x2: 10* bc + "px", y2: 4* bc + "px",
+             strokewidth: "1px", strokecolor: this.strokecolor
+         }).style.zIndex = 1;
      }     
  
      var r0 = (bc - space) / 2;
