@@ -99,7 +99,7 @@ ChessBoard.prototype.DrawBoard = function(){
 	var self = this;
 	this.container.empty();
 	var win = $(window);
-	this.container.css({position:"absolute",top:win.height()/2+"px",left:win.width()/2+"px"});
+	this.container.css({position:"absolute",top:"50%",left:"50%"});
 	var bc = this.sideLength;
 	var space = this.qzspace;
     
