@@ -4,15 +4,29 @@ import java.util.Date;
 
 @SuppressWarnings("serial")
 public class ChessEvent extends  com.whwqs.util.EventBase {
-	public static final String EVENT_COMPLETECHECKBOARD = "EVENT_COMPLETECHECKBOARD";//棋盘检查完成";
-	public static final String EVENT_BOARDEXPIRE = "EVENT_BOARDEXPIRE";//检查到操作时棋盘数据过期";		
-	public static final String EVENT_GAME_START = "EVENT_GAME_START";//棋局开始";
-	public static final String EVENT_HOLD = "EVENT_HOLD";//拿棋";
-	public static final String EVENT_PLAY = "EVENT_PLAY";//落子";
-	public static final String EVENT_UNDO = "EVENT_UNDO";//悔棋";
-	public static final String EVENT_REDO = "EVENT_REDO";//不悔了";
-	public static final String EVENT_GAME_END = "EVENT_GAME_END";//棋局结束";
-	public static final String EVENT_TIMEOUT = "EVENT_TIMEOUT";//棋手超时";
+	public static final String CHECKRESULT_NEEDUPDATE = "CHECKRESULT_NEEDUPDATE";//需要更新棋盘先";
+	public static final String CHECKRESULT_NEEDWAITOPPONENT_RED = "CHECKRESULT_NEEDWAITOPPONENT_RED";//红方等待黑方中...";
+	public static final String CHECKRESULT_NEEDWAITOPPONENT_BLACK = "CHECKRESULT_NEEDWAITOPPONENT_BLACK";//黑方等待红方中...";
+	public static final String CHECKRESULT_CLICKWRONGNODE_RED = "CHECKRESULT_CLICKWRONGNODE_RED";//红方瞎点中...";
+	public static final String CHECKRESULT_CLICKWRONGNODE_BLACK = "CHECKRESULT_CLICKWRONGNODE_BLACK";//黑方瞎点中...";
+	public static final String CHECKRESULT_FIRSTHOLDNODE_RED ="CHECKRESULT_FIRSTHOLDNODE_RED";//红方拿棋了";
+	public static final String CHECKRESULT_FIRSTHOLDNODE_BLACK ="CHECKRESULT_FIRSTHOLDNODE_BLACK";//黑方拿棋了";
+	public static final String CHECKRESULT_CHANGEHOLDNODE_RED ="CHECKRESULT_CHANGEHOLDNODE_RED";//红方换棋了";
+	public static final String CHECKRESULT_CHANGEHOLDNODE_BLACK ="CHECKRESULT_CHANGEHOLDNODE_BLACK";//黑方换棋了";
+	public static final String CHECKRESULT_HOLDSAMENODE_RED ="CHECKRESULT_HOLDSAMENODE_RED";//红方还在拿棋";
+	public static final String CHECKRESULT_HOLDSAMENODE_BLACK ="CHECKRESULT_HOLDSAMENODE_BLACK";//黑方还在拿棋";
+	public static final String CHECKRESULT_PLAYOK_RED = "CHECKRESULT_PLAYOK_RED";//红方已下棋";
+	public static final String CHECKRESULT_PLAYOK_BLACK = "CHECKRESULT_PLAYOK_BLACK";//黑方已下棋";
+	public static final String CHECKRESULT_WIN_RED ="CHECKRESULT_WIN_RED";//红方胜";
+	public static final String CHECKRESULT_WIN_BLACK = "CHECKRESULT_WIN_BLACK";//黑方胜";
+	public static final String CHECKRESULT_DOGFALL = "CHECKRESULT_DOGFALL";//建议平局";
+	public static final String CHECKRESULT_DENYPLAY_RED = "CHECKRESULT_DENYPLAY_RED";//红方违反规则";
+	public static final String CHECKRESULT_DENYPLAY_BLACK = "CHECKRESULT_DENYPLAY_BLACK";//黑方违反规则";
+	public static final String CHECKRESULT_INIT_CHECK ="CHECKRESULT_INIT_CHECK";//初始棋局检查
+	public static final String CHECKRESULT_UNDO_RED = "CHECKRESULT_UNDO_RED";//红方悔棋
+	public static final String CHECKRESULT_UNDO_BLACK="CHECKRESULT_UNDO_BLACK";//黑方悔棋
+	public static final String CHECKRESULT_REDO_RED="CHECKRESULT_REDO_RED";//红方不悔棋
+	public static final String CHECKRESULT_REDO_BLACK="CHECKRESULT_REDO_BLACK";//黑方不悔棋
 	public ChessEvent(String EventName)
 	{
 		super(EventName,new Object());

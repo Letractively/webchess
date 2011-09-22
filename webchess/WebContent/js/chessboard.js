@@ -22,6 +22,8 @@ function ChessBoard(container){
 	this.click = -1;
 	this.timespan = 2000;
 	this.timer = null;
+	this.gameover = false;
+	this.win = -1;
 }
 
 ChessBoard.prototype.SetBoardByData = function(){
@@ -38,7 +40,40 @@ ChessBoard.prototype.SetBoardByData = function(){
 		
 		$("#n"+i).attr("src",src);
 	}
-}
+};
+
+ChessBoard.prototype.SetBoardByData2 = function(data,newdata){
+	for(var i=0;i<data.length;i++){
+		var ch = data.substring(i,i+1);
+		var ch2 = newdata.substring(i,i+1);
+		if(ch!=ch2){
+			var charCode = ch2.charCodeAt(0);
+			var src = config.imgroot+"/";
+			if(charCode<91){
+				src+=ch2.toLowerCase()+"1.png";
+			}
+			else{
+				src+=ch2+".png";
+			}
+			
+			$("#n"+i).attr("src",src);
+		}
+	}
+};
+
+ChessBoard.prototype.SetSelectedNode = function(){
+	this.container.find("img").each(function(){
+		$(this).css({border:"0px"});
+	});	
+	if(this.to!=-1){
+		this.container.find("img[id='n"+this.to+"']").css({border:"1px solid red"});
+	}
+	else{
+		if(this.from!=-1){
+			this.container.find("img[id='n"+this.from+"']").css({border:"1px solid red"});
+		}
+	}
+};
 
 ChessBoard.prototype.Ajax = function(){
 	var self = this;
@@ -70,45 +105,28 @@ ChessBoard.prototype.Ajax = function(){
 			
 			if(json.type=="click"){
 				var eventList = json.data;
-				
-				/*
-				self.container.find("img").each(function(){
-					$(this).css({border:"0px"});
-				});
-				if(self.data==json.chessBoardData){
-					
-								
-				}*/
+				$.each(eventList,function(i,ev){
+					self.msg.text(ev.message);
+					var play = (self.data!=ev.chessBoardData);
+					if(play){
+						self.SetBoardByData2(self.data,ev.chessBoardData);
+						self.data=ev.chessBoardData;						
+					}					
+					self.from = ev.fromNode;
+					self.to = ev.toNode;
+					self.SetSelectedNode();						
+				});				
 			}
 			else if(json.type=="timer"){
-				
-			}
-			
-			self.data = json.chessBoardData;
-			self.SetBoardByData();
-			self.container.find("img").each(function(){
-				$(this).css({border:"0px"});
-			});
-			
-			self.from = json.fromNode;
-			self.to = json.toNode;
-			var fromNode = self.container.find("img[id='n"+json.fromNode+"']");
-			var toNode = self.container.find("img[id='n"+json.toNode+"']");
-			
-			if(json.eventName=="EVENT_HOLD"){
-				if(self.to==-1){
-					fromNode.css({border:"1px solid red"});
+				if(self.data!=json.data){
+					self.SetBoardByData2(self.data,json.data);
+					self.data=json.data;					
 				}
-				else{
-					toNode.css({border:"1px solid red"});
-				}
-			}
-			else if(json.eventName=="EVENT_PLAY"){
-				toNode.attr("src",fromNode.attr("src"));
-				fromNode.attr("src",config.imgroot + "/k.png");
-				toNode.css({border:"1px solid red"});
-			}	
-			self.msg.text(json.message);
+				self.from = json.from;
+				self.to = json.to;
+				self.SetSelectedNode(json.from, json.to);				
+			}		
+			
 		},
 		error:function(ex){
 			self.enable = true;

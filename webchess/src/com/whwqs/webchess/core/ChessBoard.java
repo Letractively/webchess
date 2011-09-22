@@ -31,6 +31,14 @@ public class ChessBoard implements IPublisher,Serializable {
 	
 	private String boardNumber = null;
 	
+	public int GetFrom(){
+		return rule.getHoldNode();
+	}
+	
+	public int GetTo(){
+		return rule.getMoveToNode();
+	}
+	
 	public String getBoardNumber() {
 		return boardNumber;
 	}
@@ -59,35 +67,9 @@ public class ChessBoard implements IPublisher,Serializable {
 	}
 
 	private void init()
-	{
+	{		
 		subscriberList = new Hashtable<String,List<ISubscriber>>();
-		AddSubscriber(ChessEvent.EVENT_PLAY,new ISubscriber(){
-			public void Update(EventBase eventArg)
-			{
-				ChessEvent ev = (ChessEvent)eventArg;
-				Play(ev.getFromNode(),ev.getToNode());
-				persist();
-			}
-		});
-		AddSubscriber(ChessEvent.EVENT_HOLD,new ISubscriber(){
-			public void Update(EventBase eventArg)
-			{				
-				persist();
-			}
-		});
-		AddSubscriber(ChessEvent.EVENT_REDO,new ISubscriber(){
-			public void Update(EventBase eventArg)
-			{				
-				persist();
-			}
-		});
-		AddSubscriber(ChessEvent.EVENT_UNDO,new ISubscriber(){
-			public void Update(EventBase eventArg)
-			{				
-				persist();
-			}
-		});
-		AddSubscriber(ChessEvent.EVENT_COMPLETECHECKBOARD,new ISubscriber(){
+		AddSubscriber(ChessEvent.CHECKRESULT_INIT_CHECK,new ISubscriber(){
 			public void Update(EventBase eventArg)
 			{
 				ChessEvent ev = (ChessEvent)eventArg;
@@ -95,6 +77,144 @@ public class ChessBoard implements IPublisher,Serializable {
 				{
 					persist();
 				}
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_PLAYOK_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{
+				ChessEvent ev = (ChessEvent)eventArg;
+				Play(ev.getFromNode(),ev.getToNode());
+				ev.setChessBoardData(ToString());
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_PLAYOK_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{
+				ChessEvent ev = (ChessEvent)eventArg;
+				Play(ev.getFromNode(),ev.getToNode());
+				ev.setChessBoardData(ToString());
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_CLICKWRONGNODE_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_CLICKWRONGNODE_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_DENYPLAY_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_DENYPLAY_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_DOGFALL,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_NEEDUPDATE,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_NEEDWAITOPPONENT_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_NEEDWAITOPPONENT_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_WIN_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_WIN_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_REDO_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_REDO_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_UNDO_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_UNDO_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
 			}
 		});
 	}
@@ -177,14 +297,18 @@ public class ChessBoard implements IPublisher,Serializable {
 		if(!UnDoStack.isEmpty())
 		{
 			PlayAction undoAction = ReDoStack.push(UnDoStack.pop());
-			undoAction.UnDo();		
-			ChessEvent ev = new ChessEvent(ChessEvent.EVENT_UNDO);
+			undoAction.UnDo();	
+			String evtName = ChessEvent.CHECKRESULT_UNDO_BLACK;
+			if(undoAction.fromType.getIndex()%2==1){
+				evtName = ChessEvent.CHECKRESULT_UNDO_RED;
+			}
+			ChessEvent ev = new ChessEvent(evtName);
 			ev.setFromNode(undoAction.from);
 			ev.setFromType(undoAction.fromType);
 			ev.setToNode(undoAction.to);
 			ev.setToType(undoAction.ToType);
 			ev.setChessBoardData(ToString());
-			Notify(ChessEvent.EVENT_UNDO,ev);
+			Notify(evtName,ev);
 		}
 	}
 	
@@ -194,13 +318,17 @@ public class ChessBoard implements IPublisher,Serializable {
 		{
 			PlayAction redoAction = UnDoStack.push(ReDoStack.pop());
 			redoAction.ReDo();
-			ChessEvent ev = new ChessEvent(ChessEvent.EVENT_REDO);
+			String evtName = ChessEvent.CHECKRESULT_REDO_BLACK;
+			if(redoAction.ToType.getIndex()%2==1){
+				evtName = ChessEvent.CHECKRESULT_REDO_RED;
+			}
+			ChessEvent ev = new ChessEvent(evtName);
 			ev.setFromNode(redoAction.from);
 			ev.setFromType(redoAction.fromType);
 			ev.setToNode(redoAction.to);
 			ev.setToType(redoAction.ToType);
 			ev.setChessBoardData(ToString());
-			Notify(ChessEvent.EVENT_REDO,ev);
+			Notify(evtName,ev);
 		}
 	}
 	

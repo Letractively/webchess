@@ -3,14 +3,11 @@ package com.whwqs.webchess.servlet;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletException;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.whwqs.util.EventBase;
-import com.whwqs.util.ISubscriber;
 import com.whwqs.util.LockManager;
 import com.whwqs.webchess.ChessBoardManager;
 import com.whwqs.webchess.core.*;
@@ -65,7 +62,8 @@ public class HandleClickBoard extends HttpServlet {
     	}
     	else if(request.getParameter("type").equals("timer")){
     		try {
-				response.getWriter().write("{\"type\":\"timer\",\"data\":\""+board.ToString()+"\"}");
+				response.getWriter().write("{\"type\":\"timer\",\"data\":\""+board.ToString()+"\",\"from\":" +board.GetFrom()+
+						",\"to\":"+board.GetTo()+"}");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
