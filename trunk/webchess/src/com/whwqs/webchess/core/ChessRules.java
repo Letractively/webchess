@@ -15,25 +15,6 @@ public class ChessRules implements Serializable {
 
 	private ChessBoard chessBoard;
 	
-	public static final String CHECKRESULT_NEEDUPDATE = "CHECKRESULT_NEEDUPDATE";//需要更新棋盘先";
-	public static final String CHECKRESULT_NEEDWAITOPPONENT_RED = "CHECKRESULT_NEEDWAITOPPONENT_RED";//红方等待黑方中...";
-	public static final String CHECKRESULT_NEEDWAITOPPONENT_BLACK = "CHECKRESULT_NEEDWAITOPPONENT_BLACK";//黑方等待红方中...";
-	public static final String CHECKRESULT_CLICKWRONGNODE_RED = "CHECKRESULT_CLICKWRONGNODE_RED";//红方瞎点中...";
-	public static final String CHECKRESULT_CLICKWRONGNODE_BLACK = "CHECKRESULT_CLICKWRONGNODE_BLACK";//黑方瞎点中...";
-	public static final String CHECKRESULT_FIRSTHOLDNODE_RED ="CHECKRESULT_FIRSTHOLDNODE_RED";//红方拿棋了";
-	public static final String CHECKRESULT_FIRSTHOLDNODE_BLACK ="CHECKRESULT_FIRSTHOLDNODE_BLACK";//黑方拿棋了";
-	public static final String CHECKRESULT_CHANGEHOLDNODE_RED ="CHECKRESULT_CHANGEHOLDNODE_RED";//红方换棋了";
-	public static final String CHECKRESULT_CHANGEHOLDNODE_BLACK ="CHECKRESULT_CHANGEHOLDNODE_BLACK";//黑方换棋了";
-	public static final String CHECKRESULT_HOLDSAMENODE_RED ="CHECKRESULT_HOLDSAMENODE_RED";//红方还在拿棋";
-	public static final String CHECKRESULT_HOLDSAMENODE_BLACK ="CHECKRESULT_HOLDSAMENODE_BLACK";//黑方还在拿棋";
-	public static final String CHECKRESULT_PLAYOK_RED = "CHECKRESULT_PLAYOK_RED";//红方已下棋";
-	public static final String CHECKRESULT_PLAYOK_BLACK = "CHECKRESULT_PLAYOK_BLACK";//黑方已下棋";
-	public static final String CHECKRESULT_WIN_RED ="CHECKRESULT_WIN_RED";//红方胜";
-	public static final String CHECKRESULT_WIN_BLACK = "CHECKRESULT_WIN_BLACK";//黑方胜";
-	public static final String CHECKRESULT_DOGFALL = "CHECKRESULT_DOGFALL";//建议平局";
-	public static final String CHECKRESULT_DENYPLAY_RED = "CHECKRESULT_DENYPLAY_RED";//红方违反规则";
-	public static final String CHECKRESULT_DENYPLAY_BLACK = "CHECKRESULT_DENYPLAY_BLACK";//黑方违反规则";
-	
 	private List<ChessEvent> eventsList ;
 	public List<ChessEvent> getEventsList()
 	{
@@ -53,6 +34,10 @@ public class ChessRules implements Serializable {
 	public Boolean getIsRedToGo() {
 		isRedToGo = chessBoard.IsRedToGo();
 		return isRedToGo;
+	}
+	
+	private String generateMessage(String eventName){
+		return eventName;
 	}
 
 	private Boolean isSuccessMove = false;	
@@ -245,8 +230,8 @@ public class ChessRules implements Serializable {
 			
 			if(!clickManCurrentBoard.equals(chessBoard.ToString()))
 			{		
-				message = CHECKRESULT_NEEDUPDATE;
-				createEvent(ChessEvent.EVENT_BOARDEXPIRE);
+				message = generateMessage(ChessEvent.CHECKRESULT_NEEDUPDATE);
+				createEvent(ChessEvent.CHECKRESULT_NEEDUPDATE);
 				return;
 			}
 			if(successorRule!=null)
@@ -274,13 +259,15 @@ public class ChessRules implements Serializable {
 			{				
 				if(isRedClicked)
 				{
-					message = CHECKRESULT_NEEDWAITOPPONENT_RED;					
+					message = generateMessage(ChessEvent.CHECKRESULT_NEEDWAITOPPONENT_RED);				
+					createEvent(ChessEvent.CHECKRESULT_NEEDWAITOPPONENT_RED);		
 				}
 				else
 				{
-					message = CHECKRESULT_NEEDWAITOPPONENT_BLACK;
+					message = generateMessage(ChessEvent.CHECKRESULT_NEEDWAITOPPONENT_BLACK);				
+					createEvent(ChessEvent.CHECKRESULT_NEEDWAITOPPONENT_BLACK);		
 				}
-				createEvent(ChessEvent.EVENT_HOLD);				
+						
 				return;
 			}
 			
@@ -311,14 +298,15 @@ public class ChessRules implements Serializable {
 					||(!isRedClicked&&NodeType(nodeClicked)!=2&&chessBoard.IsRedToGo()))
 			{
 				if(isRedClicked)
-				{
-					message = CHECKRESULT_CLICKWRONGNODE_RED;
+				{				
+					message = generateMessage(ChessEvent.CHECKRESULT_CLICKWRONGNODE_RED);				
+					createEvent(ChessEvent.CHECKRESULT_CLICKWRONGNODE_RED);		
 				}
 				else
 				{
-					message = CHECKRESULT_CLICKWRONGNODE_BLACK;
-				}
-				createEvent(ChessEvent.EVENT_HOLD);	
+					message = generateMessage(ChessEvent.CHECKRESULT_CLICKWRONGNODE_BLACK);				
+					createEvent(ChessEvent.CHECKRESULT_CLICKWRONGNODE_BLACK);		
+				}			
 				
 				return;
 			}		
@@ -354,13 +342,15 @@ public class ChessRules implements Serializable {
 					moveToNode = -1;
 					if(isRedClicked)
 					{
-						message = CHECKRESULT_FIRSTHOLDNODE_RED;
+						message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);				
+						createEvent(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);
 					}
 					else
 					{
-						message = CHECKRESULT_FIRSTHOLDNODE_BLACK;
+						message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK);				
+						createEvent(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK);
 					}	
-					createEvent(ChessEvent.EVENT_HOLD);
+					
 					
 					return;
 				}
@@ -396,25 +386,29 @@ public class ChessRules implements Serializable {
 					{
 						if(holdNode!=nodeClicked)
 						{
-							message = CHECKRESULT_CHANGEHOLDNODE_RED;
+							message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);				
+							createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);
 						}
 						else
 						{
-							message = CHECKRESULT_HOLDSAMENODE_RED;
+							message = generateMessage(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED);				
+							createEvent(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED);
 						}
 					}
 					else
 					{
 						if(holdNode!=nodeClicked)
 						{
-							message = CHECKRESULT_CHANGEHOLDNODE_BLACK;
+							message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK);				
+							createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK);
 						}
 						else
 						{
-							message = CHECKRESULT_HOLDSAMENODE_BLACK;
+							message = generateMessage(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK);				
+							createEvent(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK);
 						}
 					}	
-					createEvent(ChessEvent.EVENT_HOLD);
+					
 					return;
 				}
 			}
@@ -470,7 +464,16 @@ public class ChessRules implements Serializable {
 			if(isSuccessMove)
 			{
 				moveToNode = nodeClicked;
-				createEvent(ChessEvent.EVENT_PLAY);
+				if(isRedClicked)
+				{
+					message = generateMessage(ChessEvent.CHECKRESULT_PLAYOK_RED);				
+					createEvent(ChessEvent.CHECKRESULT_PLAYOK_RED);
+				}
+				else
+				{
+					message = generateMessage(ChessEvent.CHECKRESULT_PLAYOK_BLACK);				
+					createEvent(ChessEvent.CHECKRESULT_PLAYOK_BLACK);
+				}
 				if(successorRule!=null)
 				{
 					successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
@@ -480,13 +483,14 @@ public class ChessRules implements Serializable {
 			{
 				if(isRedClicked)
 				{
-					message = CHECKRESULT_DENYPLAY_RED;
+					message = generateMessage(ChessEvent.CHECKRESULT_DENYPLAY_RED);				
+					createEvent(ChessEvent.CHECKRESULT_DENYPLAY_RED);
 				}
 				else
 				{
-					message = CHECKRESULT_DENYPLAY_BLACK;
+					message = generateMessage(ChessEvent.CHECKRESULT_DENYPLAY_BLACK);				
+					createEvent(ChessEvent.CHECKRESULT_DENYPLAY_BLACK);
 				}
-				createEvent(ChessEvent.EVENT_HOLD);
 			}
 		}
 		
@@ -567,14 +571,14 @@ public class ChessRules implements Serializable {
 			}
 			if(isBlackWin)
 			{
-				message = CHECKRESULT_WIN_BLACK;
-				createEvent(ChessEvent.EVENT_GAME_END).setIsRedWin(false);				
+				message = generateMessage(ChessEvent.CHECKRESULT_WIN_BLACK);				
+				createEvent(ChessEvent.CHECKRESULT_WIN_BLACK).setIsRedWin(false);
 				return;
 			}
 			if(isRedWin)
 			{
-				message = CHECKRESULT_WIN_RED;
-				createEvent(ChessEvent.EVENT_GAME_END).setIsRedWin(true);
+				message = generateMessage(ChessEvent.CHECKRESULT_WIN_RED);				
+				createEvent(ChessEvent.CHECKRESULT_WIN_RED).setIsRedWin(true);
 				return;
 			}
 			if(successorRule!=null)
