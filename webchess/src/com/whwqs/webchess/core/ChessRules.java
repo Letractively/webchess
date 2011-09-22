@@ -437,7 +437,7 @@ public class ChessRules implements Serializable {
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
+				String clickManCurrentBoard) {		
 			
 			ChessType fromType = GetNodeType(holdNode);
 			int n = fromType.getIndex()/3;
@@ -740,15 +740,9 @@ public class ChessRules implements Serializable {
 					isSuccessMove=true;
 				}
 				else
-				{
-					if(col>fromCol)
-					{
-						col = col^fromCol;
-						fromCol = col^fromCol;
-						col = col^fromCol;
-					}
+				{					
 					isSuccessMove=true;
-					for(int i=col+1;i<fromCol;i++)
+					for(int i=Math.min(col, fromCol)+1;i<Math.max(col, fromCol);i++)
 					{
 						if(chessBoard.getBoardData()[row][i]!=ChessType.Пе)
 						{
@@ -765,15 +759,9 @@ public class ChessRules implements Serializable {
 					isSuccessMove=true;
 				}
 				else
-				{
-					if(row>fromRow)
-					{
-						row = row^fromRow;
-						fromRow = row^fromRow;
-						row = row^fromRow;
-					}
+				{					
 					isSuccessMove=true;
-					for(int i=row+1;i<fromRow;i++)
+					for(int i=Math.min(row, fromRow)+1;i<Math.max(row, fromRow);i++)
 					{
 						if(chessBoard.getBoardData()[i][col]!=ChessType.Пе)
 						{
@@ -804,46 +792,29 @@ public class ChessRules implements Serializable {
 			int col = nodeClicked%9;
 			int fromRow = holdNode/9;
 			int fromCol = holdNode%9;
-			if((chessBoard.getBoardData()[row][col].getIndex()%2
-					==chessBoard.getBoardData()[fromRow][fromCol].getIndex()%2)
-					&& chessBoard.getBoardData()[row][col]!=ChessType.Пе)
-			{
-				return;
-			}
+			
 			int n=0;
+			
 			if(row==fromRow)
-			{
-					if(col>fromCol)
+			{			
+				for(int i=Math.min(col, fromCol)+1;i<Math.max(col, fromCol);i++)
+				{
+					if(chessBoard.getBoardData()[row][i]!=ChessType.Пе)
 					{
-						col = col^fromCol;
-						fromCol = col^fromCol;
-						col = col^fromCol;
-					}					
-					for(int i=col+1;i<fromCol;i++)
-					{
-						if(chessBoard.getBoardData()[row][i]!=ChessType.Пе)
-						{
-							n++;
-						}
-					}
-			}
-			else if(col==fromCol)
-			{
-					if(row>fromRow)
-					{
-						row = row^fromRow;
-						fromRow = row^fromRow;
-						row = row^fromRow;
-					}
-					
-					for(int i=row+1;i<fromRow;i++)
-					{
-						if(chessBoard.getBoardData()[i][col]!=ChessType.Пе)
-						{
-							n++;
-						}
+						n++;
 					}
 				}
+			}
+			else if(col==fromCol)
+			{		
+				for(int i=Math.min(row, fromRow)+1;i<Math.max(row, fromRow);i++)
+				{
+					if(chessBoard.getBoardData()[i][col]!=ChessType.Пе)
+					{
+						n++;
+					}
+				}
+			}
 			if(n==0){
 				if(chessBoard.getBoardData()[row][col]==ChessType.Пе){
 					isSuccessMove=true;

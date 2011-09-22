@@ -1,6 +1,8 @@
 package com.whwqs.webchess.servlet;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,125 +26,57 @@ public class HandleClickBoard extends HttpServlet {
     public HandleClickBoard() {
         super();
         // TODO Auto-generated constructor stub
-    }
+    }   
     
-    private ChessEvent chessEv = null;
-    private ChessBoard board = null;
+    private ChessBoard board = null;  
     
-    private void ListenAllBoardEvent(){
-    	board.AddSubscriber(ChessEvent.EVENT_BOARDEXPIRE, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_COMPLETECHECKBOARD, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;	
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_GAME_END, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_GAME_START, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_HOLD, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_PLAY, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});board.AddSubscriber(ChessEvent.EVENT_REDO, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_TIMEOUT, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
-    	board.AddSubscriber(ChessEvent.EVENT_UNDO, new ISubscriber(){
-
-			@Override
-			public void Update(EventBase eventArg) {
-				// TODO Auto-generated method stub
-				chessEv = (ChessEvent)eventArg;				
-			}
-    		
-    	});
+    private String GenerateEventJson(){
+    	List<ChessEvent> list = board.GetEventList();
+    	String s = "";
+    	for(ChessEvent ev:list){
+    		s+=ev.ToJSON()+",";
+    	}
+    	if(!s.isEmpty()){
+    		s = s.substring(0,s.length()-1);
+    	}
+    	return "["+s+"]";
     }
     
     private void ProcessHandle(HttpServletRequest request,  HttpServletResponse response)
     {
     	String roomNumber = request.getParameter("room");
     	board =ChessBoardManager.GetChessBoard(roomNumber);
-    	ListenAllBoardEvent();
+    	
     	if(request.getParameter("type").equals("click"))
-    	{    		
+    	{      		
 	    	int nodeClicked =Integer.parseInt(request.getParameter("clickNode"));
 	    	Boolean isRedClicked = Boolean.valueOf(request.getParameter("isRed"));
 	    	String clickManCurrentBoard =  request.getParameter("data");
 	    	synchronized(LockManager.GetLock(roomNumber)){
 	    		 board.HandleClicked(nodeClicked, isRedClicked, clickManCurrentBoard);
-	    	}	    
+	    	}	
+	    	
+    		try {
+				response.getWriter().write("{\"type\":\"click\",\"data\":"+GenerateEventJson()+"}");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	    	
     	}
     	else if(request.getParameter("type").equals("timer")){
-    		 board.HandleClicked(-1, true, "");
-    	}
-    	if(chessEv!=null){
     		try {
-				response.getWriter().write(chessEv.ToJSON());
+				response.getWriter().write("{\"type\":\"timer\",\"data\":\""+board.ToString()+"\"}");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    	}	    	
+    	}    	   	
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
 		// TODO Auto-generated method stub
 		ProcessHandle(request,response);
 	}
@@ -150,7 +84,7 @@ public class HandleClickBoard extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
 		// TODO Auto-generated method stub
 		ProcessHandle(request,response);
 	}

@@ -67,6 +67,23 @@ ChessBoard.prototype.Ajax = function(){
 		success:function(json){
 			self.enable = true;
 			eval("var json="+json);
+			
+			if(json.type=="click"){
+				var eventList = json.data;
+				
+				/*
+				self.container.find("img").each(function(){
+					$(this).css({border:"0px"});
+				});
+				if(self.data==json.chessBoardData){
+					
+								
+				}*/
+			}
+			else if(json.type=="timer"){
+				
+			}
+			
 			self.data = json.chessBoardData;
 			self.SetBoardByData();
 			self.container.find("img").each(function(){
