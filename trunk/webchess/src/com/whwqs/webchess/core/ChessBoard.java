@@ -42,6 +42,10 @@ public class ChessBoard implements IPublisher,Serializable {
 		}
 	}
 	
+	public List<ChessEvent> GetEventList(){
+		return rule.getEventsList();
+	}
+	
 	private ChessRules rule;
 	
 	public ChessBoard(String boardKey){
