@@ -845,13 +845,13 @@ public class ChessRules implements Serializable {
 					}
 				}
 			if(n==0){
-				if(chessBoard.getBoardData()[fromRow][fromCol]==ChessType.Пе){
+				if(chessBoard.getBoardData()[row][col]==ChessType.Пе){
 					isSuccessMove=true;
 				}
 			}
 			else if(n==1){
-				if(chessBoard.getBoardData()[row][col].getIndex()%2
-						!=chessBoard.getBoardData()[fromRow][fromCol].getIndex()%2){
+				if(chessBoard.getBoardData()[row][col].getIndex()%2	!=chessBoard.getBoardData()[fromRow][fromCol].getIndex()%2
+						&&chessBoard.getBoardData()[row][col]!=ChessType.Пе){
 					isSuccessMove=true;
 				}
 			}
