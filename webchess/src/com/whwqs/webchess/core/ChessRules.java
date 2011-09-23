@@ -677,6 +677,9 @@ public class ChessRules implements Serializable {
 			{
 				return;
 			}
+			if(chessBoard.getBoardData()[(row+fromRow)/2][(col+fromCol)/2]!=ChessType.Пе){
+				return;
+			}
 			if(Math.abs(row-fromRow)==2&&Math.abs(col-fromCol)==2)
 			{
 				isSuccessMove=true;
@@ -704,7 +707,7 @@ public class ChessRules implements Serializable {
 			if(Math.abs(col-fromCol)==2)
 			{
 				if(Math.abs(row-fromRow)==1
-						&&chessBoard.getBoardData()[row][col/2+fromCol/2]==ChessType.Пе)
+						&&chessBoard.getBoardData()[fromRow][(col+fromCol)/2]==ChessType.Пе)
 				{
 					isSuccessMove=true;
 				}
@@ -712,7 +715,7 @@ public class ChessRules implements Serializable {
 			else if(Math.abs(row-fromRow)==2)
 			{
 				if(Math.abs(col-fromCol)==1
-						&&chessBoard.getBoardData()[row/2+fromRow/2][col]==ChessType.Пе)
+						&&chessBoard.getBoardData()[(row+fromRow)/2][fromCol]==ChessType.Пе)
 				{
 					isSuccessMove=true;
 				}
