@@ -740,6 +740,11 @@ public class ChessRules implements Serializable {
 			int col = nodeClicked%9;
 			int fromRow = holdNode/9;
 			int fromCol = holdNode%9;
+			
+			if((row!=fromRow)&&(col!=fromCol)){
+				return;
+			}
+			
 			if(row==fromRow)
 			{
 				if(Math.abs(col-fromCol)==1)
@@ -801,6 +806,10 @@ public class ChessRules implements Serializable {
 			int fromCol = holdNode%9;
 			
 			int n=0;
+			
+			if((row!=fromRow)&&(col!=fromCol)){
+				return;
+			}
 			
 			if(row==fromRow)
 			{			
