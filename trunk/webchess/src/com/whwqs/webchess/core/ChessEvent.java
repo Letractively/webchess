@@ -27,6 +27,8 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	public static final String CHECKRESULT_UNDO_BLACK="CHECKRESULT_UNDO_BLACK";//黑方悔棋
 	public static final String CHECKRESULT_REDO_RED="CHECKRESULT_REDO_RED";//红方不悔棋
 	public static final String CHECKRESULT_REDO_BLACK="CHECKRESULT_REDO_BLACK";//黑方不悔棋
+	public static final String CHECKRESULT_TOKILLKING_RED = "CHECKRESULT_TOKILLKING_RED";//红方打将
+	public static final String CHECKRESULT_TOKILLKING_BLACK = "CHECKRESULT_TOKILLKING_BLACK";//黑方打将
 	public ChessEvent(String EventName)
 	{
 		super(EventName,new Object());
@@ -43,6 +45,8 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	private Boolean isRedToGo = true;
 	private int fromNode = -1;
 	private int toNode = -1;
+	private int redKingNode = -1;
+	private int blackKingNode = -1;
 	private ChessType fromType = ChessType.空;
 	private ChessType toType = ChessType.空;
 	private String message = "";
@@ -54,6 +58,7 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 				+"\",\"isDogfall\":\""+isDogfall.toString()+"\",\"playAt\":\""+playAt.toString()
 				+"\",\"isRedToGo\":\""+isRedToGo.toString()+"\",\"fromNode\":"+fromNode
 				+",\"toNode\":\""+toNode+"\",\"fromType\":\""+fromType.getName()
+				+"\",\"redKingNode\":"+redKingNode+",\"blackKingNode\":\""+blackKingNode
 				+"\",\"toType\":\""+toType.getName()+"\",\"message\":\""+message
 				+"\"}";//*/
 	}
@@ -137,6 +142,18 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	}
 	public String getEventName() {
 		return eventName;
+	}
+	public int getRedKingNode() {
+		return redKingNode;
+	}
+	public void setRedKingNode(int redKingNode) {
+		this.redKingNode = redKingNode;
+	}
+	public int getBlackKingNode() {
+		return blackKingNode;
+	}
+	public void setBlackKingNode(int blackKingNode) {
+		this.blackKingNode = blackKingNode;
 	}
 	
 }
