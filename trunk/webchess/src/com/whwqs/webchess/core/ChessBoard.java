@@ -217,6 +217,18 @@ public class ChessBoard implements IPublisher,Serializable {
 				persist();
 			}
 		});
+		AddSubscriber(ChessEvent.CHECKRESULT_TOKILLKING_RED,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
+		AddSubscriber(ChessEvent.CHECKRESULT_TOKILLKING_BLACK,new ISubscriber(){
+			public void Update(EventBase eventArg)
+			{				
+				persist();
+			}
+		});
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException

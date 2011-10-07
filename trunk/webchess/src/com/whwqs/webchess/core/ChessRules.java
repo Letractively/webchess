@@ -14,15 +14,32 @@ public class ChessRules implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private ChessBoard chessBoard;
+	private Boolean isRedGoAhead;
+	private Boolean isRedToGo;
+	private Boolean isSuccessMove = false;	
+	private Boolean isSuccessHold = false;	
+	private Boolean isRedWin = false;
+	private Boolean isBlackWin = false;
+	private Boolean isRedWillKillKing = false;
+	private Boolean isBlackWillKillKing = false;	
+	private Boolean isDogfall = false;
 	
+	private Rule firstRule ;
 	private List<ChessEvent> eventsList ;
+	private String message = "";
+	private int holdNode = -1;
+	private int moveToNode = -1;
+	private Rule currentChessRule = null;
+	
+	public Boolean IsRedToGo(){
+		return chessBoard.IsRedToGo();
+	}
+	
 	public List<ChessEvent> getEventsList()
 	{
 		return eventsList;
 	}
 	
-	private Boolean isRedGoAhead;
-	private Boolean isRedToGo;
 	public Boolean getIsRedGoAhead() {
 		return isRedGoAhead;
 	}
@@ -32,18 +49,30 @@ public class ChessRules implements Serializable {
 	}
 
 	public Boolean getIsRedToGo() {
-		isRedToGo = chessBoard.IsRedToGo();
+		isRedToGo = IsRedToGo();
 		return isRedToGo;
 	}
 	
 	private String generateMessage(String eventName){
 		return eventName;
 	}
+	
+	public Boolean getIsRedWillKillKing() {
+		return isRedWillKillKing;
+	}
 
-	private Boolean isSuccessMove = false;	
-	private Boolean isSuccessHold = false;	
-	private Boolean isRedWin = false;
-	private Boolean isBlackWin = false;
+	public void setIsRedWillKillKing(Boolean isRedWillKillKing) {
+		this.isRedWillKillKing = isRedWillKillKing;
+	}
+
+	public Boolean getIsBlackWillKillKing() {
+		return isBlackWillKillKing;
+	}
+
+	public void setIsBlackWillKillKing(Boolean isBlackWillKillKing) {
+		this.isBlackWillKillKing = isBlackWillKillKing;
+	}
+
 	public Boolean getIsRedWin() {
 		return isRedWin;
 	}
@@ -51,8 +80,6 @@ public class ChessRules implements Serializable {
 	public Boolean getIsBlackWin() {
 		return isBlackWin;
 	}
-
-	private String message = "";
 	
 	public String getMessage(){
 		return message;
@@ -65,9 +92,8 @@ public class ChessRules implements Serializable {
 	public Boolean getIsSuccessHold()
 	{
 		return isSuccessHold;
-	}
+	}	
 	
-	private Rule firstRule ;
 	public ChessRules(ChessBoard qp){
 		chessBoard = qp;
 		AssembleResponsibilityChain();
@@ -89,13 +115,14 @@ public class ChessRules implements Serializable {
 	{
 		//组装责任链
 			Rule r1 = new CheckIfBoardDataExpired();
-			Rule r2 = new CheckIfClickWrongNode();
-			Rule r3 = new CheckIfNeedWait();		
+			Rule r2 = new CheckIfNeedWait();		
+			Rule r3 = new CheckIfClickWrongNode();			
 			Rule r4 = new CheckIfFirstHoldNode();
 			Rule r5 = new CheckIfChangeHoldNode();
 			Rule r6 = new CoreCheck();
 			Rule r7 = new CheckIfIsDogFall();
 			Rule r8 = new CheckIfGameOver();
+			Rule r9 = new CheckIfWillKillKing();
 			
 			r1.SetSuccessorRule(r2);
 			r2.SetSuccessorRule(r3);
@@ -104,12 +131,10 @@ public class ChessRules implements Serializable {
 			r5.SetSuccessorRule(r6);
 			r6.SetSuccessorRule(r7);
 			r7.SetSuccessorRule(r8);
+			r8.SetSuccessorRule(r9);
 			firstRule = r1;
 			eventsList = new ArrayList<ChessEvent>();
 	}
-	
-	private int holdNode = -1;
-	private int moveToNode = -1;
 	
 	public int getHoldNode() {
 		return holdNode;
@@ -130,10 +155,22 @@ public class ChessRules implements Serializable {
 		isSuccessHold = false;
 		isRedWin = false;
 		isBlackWin = false;
+		isDogfall=false;
+		isBlackWillKillKing=false;
+		isRedWillKillKing=false;
 		message = "";
+		moveToNode=-1;
 		firstRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 	}
 	
+	public Boolean getIsDogfall() {
+		return isDogfall;
+	}
+
+	public void setIsDogfall(Boolean isDogfall) {
+		this.isDogfall = isDogfall;
+	}
+
 	private abstract class Rule implements Serializable
 	{
 		/**
@@ -145,6 +182,7 @@ public class ChessRules implements Serializable {
 		{
 			this.successorRule = r;
 		}		
+		
 		protected ChessType GetNodeType(int i)
 		{
 			return chessBoard.getBoardData()[i/9][i%9];
@@ -198,6 +236,15 @@ public class ChessRules implements Serializable {
 		
 		protected ChessEvent createEvent(String eventName){
 			ChessEvent ev = new ChessEvent(eventName);
+			ev.setIsRedToGo(IsRedToGo());
+			ev.setIsSuccessHold(isSuccessHold);
+			ev.setIsSuccessMove(isSuccessMove);
+			ev.setIsBlackWillKillKing(isBlackWillKillKing);
+			ev.setIsRedWillKillKing(isRedWillKillKing);
+			ev.setIsRedWin(isRedWin);
+			ev.setIsBlackWin(isBlackWin);
+			ev.setIsDogfall(isDogfall);
+			
 			ev.setChessBoardData(chessBoard.ToString());
 			ev.setMessage(message);
 			ev.setFromNode(holdNode);
@@ -208,12 +255,21 @@ public class ChessRules implements Serializable {
 			if(moveToNode!=-1){
 				ev.setToType(GetNodeType(moveToNode));
 			}
-			ev.setIsRedToGo(chessBoard.IsRedToGo());
+			
+			String redKingPosition = GetTypePosition(ChessType.帅,0,3,2,5);
+			String blackKingPosition = GetTypePosition(ChessType.将,7,3,9,5);
+			String[] arr = redKingPosition.split(",");
+			ev.setRedKingNode(Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]));
+			arr = blackKingPosition.split(",");
+			ev.setBlackKingNode(Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]));
+			
 			eventsList.add(ev);
 			return ev;
 		}
 		
 		public abstract void Apply(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard);
+		public abstract String GetAllMoveableNodes(int nodeClicked);
+		public abstract Boolean CanMove(int fromRow,int fromCol,int row,int col);
 	}
 	// 点击时棋盘数据是否过期了
 	private class CheckIfBoardDataExpired extends Rule
@@ -239,6 +295,18 @@ public class ChessRules implements Serializable {
 				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 			}
 		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	// 是否要等待对手
@@ -254,8 +322,8 @@ public class ChessRules implements Serializable {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			
-			if((isRedClicked&&NodeType(nodeClicked)==1&&!chessBoard.IsRedToGo())
-					||(!isRedClicked&&NodeType(nodeClicked)==2&&chessBoard.IsRedToGo()))
+			if((isRedClicked&&!IsRedToGo())
+					||(!isRedClicked &&IsRedToGo()))
 			{				
 				if(isRedClicked)
 				{
@@ -277,6 +345,18 @@ public class ChessRules implements Serializable {
 			}
 			
 		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}	
 	
@@ -294,8 +374,15 @@ public class ChessRules implements Serializable {
 				String clickManCurrentBoard) {
 			// TODO Auto-generated method stub
 			
-			if((isRedClicked&&NodeType(nodeClicked)!=1&&!chessBoard.IsRedToGo())
-					||(!isRedClicked&&NodeType(nodeClicked)!=2&&chessBoard.IsRedToGo()))
+			if(
+					(holdNode==-1 || NodeType(holdNode)==0)
+					&&
+					(
+							(isRedClicked&&NodeType(nodeClicked)!=1&&IsRedToGo())
+							||
+							(!isRedClicked&&NodeType(nodeClicked)!=2&&!IsRedToGo())
+					)
+				)
 			{
 				if(isRedClicked)
 				{				
@@ -318,6 +405,18 @@ public class ChessRules implements Serializable {
 			}		
 			
 		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	// 是否在拿棋
@@ -333,32 +432,42 @@ public class ChessRules implements Serializable {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			
-			if(holdNode==-1)
-			{
-				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
-						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo())){
-					isSuccessHold = true;
-					holdNode = nodeClicked;
-					moveToNode = -1;
-					if(isRedClicked)
-					{
-						message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);				
-						createEvent(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);
-					}
-					else
-					{
-						message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK);				
-						createEvent(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK);
-					}	
-					
-					
-					return;
+			
+			if(holdNode==-1 || NodeType(holdNode)==0){
+				isSuccessHold = true;
+				isSuccessMove = false;
+				holdNode = nodeClicked;				
+				if(isRedClicked)
+				{
+					message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);				
+					createEvent(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);
 				}
+				else
+				{
+					message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK);			
+					createEvent(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_BLACK);
+				}	
+				
+				
+				return;
 			}
+			
 			if(successorRule!=null)
 			{
 				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 			}
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}
@@ -375,47 +484,50 @@ public class ChessRules implements Serializable {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			
-			if(holdNode!=-1)
-			{
-				if((isRedClicked&&NodeType(nodeClicked)==1&&chessBoard.IsRedToGo())
-						||(!isRedClicked&&NodeType(nodeClicked)==2&&!chessBoard.IsRedToGo())){
-					isSuccessHold = true;
+			if(NodeType(holdNode)!=0&&NodeType(holdNode)==NodeType(nodeClicked)){
+				isSuccessHold = true;
+				isSuccessMove=false;	
+				if(holdNode!=nodeClicked)
+				{
 					holdNode = nodeClicked;
-					moveToNode = -1;
-					if(isRedClicked)
-					{
-						if(holdNode!=nodeClicked)
-						{
-							message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);				
-							createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);
-						}
-						else
-						{
-							message = generateMessage(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED);				
-							createEvent(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED);
-						}
+					if(isRedClicked){
+						message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);				
+						createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);
 					}
-					else
-					{
-						if(holdNode!=nodeClicked)
-						{
-							message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK);				
-							createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK);
-						}
-						else
-						{
-							message = generateMessage(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK);				
-							createEvent(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK);
-						}
-					}	
-					
-					return;
+					else{
+						message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK);				
+						createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_BLACK);
+					}
 				}
+				else{
+					if(isRedClicked){
+						message = generateMessage(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED);				
+						createEvent(ChessEvent.CHECKRESULT_HOLDSAMENODE_RED);
+					}
+					else{
+						message = generateMessage(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK);				
+						createEvent(ChessEvent.CHECKRESULT_HOLDSAMENODE_BLACK);
+					}
+				}
+				return;
 			}
+		
 			if(successorRule!=null)
 			{
 				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 			}
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}
@@ -460,9 +572,14 @@ public class ChessRules implements Serializable {
 					r=new ChessTypeRule6();
 					break;
 			}
-			r.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
-			if(isSuccessMove)
-			{
+			currentChessRule= r;
+			int row = nodeClicked/9;
+			int col = nodeClicked%9;
+			int fromRow = holdNode/9;
+			int fromCol = holdNode%9;
+			if(r.CanMove(fromRow,fromCol,row,col)){
+				isSuccessHold=false;
+				isSuccessMove = true;			
 				moveToNode = nodeClicked;
 				if(isRedClicked)
 				{
@@ -481,6 +598,8 @@ public class ChessRules implements Serializable {
 			}
 			else
 			{
+				isSuccessHold=true;
+				isSuccessMove = false;
 				if(isRedClicked)
 				{
 					message = generateMessage(ChessEvent.CHECKRESULT_DENYPLAY_RED);				
@@ -492,6 +611,18 @@ public class ChessRules implements Serializable {
 					createEvent(ChessEvent.CHECKRESULT_DENYPLAY_BLACK);
 				}
 			}
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}
@@ -514,8 +645,89 @@ public class ChessRules implements Serializable {
 				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 			}
 		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
+	//是否将军了
+	private class CheckIfWillKillKing extends Rule{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
+			// TODO Auto-generated method stub
+			
+			String KingPosition;
+			if(isRedClicked)
+			{
+				KingPosition = GetTypePosition(ChessType.将,7,3,9,5);
+			}
+			else{
+				KingPosition = GetTypePosition(ChessType.帅,0,3,2,5);
+			}
+			
+			String[] arr = KingPosition.split(",");
+			int king =  Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]);
+			ChessType oldType = GetNodeType(nodeClicked);
+			Move(holdNode,nodeClicked);
+			String s=currentChessRule.GetAllMoveableNodes(nodeClicked);
+			if(s.indexOf("|"+king+"|")>=0){				
+				if(isRedClicked){
+					isBlackWillKillKing=false;
+					isRedWillKillKing=true;
+					message = generateMessage(ChessEvent.CHECKRESULT_TOKILLKING_RED);				
+					createEvent(ChessEvent.CHECKRESULT_TOKILLKING_RED);
+				}
+				else{
+					isBlackWillKillKing=true;
+					isRedWillKillKing=false;
+					message = generateMessage(ChessEvent.CHECKRESULT_TOKILLKING_BLACK);				
+					createEvent(ChessEvent.CHECKRESULT_TOKILLKING_BLACK);
+				}
+			}
+			UndoMove(holdNode,nodeClicked,oldType);
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		private void Move(int from,int to){
+			ChessType f = GetNodeType(from);
+			chessBoard.getBoardData()[from/9][from%9]=ChessType.空;
+			chessBoard.getBoardData()[to/9][to%9]=f;
+		}
+		
+		private void UndoMove(int from,int to,ChessType oldToType){
+			ChessType f = GetNodeType(to);
+			chessBoard.getBoardData()[from/9][from%9]=f;
+			chessBoard.getBoardData()[to/9][to%9]=oldToType;
+		}
+	}
+	
 	// 判断是否红胜或者黑胜
 	private class CheckIfGameOver extends Rule
 	{
@@ -586,6 +798,18 @@ public class ChessRules implements Serializable {
 				successorRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 			}
 		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	
@@ -597,27 +821,62 @@ public class ChessRules implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		@Override
+		public Boolean CanMove(int fromRow,int fromCol,int row,int col){
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}
+			if(col<3 || col>5)
+			{
+				return false;
+			}
+			if(row>2 && row<7)
+			{
+				return false;
+			}			
+			if((Math.abs(row-fromRow)+Math.abs(col-fromCol))==1)
+			{
+				return true;
+			}
+			return false;
+		}
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-			if(col<3 || col>5)
-			{
-				return;
-			}
-			if(row>2 && row<7)
-			{
-				return;
-			}			
-			if((Math.abs(row-fromRow)+Math.abs(col-fromCol))==1)
-			{
-				isSuccessMove=true;
-			}
 			
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.将 && clickType!=ChessType.帅){
+				return null;
+			}
+			String s = "";
+			int rMin = nodeClicked/9-1;
+			int rMax = nodeClicked/9+1;
+			int cMin = nodeClicked%9-1;
+			int cMax =  nodeClicked%9+1;
+			for(int r=rMin;r<=rMax;r++){
+				for(int c=cMin;c<=cMax;c++){
+					if(CanMove(nodeClicked/9,nodeClicked%9,r,c)){
+						s+="|"+(r*9+c);
+					}
+				}
+			}
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
 		}
 		
 	}	
@@ -629,27 +888,62 @@ public class ChessRules implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		@Override
+		public Boolean CanMove(int fromRow,int fromCol,int row,int col){
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}
+			if(col<3 || col>5)
+			{
+				return false;
+			}
+			if(row>2 && row<7)
+			{
+				return false;
+			}
+			if(Math.abs(row-fromRow)==1&&Math.abs(col-fromCol)==1)
+			{
+				return true;
+			}
+			return false;
+		}
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-			if(col<3 || col>5)
-			{
-				return;
-			}
-			if(row>2 && row<7)
-			{
-				return;
-			}
-			if(Math.abs(row-fromRow)==1&&Math.abs(col-fromCol)==1)
-			{
-				isSuccessMove=true;
-			}
 			
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.仕 && clickType!=ChessType.士){
+				return null;
+			}
+			String s = "";
+			int rMin = nodeClicked/9-1;
+			int rMax = nodeClicked/9+1;
+			int cMin = nodeClicked%9-1;
+			int cMax =  nodeClicked%9+1;
+			for(int r=rMin;r<=rMax;r++){
+				for(int c=cMin;c<=cMax;c++){
+					if(CanMove(nodeClicked/9,nodeClicked%9,r,c)){
+						s+="|"+(r*9+c);
+					}
+				}
+			}
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
 		}
 		
 	}
@@ -661,30 +955,70 @@ public class ChessRules implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		@Override
+		public Boolean CanMove(int fromRow,int fromCol,int row,int col){
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}
+			Boolean isRedClicked = true;
+			if(NodeType(fromRow*9+fromCol)==2){
+				isRedClicked = false;
+			}
+			if(isRedClicked&&row>4)
+			{
+				return false;
+			}
+			if(!isRedClicked&&row<5)
+			{
+				return false;
+			}
+			if(chessBoard.getBoardData()[(row+fromRow)/2][(col+fromCol)/2]!=ChessType.空){
+				return false;
+			}
+			if(Math.abs(row-fromRow)==2&&Math.abs(col-fromCol)==2)
+			{
+				return true;
+			}
+			return true;
+		}
 
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-			if(isRedClicked&&row>4)
-			{
-				return;
-			}
-			if(!isRedClicked&&row<5)
-			{
-				return;
-			}
-			if(chessBoard.getBoardData()[(row+fromRow)/2][(col+fromCol)/2]!=ChessType.空){
-				return;
-			}
-			if(Math.abs(row-fromRow)==2&&Math.abs(col-fromCol)==2)
-			{
-				isSuccessMove=true;
-			}
 			
+			
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.相 && clickType!=ChessType.象){
+				return null;
+			}
+			String s = "";
+			int rMin = nodeClicked/9-2;
+			int rMax = nodeClicked/9+2;
+			int cMin = nodeClicked%9-2;
+			int cMax =  nodeClicked%9+2;
+			for(int r=rMin;r<=rMax;r++){
+				for(int c=cMin;c<=cMax;c++){
+					if(CanMove(nodeClicked/9,nodeClicked%9,r,c)){
+						s+="|"+(r*9+c);
+					}
+				}
+			}
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
 		}
 		
 	}
@@ -696,20 +1030,21 @@ public class ChessRules implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-
 		@Override
-		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
+		public Boolean CanMove(int fromRow,int fromCol,int row,int col){
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}
 			if(Math.abs(col-fromCol)==2)
 			{
 				if(Math.abs(row-fromRow)==1
 						&&chessBoard.getBoardData()[fromRow][(col+fromCol)/2]==ChessType.空)
 				{
-					isSuccessMove=true;
+					return true;
 				}
 			}
 			else if(Math.abs(row-fromRow)==2)
@@ -717,10 +1052,45 @@ public class ChessRules implements Serializable {
 				if(Math.abs(col-fromCol)==1
 						&&chessBoard.getBoardData()[(row+fromRow)/2][fromCol]==ChessType.空)
 				{
-					isSuccessMove=true;
+					return true;
 				}
 			}
+			return false;
+		}
+
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
 			
+			
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.馬 && clickType!=ChessType.马){
+				return null;
+			}
+			String s = "";
+			int rMin = nodeClicked/9-2;
+			int rMax = nodeClicked/9+2;
+			int cMin = nodeClicked%9-2;
+			int cMax =  nodeClicked%9+2;
+			for(int r=rMin;r<=rMax;r++){
+				for(int c=cMin;c<=cMax;c++){
+					if(CanMove(nodeClicked/9,nodeClicked%9,r,c)){
+						s+="|"+(r*9+c);
+					}
+				}
+			}
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
 		}
 		
 	}
@@ -732,34 +1102,33 @@ public class ChessRules implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-
+		
 		@Override
-		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-			
+		public Boolean CanMove(int fromRow,int fromCol,int row,int col){
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}
 			if((row!=fromRow)&&(col!=fromCol)){
-				return;
+				return false;
 			}
 			
 			if(row==fromRow)
 			{
 				if(Math.abs(col-fromCol)==1)
 				{
-					isSuccessMove=true;
+					return true;
 				}
 				else
-				{					
-					isSuccessMove=true;
+				{	
 					for(int i=Math.min(col, fromCol)+1;i<Math.max(col, fromCol);i++)
 					{
 						if(chessBoard.getBoardData()[row][i]!=ChessType.空)
 						{
-							isSuccessMove = false;
-							break;
+							return false;
 						}
 					}
 				}
@@ -768,23 +1137,54 @@ public class ChessRules implements Serializable {
 			{
 				if(Math.abs(row-fromRow)==1)
 				{
-					isSuccessMove=true;
+					return true;
 				}
 				else
-				{					
-					isSuccessMove=true;
+				{	
 					for(int i=Math.min(row, fromRow)+1;i<Math.max(row, fromRow);i++)
 					{
 						if(chessBoard.getBoardData()[i][col]!=ChessType.空)
 						{
-							isSuccessMove = false;
-							break;
+							return false;
 						}
 					}
 				}
 			}
+			return true;
+		}
+
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
 			
 			
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.车 && clickType!=ChessType.車){
+				return null;
+			}
+			String s = "";
+			for(int r=0;r<=9;r++){
+				if(CanMove(nodeClicked/9,nodeClicked%9,r,nodeClicked%9)){
+					s+="|"+(r*9+nodeClicked%9);
+				}
+			}
+			for(int c=0;c<=8;c++){
+				if(CanMove(nodeClicked/9,nodeClicked%9,nodeClicked/9,c)){
+					s+="|"+(nodeClicked/9*9+c);
+				}
+			}			
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
 		}
 		
 	}
@@ -796,21 +1196,22 @@ public class ChessRules implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-
+		
 		@Override
-		public void Apply(int nodeClicked, Boolean isRedClicked,
-				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-			
-			int n=0;
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}			
 			
 			if((row!=fromRow)&&(col!=fromCol)){
-				return;
+				return false;
 			}
-			
+			int n=0;
 			if(row==fromRow)
 			{			
 				for(int i=Math.min(col, fromCol)+1;i<Math.max(col, fromCol);i++)
@@ -833,16 +1234,50 @@ public class ChessRules implements Serializable {
 			}
 			if(n==0){
 				if(chessBoard.getBoardData()[row][col]==ChessType.空){
-					isSuccessMove=true;
+					return true;
 				}
 			}
 			else if(n==1){
 				if(chessBoard.getBoardData()[row][col].getIndex()%2	!=chessBoard.getBoardData()[fromRow][fromCol].getIndex()%2
 						&&chessBoard.getBoardData()[row][col]!=ChessType.空){
-					isSuccessMove=true;
+					return true;
 				}
 			}
+			return false;
+		}
+
+		@Override
+		public void Apply(int nodeClicked, Boolean isRedClicked,
+				String clickManCurrentBoard) {
+			
 				
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.炮 && clickType!=ChessType.砲){
+				return null;
+			}
+			String s = "";
+			for(int r=0;r<=9;r++){
+				if(CanMove(nodeClicked/9,nodeClicked%9,r,nodeClicked%9)){
+					s+="|"+(r*9+nodeClicked%9);
+				}
+			}
+			for(int c=0;c<=8;c++){
+				if(CanMove(nodeClicked/9,nodeClicked%9,nodeClicked/9,c)){
+					s+="|"+(nodeClicked/9*9+c);
+				}
+			}			
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
 		}
 		
 	}
@@ -858,54 +1293,94 @@ public class ChessRules implements Serializable {
 		@Override
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
-			int row = nodeClicked/9;
-			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
-				
+			
+		}
+
+		@Override
+		public String GetAllMoveableNodes(int nodeClicked) {
+			// TODO Auto-generated method stub
+			if(NodeType(nodeClicked)==0){
+				return null;
+			}
+			ChessType clickType = GetNodeType(nodeClicked);
+			if(clickType!= ChessType.兵 && clickType!=ChessType.卒){
+				return null;
+			}
+			String s = "";
+			int rMin = nodeClicked/9-1;
+			int rMax = nodeClicked/9+1;
+			int cMin = nodeClicked%9-1;
+			int cMax =  nodeClicked%9+1;
+			for(int r=rMin;r<=rMax;r++){
+				for(int c=cMin;c<=cMax;c++){
+					if(CanMove(nodeClicked/9,nodeClicked%9,r,c)){
+						s+="|"+(r*9+c);
+					}
+				}
+			}
+			if(s.isEmpty()){
+				return null;
+			}
+			return s+"|";
+		}
+
+		@Override
+		public Boolean CanMove(int fromRow, int fromCol, int row, int col) {
+			// TODO Auto-generated method stub
+			if(fromRow<0 || fromRow>9 || fromCol<0 || fromCol>8 || row<0 || row>9 || col<0 || col >8){
+				return false;
+			}
+			if(NodeType(fromRow*9+fromCol)==NodeType(row*9+col))
+			{
+				return false;
+			}		
+			
 			if(!((Math.abs(row-fromRow)+Math.abs(col-fromCol))==1))
 			{
-				return;
+				return false;
+			}
+			Boolean isRedClicked = true;
+			if(NodeType(fromRow*9+fromCol)==2){
+				isRedClicked = false;
 			}
 			if(isRedClicked)
 			{
 				if(row<fromRow)
 				{
-					return;
+					return false;
 				}
 				if(fromRow<5)
 				{
 					if(row>fromRow)
 					{
-						isSuccessMove=true;
+						return true;
 					}
 				}
 				else
 				{
-					isSuccessMove=true;
+					return true;
 				}
 			}
 			else
 			{
 				if(row>fromRow)
 				{
-					return;
+					return false;
 				}
 				if(fromRow>4)
 				{
 					if(row<fromRow)
 					{
-						isSuccessMove=true;
+						return true;
 					}
 				}
 				else
 				{
-					isSuccessMove=true;
+					return true;
 				}
 			}
-			
-		}
-		
+			return false;
+		}		
 	}
 	
 }

@@ -26,6 +26,10 @@ function ChessBoard(container){
 	this.win = -1;
 }
 
+ChessBoard.prototype.HandleEventList = function(eventList){
+	
+};
+
 ChessBoard.prototype.SetBoardByData = function(){
 	for(var i=0;i<this.data.length;i++){
 		var ch = this.data.substring(i,i+1);
@@ -99,11 +103,11 @@ ChessBoard.prototype.Ajax = function(){
 				return {"type":"timer","room":config.room};
 			}
 		})(),
-		success:function(json){
+		success:function(json){var s = json;
 			self.enable = true;
 			eval("var json="+json);
 			
-			if(json.type=="click"){
+			if(json.type=="click"){alert(s);
 				var eventList = json.data;
 				$.each(eventList,function(i,ev){
 					self.msg.text(ev.message);

@@ -38,11 +38,8 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	private String wrongNodesPositionData = "";//检查棋盘是否符合规则 格式1|2|3...	
 	private String chessBoardData = ""; //cmxsj...
 	private Date gameStartAt = new Date();
-	private Date gameEndAt = new Date();
-	private Boolean isRedWin = false;
-	private Boolean isDogfall = false;
-	private Date playAt = new Date();
-	private Boolean isRedToGo = true;
+	private Date gameEndAt = new Date();	
+	private Date playAt = new Date();	
 	private int fromNode = -1;
 	private int toNode = -1;
 	private int redKingNode = -1;
@@ -50,15 +47,29 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	private ChessType fromType = ChessType.空;
 	private ChessType toType = ChessType.空;
 	private String message = "";
+	
+	private Boolean isRedToGo = true;
+	private Boolean isRedWin = false;
+	private Boolean isBlackWin = false;
+	private Boolean isDogfall = false;
+	private Boolean isRedWillKillKing = false;
+	private Boolean isBlackWillKillKing = false;
+	private Boolean isSuccessMove = false;	
+	private Boolean isSuccessHold = false;	
 	public String ToJSON(){
 		///*
 		  return "{\"eventName\":\""+eventName+"\",\"wrongNodesPositionData\":\""+wrongNodesPositionData		 
 				+"\",\"chessBoardData\":\""+chessBoardData+"\",\"gameStartAt\":\""+gameStartAt.toString()
 				+"\",\"gameEndAt\":\""+gameEndAt.toString()+"\",\"isRedWin\":\""+isRedWin.toString()
+				+"\",\"isBlackWin\":\""+isBlackWin.toString()
 				+"\",\"isDogfall\":\""+isDogfall.toString()+"\",\"playAt\":\""+playAt.toString()
 				+"\",\"isRedToGo\":\""+isRedToGo.toString()+"\",\"fromNode\":"+fromNode
 				+",\"toNode\":\""+toNode+"\",\"fromType\":\""+fromType.getName()
 				+"\",\"redKingNode\":"+redKingNode+",\"blackKingNode\":\""+blackKingNode
+				+"\",\"isRedWillKillKing\":\""+isRedWillKillKing.toString()
+				+"\",\"isBlackWillKillKing\":\""+isBlackWillKillKing.toString()
+				+"\",\"isSuccessMove\":\""+isSuccessMove.toString()
+				+"\",\"isSuccessHold\":\""+isSuccessHold.toString()
 				+"\",\"toType\":\""+toType.getName()+"\",\"message\":\""+message
 				+"\"}";//*/
 	}
@@ -154,6 +165,36 @@ public class ChessEvent extends  com.whwqs.util.EventBase {
 	}
 	public void setBlackKingNode(int blackKingNode) {
 		this.blackKingNode = blackKingNode;
+	}
+	public Boolean getIsRedWillKillKing() {
+		return isRedWillKillKing;
+	}
+	public void setIsRedWillKillKing(Boolean isRedWillKillKing) {
+		this.isRedWillKillKing = isRedWillKillKing;
+	}
+	public Boolean getIsBlackWillKillKing() {
+		return isBlackWillKillKing;
+	}
+	public void setIsBlackWillKillKing(Boolean isBlackWillKillKing) {
+		this.isBlackWillKillKing = isBlackWillKillKing;
+	}
+	public Boolean getIsSuccessMove() {
+		return isSuccessMove;
+	}
+	public void setIsSuccessMove(Boolean isSuccessMove) {
+		this.isSuccessMove = isSuccessMove;
+	}
+	public Boolean getIsSuccessHold() {
+		return isSuccessHold;
+	}
+	public void setIsSuccessHold(Boolean isSuccessHold) {
+		this.isSuccessHold = isSuccessHold;
+	}
+	public Boolean getIsBlackWin() {
+		return isBlackWin;
+	}
+	public void setIsBlackWin(Boolean isBlackWin) {
+		this.isBlackWin = isBlackWin;
 	}
 	
 }
