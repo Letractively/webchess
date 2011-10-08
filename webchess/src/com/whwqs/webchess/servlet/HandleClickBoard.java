@@ -43,7 +43,7 @@ public class HandleClickBoard extends HttpServlet {
     {
     	String roomNumber = request.getParameter("room");
     	board =ChessBoardManager.GetChessBoard(roomNumber);
-    	
+    	String type="";
     	if(request.getParameter("type").equals("click"))
     	{      		
 	    	int nodeClicked =Integer.parseInt(request.getParameter("clickNode"));
@@ -52,23 +52,19 @@ public class HandleClickBoard extends HttpServlet {
 	    	synchronized(LockManager.GetLock(roomNumber)){
 	    		 board.HandleClicked(nodeClicked, isRedClicked, clickManCurrentBoard);
 	    	}	
-	    	
-    		try {
-				response.getWriter().write("{\"type\":\"click\",\"data\":"+GenerateEventJson()+"}");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	    	
+	    	type="click";
     	}
     	else if(request.getParameter("type").equals("timer")){
-    		try {
-				response.getWriter().write("{\"type\":\"timer\",\"data\":\""+board.ToString()+"\",\"from\":" +board.GetFrom()+
-						",\"to\":"+board.GetTo()+"}");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}    	   	
+    		type="timer";
+    	}
+    	
+    	try {
+			response.getWriter().write("{\"type\":\""+type+"\",\"data\":"+GenerateEventJson()+"}");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	    
+    	  	   	
     }
 
 	/**

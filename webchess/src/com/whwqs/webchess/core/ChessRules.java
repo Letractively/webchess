@@ -26,6 +26,7 @@ public class ChessRules implements Serializable {
 	
 	private Rule firstRule ;
 	private List<ChessEvent> eventsList ;
+	private List<ChessEvent> eventsListBak;
 	private String message = "";
 	private int holdNode = -1;
 	private int moveToNode = -1;
@@ -37,7 +38,7 @@ public class ChessRules implements Serializable {
 	
 	public List<ChessEvent> getEventsList()
 	{
-		return eventsList;
+		return eventsListBak;
 	}
 	
 	public Boolean getIsRedGoAhead() {
@@ -159,8 +160,8 @@ public class ChessRules implements Serializable {
 		isBlackWillKillKing=false;
 		isRedWillKillKing=false;
 		message = "";
-		moveToNode=-1;
 		firstRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
+		eventsListBak=eventsList;
 	}
 	
 	public Boolean getIsDogfall() {
@@ -258,11 +259,15 @@ public class ChessRules implements Serializable {
 			
 			String redKingPosition = GetTypePosition(ChessType.Ë§,0,3,2,5);
 			String blackKingPosition = GetTypePosition(ChessType.½«,7,3,9,5);
-			String[] arr = redKingPosition.split(",");
-			ev.setRedKingNode(Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]));
-			arr = blackKingPosition.split(",");
-			ev.setBlackKingNode(Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]));
-			
+			String[] arr;
+			if(!redKingPosition.isEmpty()){
+				arr = redKingPosition.split(",");
+				ev.setRedKingNode(Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]));
+			}
+			if(!blackKingPosition.isEmpty()){
+				arr = blackKingPosition.split(",");
+				ev.setBlackKingNode(Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]));
+			}			
 			eventsList.add(ev);
 			return ev;
 		}
@@ -762,7 +767,7 @@ public class ChessRules implements Serializable {
 					int i2Temp = Integer.parseInt(blackTemp[0]);
 					for(int i=i1Temp+1;i<i2Temp;i++)
 					{
-						if(chessBoard.getBoardData()[i][jTemp]!=ChessType.¿Õ)
+						if(chessBoard.getBoardData()[i][jTemp]!=ChessType.¿Õ&&i!=nodeClicked/9)
 						{
 							isKingFaceToFace = false;
 							break;
