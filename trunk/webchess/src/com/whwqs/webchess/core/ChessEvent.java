@@ -1,9 +1,10 @@
 package com.whwqs.webchess.core;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @SuppressWarnings("serial")
-public class ChessEvent extends  com.whwqs.util.EventBase {
+public class ChessEvent extends  com.whwqs.util.EventBase implements Serializable   {
 	public static final String CHECKRESULT_NEEDUPDATE = "CHECKRESULT_NEEDUPDATE";//需要更新棋盘先";
 	public static final String CHECKRESULT_NEEDWAITOPPONENT_RED = "CHECKRESULT_NEEDWAITOPPONENT_RED";//红方等待黑方中...";
 	public static final String CHECKRESULT_NEEDWAITOPPONENT_BLACK = "CHECKRESULT_NEEDWAITOPPONENT_BLACK";//黑方等待红方中...";

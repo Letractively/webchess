@@ -16,7 +16,8 @@ function ChessBoard(container){
 	this.msg = "";
 	this.from=-1;
 	this.to=-1;
-	this.success;
+	this.successMove=false;
+	this.successHold=false;
 	this.enable=true;
 	this.ajaxtype="";
 	this.click = -1;
@@ -27,7 +28,185 @@ function ChessBoard(container){
 }
 
 ChessBoard.prototype.HandleEventList = function(eventList){
-	
+	var self = this;
+	$.each(eventList,function(i,ev){
+		var eventName = ev.eventName;
+		self[eventName](ev);
+	});
+};
+
+ChessBoard.prototype.CHECKRESULT_NEEDUPDATE = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+};
+
+ChessBoard.prototype.CHECKRESULT_NEEDWAITOPPONENT_RED = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_NEEDWAITOPPONENT_BLACK = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_RED = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_BLACK = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){
+	this.msg.text(ev.message);
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_BLACK = function(ev){
+	this.msg.text(ev.message);
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_RED = function(ev){
+	this.msg.text(ev.message);
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_BLACK = function(ev){
+	this.msg.text(ev.message);
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_RED = function(ev){
+	this.msg.text(ev.message);
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_BLACK = function(ev){
+	this.msg.text(ev.message);
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=false;
+	this.successMove=true;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=false;
+	this.successMove=true;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_WIN_BLACK = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_DOGFALL = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_DENYPLAY_RED = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_DENYPLAY_BLACK = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_INIT_CHECK = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_UNDO_RED = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_UNDO_BLACK = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=true;
+	this.successMove=false;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_REDO_RED = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=false;
+	this.successMove=true;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_REDO_BLACK = function(ev){
+	this.msg.text(ev.message);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=false;
+	this.successMove=true;
+	this.SetSelectedNode();	
+};
+
+ChessBoard.prototype.CHECKRESULT_TOKILLKING_RED = function(ev){
+	this.msg.text(ev.message);
+};
+
+ChessBoard.prototype.CHECKRESULT_TOKILLKING_BLACK = function(ev){
+	this.msg.text(ev.message);
 };
 
 ChessBoard.prototype.SetBoardByData = function(){
@@ -69,13 +248,11 @@ ChessBoard.prototype.SetSelectedNode = function(){
 	this.container.find("img").each(function(){
 		$(this).css({border:"0px"});
 	});	
-	if(this.to!=-1){
+	if(this.successMove){
 		this.container.find("img[id='n"+this.to+"']").css({border:"1px solid red"});
 	}
-	else{
-		if(this.from!=-1){
-			this.container.find("img[id='n"+this.from+"']").css({border:"1px solid red"});
-		}
+	if(this.successHold){
+		this.container.find("img[id='n"+this.from+"']").css({border:"1px solid red"});
 	}
 };
 
@@ -92,69 +269,38 @@ ChessBoard.prototype.Ajax = function(){
 		cache:false,
 		url:config.webroot+"/HandleClickBoard",
 		data:(function(){
-			if(self.ajaxtype=="click"){
-				return {"type":"click",
-					"room":config.room,
-					"clickNode":self.click,
-					"isRed":config.type==1,
-					"data":self.data};
-			}
-			else if(self.ajaxtype=="timer"){
-				return {"type":"timer","room":config.room};
-			}
+			return {"type":self.ajaxtype,
+				"room":config.room,
+				"clickNode":self.click,
+				"isRed":config.type==1,
+				"data":self.data};
 		})(),
-		success:function(json){var s = json;
+		success:function(json){			
+			eval("var json="+json);		
+			self.HandleEventList(json.data);	
 			self.enable = true;
-			eval("var json="+json);
-			
-			if(json.type=="click"){alert(s);
-				var eventList = json.data;
-				$.each(eventList,function(i,ev){
-					self.msg.text(ev.message);
-					var play = (self.data!=ev.chessBoardData);
-					if(play){
-						self.SetBoardByData2(self.data,ev.chessBoardData);
-						self.data=ev.chessBoardData;						
-					}					
-					self.from = ev.fromNode;
-					self.to = ev.toNode;
-					self.SetSelectedNode();						
-				});				
-			}
-			else if(json.type=="timer"){
-				if(self.data!=json.data){
-					self.SetBoardByData2(self.data,json.data);
-					self.data=json.data;					
-				}
-				self.from = json.from;
-				self.to = json.to;
-				self.SetSelectedNode(json.from, json.to);				
-			}		
-			
 		},
 		error:function(ex){
 			self.enable = true;
 			self.msg.text("error and try again later!");
-			//alert("error:"+ex.responseText)
 		}		
-	})
-}
+	});
+};
 ChessBoard.prototype.setTimer = function(){
 	var self = this;
 	this.timer = setInterval(function(){
 		self.ajaxtype="timer";
 		self.Ajax();
 	},this.timespan);
-}
+};
 ChessBoard.prototype.HandleClick = function(id){
 	this.ajaxtype = "click";
 	this.click = id.replace("n","");
 	this.Ajax();
-}
+};
 ChessBoard.prototype.DrawBoard = function(){
 	var self = this;
 	this.container.empty();
-	var win = $(window);
 	this.container.css({position:"absolute",top:"50%",left:"50%"});
 	var bc = this.sideLength;
 	var space = this.qzspace;
@@ -165,7 +311,7 @@ ChessBoard.prototype.DrawBoard = function(){
      var  qpheight= (ysum + 1) * bc;
      var qpwidth = (xsum + 1) * bc;
      this.container.css({width:qpwidth+"px",height:qpheight+"px","margin-left":-1*qpwidth/2+"px","margin-top":-1*qpheight/2+"px"});
-     var r0 = (bc - space) / 2; //棋子半径 
+     
      var drawObj = new drawing(this.container[0], { antialias: true, fillcolor: this.bgcolor });// 作图对象
      
      if (config.type>0) {
@@ -241,7 +387,7 @@ ChessBoard.prototype.DrawBoard = function(){
          }).style.zIndex = 1;
      }     
  
-     var r0 = (bc - space) / 2;
+     var r0 = (bc - space) / 2;//棋子半径 
      
      for (var i = 0; i < xsum; i++) {
          for (var j = 0; j < ysum; j++) {     
@@ -263,13 +409,13 @@ ChessBoard.prototype.DrawBoard = function(){
             		 self.HandleClick($(this).attr("id"));
             	 }
             	 else{
-            		 self.msg.text("look and don't speak")
+            		 self.msg.text("look and don't speak");
             	 }
              }).appendTo(drawObj.el);
          }
      }  
      this.msg = $("<span style='position:absolute;z-index:2;'/>").text("hello");
     this.container.prepend(this.msg);
-}
+};
 
 
