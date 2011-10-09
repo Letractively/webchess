@@ -25,7 +25,103 @@ function ChessBoard(container){
 	this.timer = null;
 	this.gameover = false;
 	this.win = -1;
-}
+};
+
+ChessBoard.prototype.SetBoardByData = function(){
+	for(var i=0;i<this.data.length;i++){
+		var ch = this.data.substring(i,i+1);
+		var charCode = ch.charCodeAt(0);
+		var src = config.imgroot+"/";
+		if(charCode<91){
+			src+=ch.toLowerCase()+"1.png";
+		}
+		else{
+			src+=ch+".png";
+		}
+		
+		$("#n"+i).attr("src",src);
+	}
+};
+
+ChessBoard.prototype.SetBoardByData2 = function(data,newdata){
+	for(var i=0;i<data.length;i++){
+		var ch = data.substring(i,i+1);
+		var ch2 = newdata.substring(i,i+1);
+		if(ch!=ch2){
+			var charCode = ch2.charCodeAt(0);
+			var src = config.imgroot+"/";
+			if(charCode<91){
+				src+=ch2.toLowerCase()+"1.png";
+			}
+			else{
+				src+=ch2+".png";
+			}
+			
+			$("#n"+i).attr("src",src);
+		}
+	}
+};
+
+ChessBoard.prototype.Move = function(from,to)
+{
+	var fromImg = this.container.find("img[id='n"+from+"']");
+	this.container.find("img[id='n"+to+"']").css({border:"1px solid red"}).attr("src",fromImg.attr("src"));
+	fromImg.css({border:"0px"}).attr("src",config.imgroot+"/k.png");
+};
+ChessBoard.prototype.SetSelectedNode = function(){
+	this.container.find("img").each(function(){
+		$(this).css({border:"0px"});
+	});	
+	if(this.successMove){
+		this.container.find("img[id='n"+this.to+"']").css({border:"1px solid red"});
+	}
+	if(this.successHold){
+		this.container.find("img[id='n"+this.from+"']").css({border:"1px solid red"});
+	}
+};
+
+ChessBoard.prototype.Ajax = function(){
+	var self = this;
+	if(this.enable==false){
+		this.msg.text("please wait and try again later");
+		return;
+	}
+	this.enable = false;
+	
+	$.ajax({
+		type:"POST",
+		cache:false,
+		url:config.webroot+"/HandleClickBoard",
+		data:(function(){
+			return {"type":self.ajaxtype,
+				"room":config.room,
+				"clickNode":self.click,
+				"isRed":config.type==1,
+				"data":self.data};
+		})(),
+		success:function(json){			
+			eval("var json="+json);		
+			self.HandleEventList(json.data);	
+			self.enable = true;
+		},
+		error:function(ex){
+			self.enable = true;
+			self.msg.text("error and try again later!");
+		}		
+	});
+};
+ChessBoard.prototype.setTimer = function(){
+	var self = this;
+	this.timer = setInterval(function(){
+		self.ajaxtype="timer";
+		self.Ajax();
+	},this.timespan);
+};
+ChessBoard.prototype.HandleClick = function(id){
+	this.ajaxtype = "click";
+	this.click = id.replace("n","");
+	this.Ajax();
+};
 
 ChessBoard.prototype.HandleEventList = function(eventList){
 	var self = this;
@@ -209,95 +305,7 @@ ChessBoard.prototype.CHECKRESULT_TOKILLKING_BLACK = function(ev){
 	this.msg.text(ev.message);
 };
 
-ChessBoard.prototype.SetBoardByData = function(){
-	for(var i=0;i<this.data.length;i++){
-		var ch = this.data.substring(i,i+1);
-		var charCode = ch.charCodeAt(0);
-		var src = config.imgroot+"/";
-		if(charCode<91){
-			src+=ch.toLowerCase()+"1.png";
-		}
-		else{
-			src+=ch+".png";
-		}
-		
-		$("#n"+i).attr("src",src);
-	}
-};
 
-ChessBoard.prototype.SetBoardByData2 = function(data,newdata){
-	for(var i=0;i<data.length;i++){
-		var ch = data.substring(i,i+1);
-		var ch2 = newdata.substring(i,i+1);
-		if(ch!=ch2){
-			var charCode = ch2.charCodeAt(0);
-			var src = config.imgroot+"/";
-			if(charCode<91){
-				src+=ch2.toLowerCase()+"1.png";
-			}
-			else{
-				src+=ch2+".png";
-			}
-			
-			$("#n"+i).attr("src",src);
-		}
-	}
-};
-
-ChessBoard.prototype.SetSelectedNode = function(){
-	this.container.find("img").each(function(){
-		$(this).css({border:"0px"});
-	});	
-	if(this.successMove){
-		this.container.find("img[id='n"+this.to+"']").css({border:"1px solid red"});
-	}
-	if(this.successHold){
-		this.container.find("img[id='n"+this.from+"']").css({border:"1px solid red"});
-	}
-};
-
-ChessBoard.prototype.Ajax = function(){
-	var self = this;
-	if(this.enable==false){
-		this.msg.text("please wait and try again later");
-		return;
-	}
-	this.enable = false;
-	
-	$.ajax({
-		type:"POST",
-		cache:false,
-		url:config.webroot+"/HandleClickBoard",
-		data:(function(){
-			return {"type":self.ajaxtype,
-				"room":config.room,
-				"clickNode":self.click,
-				"isRed":config.type==1,
-				"data":self.data};
-		})(),
-		success:function(json){			
-			eval("var json="+json);		
-			self.HandleEventList(json.data);	
-			self.enable = true;
-		},
-		error:function(ex){
-			self.enable = true;
-			self.msg.text("error and try again later!");
-		}		
-	});
-};
-ChessBoard.prototype.setTimer = function(){
-	var self = this;
-	this.timer = setInterval(function(){
-		self.ajaxtype="timer";
-		self.Ajax();
-	},this.timespan);
-};
-ChessBoard.prototype.HandleClick = function(id){
-	this.ajaxtype = "click";
-	this.click = id.replace("n","");
-	this.Ajax();
-};
 ChessBoard.prototype.DrawBoard = function(){
 	var self = this;
 	this.container.empty();
