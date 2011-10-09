@@ -67,7 +67,24 @@ ChessBoard.prototype.Move = function(from,to)
 	var fromImg = this.container.find("img[id='n"+from+"']");
 	this.container.find("img[id='n"+to+"']").css({border:"1px solid red"}).attr("src",fromImg.attr("src"));
 	fromImg.css({border:"0px"}).attr("src",config.imgroot+"/k.png");
+	this.from = from;
+	this.to = to;
+	this.successHold=false;
+	this.successMove=true;
 };
+
+ChessBoard.prototype.Hold = function(from,to){
+	
+	if(this.from == from){return;}
+	this.container.find("img[id='n"+from+"']").css({border:"1px solid red"});
+	this.container.find("img[id='n"+this.from+"']").css({border:"0px"});
+	this.container.find("img[id='n"+this.to+"']").css({border:"0px"});
+	this.from = from;
+	this.to = to;
+	this.successHold=true;
+	this.successMove=false;
+};
+
 ChessBoard.prototype.SetSelectedNode = function(){
 	this.container.find("img").each(function(){
 		$(this).css({border:"0px"});
@@ -155,67 +172,37 @@ ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_BLACK = function(ev){
 
 ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){
 	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.Hold(ev.fromNode,ev.toNode);
 };
 
 ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_BLACK = function(ev){
 	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.Hold(ev.fromNode,ev.toNode);	
 };
 
 ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_RED = function(ev){
 	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.Hold(ev.fromNode,ev.toNode);
 };
 
 ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_BLACK = function(ev){
 	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.Hold(ev.fromNode,ev.toNode);
 };
 
 ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_RED = function(ev){
 	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.Hold(ev.fromNode,ev.toNode);
 };
 
 ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_BLACK = function(ev){
 	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.Hold(ev.fromNode,ev.toNode);
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
 	this.msg.text(ev.message);
-	this.SetBoardByData2(this.data,ev.chessBoardData);
-	this.data=ev.chessBoardData;	
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=false;
-	this.successMove=true;
-	this.SetSelectedNode();	
+	this.Move(ev.fromNode,ev.toNode);		
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
