@@ -203,6 +203,7 @@ ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
 
 ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){
 	this.msg.text(ev.message);
+	
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_BLACK = function(ev){

@@ -41,10 +41,14 @@ $(function(){
 	chessBoard.data = '<%=board.ToString()%>';
 	chessBoard.SetBoardByData();
 	chessBoard.setTimer();
-})
+	
+	$(".nyroModal").nm();
+	$.nmTop(); 
+});
 </script>
 </head>
-<body>
-<div id="qp"></div>
+<body >
+<div id="qp" ></div>
+<a href="demoSent.php" class="nyroModal" >Ajax</a>
 </body>
 </html>

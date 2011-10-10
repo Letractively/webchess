@@ -131,7 +131,6 @@ public class ChessBoardManager {
         }
     }
 
-	
 	public static void StoreChessBoard(String key) throws Exception{
 		String file = GetFileName(key);
 		java.io.File boardFile = new java.io.File(file);
