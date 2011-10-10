@@ -9,7 +9,10 @@ webRoot = request.getRequestURL().toString().replace(request.getServletPath(), "
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
 <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"> 
 <META HTTP-EQUIV="Expires" CONTENT="0"> 
-<script type="text/javascript" src="<%=webRoot%>/common/js/jquery-1.5.2.min.js"></script>
+<link rel="stylesheet" href="<%=webRoot%>/common/css/nyroModal.css" type="text/css" media="screen" />
+<script type="text/javascript" src="<%=webRoot%>/common/js/jquery-1.6.3.min.js"></script>
+<script type="text/javascript" src="<%=webRoot%>/common/js/jquery.spritely-0.6.js"></script>
+<script type="text/javascript" src="<%=webRoot%>/common/js/jquery.nyroModal.custom.js"></script>
 <script type="text/javascript" src="<%=webRoot%>/common/js/template.js"></script>
 <script type="text/javascript" src="<%=webRoot%>/common/js/drawing.js"></script>
 <script type="text/javascript">
