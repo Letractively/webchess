@@ -25,6 +25,15 @@ function ChessBoard(container){
 	this.timer = null;
 	this.gameover = false;
 	this.win = -1;
+	this.timerPause = false;
+};
+
+ChessBoard.prototype.PauseTimer = function(){
+	this.timerPause=true;
+};
+
+ChessBoard.prototype.ResetTimer = function(){
+	this.timerPause=false;
 };
 
 ChessBoard.prototype.SetBoardByData = function(){
@@ -117,20 +126,23 @@ ChessBoard.prototype.Ajax = function(){
 		})(),
 		success:function(json){			
 			eval("var json="+json);		
-			self.HandleEventList(json.data);	
-			self.enable = true;
+			self.HandleEventList(json.data);
 		},
 		error:function(ex){
-			self.enable = true;
 			self.msg.text("error and try again later!");
-		}		
+		},
+		complete:function(){
+			self.enable = true;
+		}
 	});
 };
 ChessBoard.prototype.setTimer = function(){
 	var self = this;
 	this.timer = setInterval(function(){
-		self.ajaxtype="timer";
-		self.Ajax();
+		if(!self.timerPause){
+			self.ajaxtype="timer";
+			self.Ajax();
+		}
 	},this.timespan);
 };
 ChessBoard.prototype.HandleClick = function(id){
