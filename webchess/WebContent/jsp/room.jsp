@@ -47,8 +47,8 @@ $(function(){
 });
 </script>
 </head>
-<body >
+<body style="height:800px">
 <div id="qp" ></div>
-<a href="demoSent.php" class="nyroModal" >Ajax</a>
+<a href="http://www.sohu.com" class="nyroModal" >Ajax</a>
 </body>
 </html>
