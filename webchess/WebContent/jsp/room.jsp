@@ -34,21 +34,22 @@ else
 config.room = <%=roomNumber %>;
 config.type = <%=manType %>;
 var chessBoard ;
-//
+function SetBoardData(data)
+{
+	chessBoard.data = data;
+	chessBoard.SetBoardByData();
+}
 $(function(){
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();
-	chessBoard.data = '<%=board.ToString()%>';
-	chessBoard.SetBoardByData();
+	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	
-	$(".nyroModal").nm();
-	$.nmTop(); 
+	$(".nyroModal").nm({type:'iframe'});
 });
 </script>
 </head>
-<body style="height:800px">
+<body>
 <div id="qp" ></div>
-<a href="http://www.sohu.com" class="nyroModal" >Ajax</a>
+<a href="game.jsp"  class="nyroModal" rev="modal">test</a>
 </body>
 </html>
