@@ -27,17 +27,7 @@ $(function(){
 			$(this).nm({
 				closeOnClick: true,
 				showCloseButton: true,
-				closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>',
-				sizes:{
-					initW: 800,	// Initial width
-				    initH: 800,	// Initial height
-				    w: 800,		// width
-				    h: 800,		// height
-				    minW: 800,	// minimum width
-				    minH: 800,	// minimum height
-				    wMargin: 0,	// Horizontal margin
-				    hMargin: 100	// Vertical margin
-				}
+				closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>'				
 			});
 		});
 	});

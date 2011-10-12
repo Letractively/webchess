@@ -44,10 +44,12 @@ $(function(){
 	chessBoard.DrawBoard();
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
+	parent.$(".nyroModalCont").width(800).height(800);
+	parent.$("iframe[id*='nyromodal-iframe-']").width(600).height(600);
 });
 </script>
 </head>
-<body>
+<body style="width:800px;height:800px;">
 <div id="qp" ></div>
 </body>
 </html>
