@@ -23,8 +23,24 @@ $(function(){
 	var d = {arrDesk:arrDesk};
 	var html = TrimPath.processDOMTemplate("model",d);
 	$("body").html(html);	
-	$(".nyroModal").nm({type:'iframe'});
-});
+		$(".nyroModal").each(function(){
+			$(this).nm({
+				closeOnClick: true,
+				showCloseButton: true,
+				closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>',
+				sizes:{
+					initW: 800,	// Initial width
+				    initH: 800,	// Initial height
+				    w: 800,		// width
+				    h: 800,		// height
+				    minW: 800,	// minimum width
+				    minH: 800,	// minimum height
+				    wMargin: 0,	// Horizontal margin
+				    hMargin: 100	// Vertical margin
+				}
+			});
+		});
+	});
 </script>
 </head>
 <body>
@@ -41,7 +57,7 @@ $(function(){
 	<br/>
 	<input type="radio"  name="qp\${e.number}" value="0" onclick=";fixHref(\${e.number});" />look
 	<br/>
-	<a rel="room" href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="room_\${e.number}" >enter</a>
+	<a rel="room" href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
 	</div>
 {/for}
 </textarea>
