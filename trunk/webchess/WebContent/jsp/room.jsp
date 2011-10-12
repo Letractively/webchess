@@ -44,12 +44,16 @@ $(function(){
 	chessBoard.DrawBoard();
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	$(".nyroModal").nm({type:'iframe'});
+	
+	$(".nyroModal").click(function(e){
+		e.preventDefault();
+		$(this).nm({type:'iframe',modal:true});
+	});//.nm({type:'iframe',modal:true});
 });
 </script>
 </head>
 <body>
 <div id="qp" ></div>
-<a href="game.jsp"  class="nyroModal" rev="modal">test</a>
+<a href="game.jsp"  class="nyroModal" >test</a>
 </body>
 </html>
