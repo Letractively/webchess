@@ -48,7 +48,7 @@ ChessBoard.prototype.SetBoardByData = function(){
 			src+=ch+".png";
 		}
 		
-		$("#n"+i).attr("src",src);
+		jQuery("#n"+i).attr("src",src);
 	}
 };
 
@@ -66,7 +66,7 @@ ChessBoard.prototype.SetBoardByData2 = function(data,newdata){
 				src+=ch2+".png";
 			}
 			
-			$("#n"+i).attr("src",src);
+			jQuery("#n"+i).attr("src",src);
 		}
 	}
 };
@@ -95,7 +95,7 @@ ChessBoard.prototype.Hold = function(ev){
 
 ChessBoard.prototype.SetSelectedNode = function(){
 	this.container.find("img").each(function(){
-		$(this).css({border:"0px"});
+		jQuery(this).css({border:"0px"});
 	});	
 	if(this.successMove){
 		this.container.find("img[id='n"+this.to+"']").css({border:"1px solid red"});
@@ -113,7 +113,7 @@ ChessBoard.prototype.Ajax = function(){
 	}
 	this.enable = false;
 	
-	$.ajax({
+	jQuery.ajax({
 		type:"POST",
 		cache:false,
 		url:config.webroot+"/HandleClickBoard",
@@ -153,7 +153,7 @@ ChessBoard.prototype.HandleClick = function(id){
 
 ChessBoard.prototype.HandleEventList = function(eventList){
 	var self = this;
-	$.each(eventList,function(i,ev){
+	jQuery.each(eventList,function(i,ev){
 		var eventName = ev.eventName;
 		self[eventName](ev);
 	});
@@ -384,7 +384,7 @@ ChessBoard.prototype.DrawBoard = function(){
      
      for (var i = 0; i < xsum; i++) {
          for (var j = 0; j < ysum; j++) {     
-             $("<img mytype='node' />").attr({src:config.imgroot + "/k.png",id:function(){
+             jQuery("<img mytype='node' />").attr({src:config.imgroot + "/k.png",id:function(){
             	 if(config.type==0){//红方在左边
             		 return "n"+ (8+i*9-j);
             	 }
@@ -399,7 +399,7 @@ ChessBoard.prototype.DrawBoard = function(){
                      left: bc + bc * i - r0 + "px", top: bc + bc * j - r0 + "px"
              }).click(function(){
             	 if(config.type>0){
-            		 self.HandleClick($(this).attr("id"));
+            		 self.HandleClick(jQuery(this).attr("id"));
             	 }
             	 else{
             		 self.msg.text("look and don't speak");
@@ -407,7 +407,7 @@ ChessBoard.prototype.DrawBoard = function(){
              }).appendTo(drawObj.el);
          }
      }  
-     this.msg = $("<span style='position:absolute;z-index:2;'/>").text("hello");
+     this.msg = jQuery("<span style='position:absolute;z-index:2;'/>").text("hello");
     this.container.prepend(this.msg);
 };
 
