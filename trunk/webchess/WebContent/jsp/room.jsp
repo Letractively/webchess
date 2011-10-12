@@ -33,7 +33,7 @@ else
 <script type="text/javascript">
 config.room = <%=roomNumber %>;
 config.type = <%=manType %>;
-var chessBoard ;
+var chessBoard = {};
 function SetBoardData(data)
 {
 	chessBoard.data = data;
@@ -44,11 +44,11 @@ $(function(){
 	chessBoard.DrawBoard();
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	
+	/*
 	$(".nyroModal").click(function(e){
 		e.preventDefault();
 		$(this).nm({type:'iframe',modal:true});
-	});//.nm({type:'iframe',modal:true});
+	});//.nm({type:'iframe',modal:true});*/
 });
 </script>
 </head>
