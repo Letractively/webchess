@@ -25,6 +25,21 @@ $(function(){
 	$("body").html(html);	
 		$(".nyroModal").each(function(){
 			$(this).nm({
+				titleFromIframe: true,
+				resizable: false,
+				autoSizable: true,
+				width:700,
+				height:620,
+				sizes:{
+					initW: 600,    // Initial width
+	                initH: 600,    // Initial height
+	                w: 600,        // width
+	                h: 600,        // height
+	                minW: 800,    // minimum Width这个会生效
+	                minH: 800,    // minimum height这个会生效
+	                wMargin: 1,    // Horizontal margin
+	                hMargin: 1// Vertical margin
+				},
 				closeOnClick: true,
 				showCloseButton: true,
 				closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>'				
