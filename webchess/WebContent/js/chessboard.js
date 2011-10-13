@@ -141,7 +141,9 @@ ChessBoard.prototype.setTimer = function(){
 	this.timer = setInterval(function(){
 		if(!self.timerPause){
 			self.ajaxtype="timer";
-			self.Ajax();
+			try{
+				self.Ajax();
+			}catch(ex){};
 		}
 	},this.timespan);
 };

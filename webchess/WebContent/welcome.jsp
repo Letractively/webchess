@@ -27,7 +27,7 @@ $(function(){
 			$(this).nm({
 				titleFromIframe: true,
 				resizable: false,
-				autoSizable: true,
+				autoSizable: false,
 				width:700,
 				height:620,
 				sizes:{
@@ -62,7 +62,7 @@ $(function(){
 	<br/>
 	<input type="radio"  name="qp\${e.number}" value="0" onclick=";fixHref(\${e.number});" />look
 	<br/>
-	<a rel="room" href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
+	<a rel="gal" href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
 	</div>
 {/for}
 </textarea>
