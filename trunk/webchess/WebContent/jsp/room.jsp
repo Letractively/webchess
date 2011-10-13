@@ -44,8 +44,8 @@ $(function(){
 	chessBoard.DrawBoard();
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	parent.$(".nyroModalCont").width(800).height(700);
-	parent.$("iframe[id*='nyromodal-iframe-']").width(600).height(600).css({left:"50%",top:"50%"});
+	parent.$("iframe[id*='nyromodal-iframe-']").width(600).height(600).parent()
+	.css({left:"50%",top:"50%","margin":"-300px -300px"});
 });
 </script>
 </head>
