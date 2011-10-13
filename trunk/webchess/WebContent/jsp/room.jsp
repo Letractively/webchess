@@ -44,12 +44,23 @@ $(function(){
 	chessBoard.DrawBoard();
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	parent.$("iframe[id*='nyromodal-iframe-']").width(600).height(600).parent()
-	.css({left:"50%",top:"50%","margin":"-300px -300px"});
+	
+	var qpW = 500;
+	var qpH = 550;
+	if(config.type==0){
+		qpW=550;
+		qpH=500;
+	}
+	
+	parent.$("iframe[id*='nyromodal-iframe-']")
+	.width(qpW).height(qpH)
+	.css({left:"50%",top:"50%","margin-left":"-"+qpW/2+"px","margin-top":"-"+qpH/2+"px",position:"absolute"})
+	.parent().width(600).height(600)
+	.css({left:"50%",top:"50%","margin-left":"-300px","margin-top":"-300px",position:"absolute"});
 });
 </script>
 </head>
-<body style="width:800px;height:800px;">
+<body>
 <div id="qp" ></div>
 </body>
 </html>
