@@ -44,7 +44,9 @@ $(function(){
 	chessBoard.DrawBoard();	
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	$("#funcList").appendTo(chessBoard.container);
+	$("#funcList").appendTo(chessBoard.container);	
+	chessBoard.roomNum=$("#roomnum").text("room: "+config.room+" ").prependTo(chessBoard.container).end();
+	chessBoard.msg = $("#msg").prependTo(chessBoard.container).end();
 	var qpW = 500;
 	var qpH = 550;
 	if(config.type==0){
@@ -62,17 +64,20 @@ $(function(){
 	$("#preRoom").click(function(e){
 		e.preventDefault();
 		var room = (curDesk+deskCount-1)%deskCount;
+		if(room==0)room=deskCount;
 		parent.$("#room_"+room).click();
 	});
 	$("#nextRoom").click(function(e){
 		e.preventDefault();
 		var room = (curDesk+1)%deskCount;
+		if(room==0)room=deskCount;
 		parent.$("#room_"+room).click();
 	});
 	$("#changeSeat").click(function(e){
 		e.preventDefault();
 		var type = (curType+1)%3;
-		alert(parent.$("#qp"+curDesk+""+type).attr("id"));
+		parent.$("#qp"+curDesk+""+type).attr("checked",true);
+		parent.fixHref(curDesk);
 		parent.$("#room_"+curDesk).click();
 	});
 	
@@ -86,6 +91,8 @@ $(function(){
 </head>
 <body>
 <div id="qp" style="position:relative;"></div>
+<div id="msg" style="position:absolute;top:5px;left:10px;"></div>
+<div id="roomnum" style="position:absolute;top:5px;right:10px;"></div>
 <div id="funcList" style="position:absolute;bottom:5px;left:10px;">
 	&nbsp;<a href="#" id="preRoom">preRoom</a>
 	&nbsp;<a href="#" id="changeSeat">changeSeat</a>

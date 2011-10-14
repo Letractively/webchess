@@ -14,6 +14,7 @@ function ChessBoard(container){
 	this.strokecolor = "#000";
 	this.data = "";
 	this.msg = "";
+	this.roomNum="";
 	this.from=-1;
 	this.to=-1;
 	this.successMove=false;
@@ -413,8 +414,6 @@ ChessBoard.prototype.DrawBoard = function(){
              }).appendTo(drawObj.el);
          }
      }  
-     this.msg = jQuery("<span style='position:absolute;z-index:2;'/>").text("hello");
-    this.container.prepend(this.msg);
 };
 
 
