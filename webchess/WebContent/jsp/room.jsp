@@ -41,16 +41,40 @@ function SetBoardData(data)
 }
 $(function(){
 	chessBoard = new ChessBoard($("#qp"));
-	chessBoard.DrawBoard();
+	chessBoard.DrawBoard();	
 	SetBoardData( '<%=board.ToString()%>');
 	chessBoard.setTimer();
-	
+	$("#funcList").appendTo(chessBoard.container);
 	var qpW = 500;
 	var qpH = 550;
 	if(config.type==0){
 		qpW=550;
 		qpH=500;
 	}
+	
+	$(window).unload(function(){
+		chessBoard.KillTimer();
+	});
+	
+	var deskCount = parent.deskCount;
+	var curDesk = config.room;
+	var curType = config.type;
+	$("#preRoom").click(function(e){
+		e.preventDefault();
+		var room = (curDesk+deskCount-1)%deskCount;
+		parent.$("#room_"+room).click();
+	});
+	$("#nextRoom").click(function(e){
+		e.preventDefault();
+		var room = (curDesk+1)%deskCount;
+		parent.$("#room_"+room).click();
+	});
+	$("#changeSeat").click(function(e){
+		e.preventDefault();
+		var type = (curType+1)%3;
+		alert(parent.$("#qp"+curDesk+""+type).attr("id"));
+		parent.$("#room_"+curDesk).click();
+	});
 	
 	parent.$("iframe[id*='nyromodal-iframe-']")
 	.width(qpW).height(qpH)
@@ -61,6 +85,11 @@ $(function(){
 </script>
 </head>
 <body>
-<div id="qp" ></div>
+<div id="qp" style="position:relative;"></div>
+<div id="funcList" style="position:absolute;bottom:5px;left:10px;">
+	&nbsp;<a href="#" id="preRoom">preRoom</a>
+	&nbsp;<a href="#" id="changeSeat">changeSeat</a>
+	&nbsp;<a href="#" id="nextRoom">nextRoom</a>
+</div>
 </body>
 </html>
