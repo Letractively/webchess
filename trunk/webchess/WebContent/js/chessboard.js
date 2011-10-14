@@ -28,6 +28,10 @@ function ChessBoard(container){
 	this.timerPause = false;
 };
 
+ChessBoard.prototype.KillTimer = function(){
+	window.clearInterval(this.timer);
+};
+
 ChessBoard.prototype.PauseTimer = function(){
 	this.timerPause=true;
 };

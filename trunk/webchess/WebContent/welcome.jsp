@@ -56,13 +56,13 @@ $(function(){
 	<div style="border:1px solid blue;width:80px;float:left;margin:0 0 10px 10px;">
 	room:\${e.number}
 	<br/>
-	<input type="radio"  name="qp\${e.number}" value="1" checked onclick=";fixHref(\${e.number});" />red
+	<input type="radio" id="qp\${e.number}1"  name="qp\${e.number}" value="1" checked onmousedown=";fixHref(\${e.number});" />red
 	<br/>
-	<input type="radio"  name="qp\${e.number}" value="2" onclick=";fixHref(\${e.number});" />black
+	<input type="radio" id="qp\${e.number}2" name="qp\${e.number}" value="2" onmousedown=";fixHref(\${e.number});" />black
 	<br/>
-	<input type="radio"  name="qp\${e.number}" value="0" onclick=";fixHref(\${e.number});" />look
+	<input type="radio" id="qp\${e.number}0" name="qp\${e.number}" value="0" onmousedown=";fixHref(\${e.number});" />look
 	<br/>
-	<a rel="gal" href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
+	<a href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
 	</div>
 {/for}
 </textarea>
