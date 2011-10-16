@@ -10,8 +10,8 @@ function ChessBoard(container){
 	
 	this.sideLength = 50;
 	this.qzspace = 6;
-	this.bgcolor = "rgb(201,199,224)";
-	this.strokecolor = "#000";
+	this.bgcolor = config.qpColor;
+	this.strokecolor = config.qpLineColor;
 	this.data = "";
 	this.msg = "";
 	this.roomNum="";
@@ -27,6 +27,10 @@ function ChessBoard(container){
 	this.gameover = false;
 	this.win = -1;
 	this.timerPause = false;
+};
+
+ChessBoard.prototype.HandleGameOver = function(){
+	
 };
 
 ChessBoard.prototype.KillTimer = function(){
