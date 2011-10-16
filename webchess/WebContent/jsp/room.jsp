@@ -33,6 +33,9 @@ else
 <script type="text/javascript">
 config.roomNum = <%=roomNumber %>;
 config.seatType = <%=manType %>;
+config.qpBackgroundColor = "rgb(100,200,200)";
+config.qpLineColor = "#003663";
+config.qpColor = "rgb(201,199,224)";
 var deskCount = parent.deskCount;
 var chessBoard = {};
 
@@ -103,20 +106,28 @@ $(function(){
 	
 	SetIframe();
 	
-	$("#funcList").appendTo(nyroIframe_grandfather);	
+	$("#funcList1").appendTo(nyroIframe_grandfather);	
+	$("#funcList2").appendTo(nyroIframe_grandfather);	
 	chessBoard.roomNum=$("#roomnum").text("room: "+config.roomNum+" ").prependTo(nyroIframe_grandfather).end();
 	chessBoard.msg = $("#msg").prependTo(nyroIframe_grandfather).end();
+	
+	nyroIframe_grandfather.css({"background-color":config.qpBackgroundColor});
 });
 </script>
 </head>
 <body>
 <div id="qp" style="position:relative;"></div>
-<div id="msg" style="position:absolute;top:5px;left:10px;"></div>
-<div id="roomnum" style="position:absolute;top:5px;right:10px;"></div>
-<div id="funcList" style="position:absolute;bottom:5px;left:10px;">
+<div id="msg" style="position:absolute;bottom:5px;left:10px;font-size:large;"></div>
+<div id="roomnum" style="position:absolute;bottom:5px;right:10px;font-size:large;"></div>
+<div id="funcList1" style="position:absolute;top:5px;left:10px;font-size:large;">
 	&nbsp;<a href="#" id="preRoom">preRoom</a>
-	&nbsp;<a href="#" id="changeSeat">changeSeat</a>
 	&nbsp;<a href="#" id="nextRoom">nextRoom</a>
+</div>
+<div id="funcList2" style="position:absolute;top:5px;right:10px;font-size:large;">
+	<a href="#" id="changeSeat">changeSeat</a>&nbsp;
+</div>
+<div style="display:none">
+	<a href="demoSent.php" id="handleGameOver" rev="modal">handle win</a>
 </div>
 </body>
 </html>
