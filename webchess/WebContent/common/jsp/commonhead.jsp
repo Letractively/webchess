@@ -16,9 +16,9 @@ webRoot = request.getRequestURL().toString().replace(request.getServletPath(), "
 <script type="text/javascript" src="<%=webRoot%>/common/js/jquery.nyroModal-ie6.min.js"></script>
 <script type="text/javascript" src="<%=webRoot%>/common/js/template.js"></script>
 <script type="text/javascript" src="<%=webRoot%>/common/js/drawing.js"></script>
+<script type="text/javascript" src="<%=webRoot%>/common/js/config.js"></script>
 <script type="text/javascript">
 <!--
-window.config = {};
 config.webroot = "<%=webRoot%>";
 config.imgroot = "<%=webRoot%>"+"/images";
 //-->

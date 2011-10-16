@@ -101,11 +101,11 @@ ChessBoard.prototype.Hold = function(ev){
 ChessBoard.prototype.SetSelectedNode = function(){
 	this.container.find("img").each(function(){
 		jQuery(this).css({border:"0px"});
-	});	
-	if(this.successMove){
+	});
+	if(this.successMove==true){
 		this.container.find("img[id='n"+this.to+"']").css({border:"1px solid red"});
 	}
-	if(this.successHold){
+	if(this.successHold==true){
 		this.container.find("img[id='n"+this.from+"']").css({border:"1px solid red"});
 	}
 };
@@ -124,13 +124,18 @@ ChessBoard.prototype.Ajax = function(){
 		url:config.webroot+"/HandleClickBoard",
 		data:(function(){
 			return {"type":self.ajaxtype,
-				"room":config.room,
+				"room":config.roomNum,
 				"clickNode":self.click,
-				"isRed":config.type==1,
+				"isRed":config.seatType==1,
 				"data":self.data};
 		})(),
 		success:function(json){			
-			eval("var json="+json);		
+			eval("var json="+json);
+			if(self.ajaxtype=="changeroom"){
+				self.container.empty();
+				self.DrawBoard();
+				self.AfterChangeRoom();
+			}
 			self.HandleEventList(json.data);
 		},
 		error:function(ex){
@@ -157,7 +162,12 @@ ChessBoard.prototype.HandleClick = function(id){
 	this.click = id.replace("n","");
 	this.Ajax();
 };
-
+ChessBoard.prototype.ChangeRoom = function(){
+	this.data = "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk";
+	this.ajaxtype="changeroom";
+	this.Ajax();
+};
+ChessBoard.prototype.AfterChangeRoom = function(){};
 ChessBoard.prototype.HandleEventList = function(eventList){
 	var self = this;
 	jQuery.each(eventList,function(i,ev){
@@ -167,25 +177,34 @@ ChessBoard.prototype.HandleEventList = function(eventList){
 };
 
 ChessBoard.prototype.CHECKRESULT_NEEDUPDATE = function(ev){
-	this.msg.text(ev.message);
+	this.msg.text(ev.message);	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
+	this.from = ev.fromNode;
+	this.to = ev.toNode;
+	this.successHold=ev.isSuccessHold;
+	this.successMove=ev.isSuccessMove;
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_NEEDWAITOPPONENT_RED = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_NEEDWAITOPPONENT_BLACK = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_RED = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_BLACK = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){
@@ -222,7 +241,7 @@ ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
 
 ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){
 	this.msg.text(ev.message);
-	
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_BLACK = function(ev){
@@ -231,18 +250,22 @@ ChessBoard.prototype.CHECKRESULT_WIN_BLACK = function(ev){
 
 ChessBoard.prototype.CHECKRESULT_DOGFALL = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_DENYPLAY_RED = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_DENYPLAY_BLACK = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_INIT_CHECK = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_UNDO_RED = function(ev){
@@ -291,10 +314,12 @@ ChessBoard.prototype.CHECKRESULT_REDO_BLACK = function(ev){
 
 ChessBoard.prototype.CHECKRESULT_TOKILLKING_RED = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 ChessBoard.prototype.CHECKRESULT_TOKILLKING_BLACK = function(ev){
 	this.msg.text(ev.message);
+	this.SetSelectedNode();
 };
 
 
@@ -305,7 +330,7 @@ ChessBoard.prototype.DrawBoard = function(){
 	var bc = this.sideLength;
 	var space = this.qzspace;
     
-     var xsum = (config.type==0) ? 10 : 9;
+     var xsum = (config.seatType==0) ? 10 : 9;
     
      var ysum = 19 - xsum;
      var  qpheight= (ysum + 1) * bc;
@@ -314,7 +339,7 @@ ChessBoard.prototype.DrawBoard = function(){
      
      var drawObj = new drawing(this.container[0], { antialias: true, fillcolor: this.bgcolor });// 作图对象
      
-     if (config.type>0) {
+     if (config.seatType>0) {
          for (var x = 0; x < 10; x++) {
              drawObj.line(drawObj.drawing, {
                  x1: bc + "px", y1: bc + x * bc + "px", x2: 9 * bc + "px", y2: bc + x * bc + "px",
@@ -392,10 +417,10 @@ ChessBoard.prototype.DrawBoard = function(){
      for (var i = 0; i < xsum; i++) {
          for (var j = 0; j < ysum; j++) {     
              jQuery("<img mytype='node' />").attr({src:config.imgroot + "/k.png",id:function(){
-            	 if(config.type==0){//红方在左边
+            	 if(config.seatType==0){//红方在左边
             		 return "n"+ (8+i*9-j);
             	 }
-            	 else if(config.type==1){//红方在下边
+            	 else if(config.seatType==1){//红方在下边
             		 return "n"+(89-i-j*9);
             	 }
             	 else{//红方在上边
@@ -405,7 +430,7 @@ ChessBoard.prototype.DrawBoard = function(){
              .css({position:"absolute",width:2*r0+"px",height:2*r0+"px",zIndex:2,
                      left: bc + bc * i - r0 + "px", top: bc + bc * j - r0 + "px"
              }).click(function(){
-            	 if(config.type>0){
+            	 if(config.seatType>0){
             		 self.HandleClick(jQuery(this).attr("id"));
             	 }
             	 else{

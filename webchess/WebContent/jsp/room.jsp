@@ -31,61 +31,81 @@ else
 <title>desk<%=roomNumber %>_<%=typeString[Integer.valueOf(manType)] %></title>
 <script type="text/javascript" src="../js/chessboard.js"></script>
 <script type="text/javascript">
-config.room = <%=roomNumber %>;
-config.type = <%=manType %>;
+config.roomNum = <%=roomNumber %>;
+config.seatType = <%=manType %>;
+var deskCount = parent.deskCount;
 var chessBoard = {};
-function SetBoardData(data)
-{
-	chessBoard.data = data;
-	chessBoard.SetBoardByData();
-}
-$(function(){
+
+$(function(){	
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();	
-	SetBoardData( '<%=board.ToString()%>');
+	chessBoard.data = '<%=board.ToString()%>';
+	chessBoard.SetBoardByData();
 	chessBoard.setTimer();
-	$("#funcList").appendTo(chessBoard.container);	
-	chessBoard.roomNum=$("#roomnum").text("room: "+config.room+" ").prependTo(chessBoard.container).end();
-	chessBoard.msg = $("#msg").prependTo(chessBoard.container).end();
-	var qpW = 500;
-	var qpH = 550;
-	if(config.type==0){
-		qpW=550;
-		qpH=500;
-	}
 	
 	$(window).unload(function(){
 		chessBoard.KillTimer();
-	});
+	});	
 	
-	var deskCount = parent.deskCount;
-	var curDesk = config.room;
-	var curType = config.type;
 	$("#preRoom").click(function(e){
 		e.preventDefault();
-		var room = (curDesk+deskCount-1)%deskCount;
+		var room = (config.roomNum+deskCount-1)%deskCount;
 		if(room==0)room=deskCount;
-		parent.$("#room_"+room).click();
+		config.roomNum =room;
+		config.seatType = parent.getSeatType(config.roomNum);
+		chessBoard.AfterChangeRoom = function(){
+			SetIframe();
+			chessBoard.roomNum.text("room: "+config.roomNum+" ");
+		};
+		chessBoard.ChangeRoom();
 	});
 	$("#nextRoom").click(function(e){
 		e.preventDefault();
-		var room = (curDesk+1)%deskCount;
+		var room = (config.roomNum+1)%deskCount;
 		if(room==0)room=deskCount;
-		parent.$("#room_"+room).click();
+		config.roomNum =room;
+		config.seatType = parent.getSeatType(config.roomNum);
+		chessBoard.AfterChangeRoom = function(){
+			SetIframe();
+			chessBoard.roomNum.text("room: "+config.roomNum+" ");
+		};
+		chessBoard.ChangeRoom();
 	});
 	$("#changeSeat").click(function(e){
 		e.preventDefault();
-		var type = (curType+1)%3;
-		parent.$("#qp"+curDesk+""+type).attr("checked",true);
-		parent.fixHref(curDesk);
-		parent.$("#room_"+curDesk).click();
+		config.seatType = (config.seatType+1)%3;
+		chessBoard.AfterChangeRoom = function(){
+			parent.$("#qp"+config.roomNum+""+config.seatType).attr("checked",true);
+			parent.fixHref(config.roomNum,config.seatType);
+			SetIframe();
+		};
+		chessBoard.ChangeRoom();
 	});
 	
-	parent.$("iframe[id*='nyromodal-iframe-']")
-	.width(qpW).height(qpH)
-	.css({left:"50%",top:"50%","margin-left":"-"+qpW/2+"px","margin-top":"-"+qpH/2+"px",position:"absolute"})
-	.parent().width(600).height(600)
-	.css({left:"50%",top:"50%","margin-left":"-300px","margin-top":"-300px",position:"absolute"});
+	var nyroIframe = parent.$("iframe[id*='nyromodal-iframe-']");
+	var nyroIframe_father = nyroIframe.parent();
+	var nyroIframe_grandfather = nyroIframe.parent().parent();
+	
+	function SetIframe(){
+		var qpW = 500;
+		var qpH = 550;
+		if(config.seatType==0){
+			qpW=550;
+			qpH=500;
+		}
+		
+		nyroIframe.width(qpW).height(qpH)
+		.css({left:"50%",top:"50%","margin-left":"-"+qpW/2+"px","margin-top":"-"+qpH/2+"px",position:"absolute"});
+		
+		nyroIframe_father.width(600).height(600)
+		.css({left:"50%",top:"50%","margin-left":"-300px","margin-top":"-300px",position:"absolute"});
+	}
+	
+	SetIframe();
+	
+	$("#funcList").appendTo(nyroIframe_grandfather);	
+	chessBoard.roomNum=$("#roomnum").text("room: "+config.roomNum+" ").prependTo(nyroIframe_grandfather).end();
+	chessBoard.msg = $("#msg").prependTo(nyroIframe_grandfather).end();
 });
 </script>
 </head>
