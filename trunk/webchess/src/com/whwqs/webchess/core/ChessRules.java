@@ -152,14 +152,6 @@ public class ChessRules implements Serializable {
 	}
 
 	public void AcceptClicked(int nodeClicked,Boolean isRedClicked,String clickManCurrentBoard){
-		isSuccessMove = false;
-		isSuccessHold = false;
-		isRedWin = false;
-		isBlackWin = false;
-		isDogfall=false;
-		isBlackWillKillKing=false;
-		isRedWillKillKing=false;
-		message = "";
 		firstRule.Apply(nodeClicked, isRedClicked, clickManCurrentBoard);
 		eventsListBak=eventsList;
 	}
@@ -747,11 +739,15 @@ public class ChessRules implements Serializable {
 				String clickManCurrentBoard) {
 			if(GetNodeType(moveToNode)==ChessType.Ë§)
 			{
-				isBlackWin = true;				
+				isRedWin = false;	
+				isBlackWin = true;
+				isDogfall = false;				
 			}
 			else if(GetNodeType(moveToNode)==ChessType.½«)
 			{
-				isRedWin = true;				
+				isRedWin = true;	
+				isBlackWin = false;
+				isDogfall = false;
 			}
 			else
 			{
@@ -777,11 +773,15 @@ public class ChessRules implements Serializable {
 					{
 						if(isRedClicked)
 						{
-							isBlackWin = true;	
+							isRedWin = false;	
+							isBlackWin = true;
+							isDogfall = false;
 						}
 						else
 						{
-							isRedWin = true;
+							isRedWin = true;	
+							isBlackWin = false;
+							isDogfall = false;
 						}
 					}
 				}
