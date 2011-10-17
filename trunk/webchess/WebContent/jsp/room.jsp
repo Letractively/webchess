@@ -89,6 +89,7 @@ $(function(){
 	var nyroIframe_father = nyroIframe.parent();
 	var nyroIframe_grandfather = nyroIframe.parent().parent();
 	
+	
 	function SetIframe(){
 		var qpW = 500;
 		var qpH = 550;
@@ -112,6 +113,11 @@ $(function(){
 	chessBoard.msg = $("#msg").prependTo(nyroIframe_grandfather).end();
 	
 	nyroIframe_grandfather.css({"background-color":config.qpBackgroundColor});
+	
+	chessBoard.HandleGameOver = function(){
+		
+	};
+	
 });
 </script>
 </head>
@@ -125,9 +131,6 @@ $(function(){
 </div>
 <div id="funcList2" style="position:absolute;top:5px;right:10px;font-size:large;">
 	<a href="#" id="changeSeat">changeSeat</a>&nbsp;
-</div>
-<div style="display:none">
-	<a href="demoSent.php" id="handleGameOver" rev="modal">handle win</a>
 </div>
 </body>
 </html>

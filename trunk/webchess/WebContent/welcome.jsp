@@ -16,6 +16,12 @@ function desk(num)
 function getSeatType(num){
 	return $(":radio:checked[name=qp"+num+"]").val();
 }
+function enterRoom(num){
+	$("#room_"+num).click();
+}
+function gameoverHandle(num,msg){
+	
+}
 var deskCount = 20;
 $(function(){
 	var arrDesk = [];
@@ -24,35 +30,36 @@ $(function(){
 	}
 	var d = {arrDesk:arrDesk};
 	var html = TrimPath.processDOMTemplate("model",d);
-	$("body").html(html);	
-		$(".nyroModal").each(function(){
-			$(this).nm({
-				titleFromIframe: true,
-				resizable: false,
-				autoSizable: false,
-				width:700,
-				height:620,
-				sizes:{
-					initW: 600,    // Initial width
-	                initH: 600,    // Initial height
-	                w: 600,        // width
-	                h: 600,        // height
-	                minW: 800,    // minimum Width这个会生效
-	                minH: 800,    // minimum height这个会生效
-	                wMargin: 1,    // Horizontal margin
-	                hMargin: 1// Vertical margin
-				},
-				closeOnClick: true,
-				showCloseButton: true,
-				closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>'				
-			});
+	$("#rooms").html(html);	
+	$(".nyroModal").each(function(){
+		$(this).nm({
+			titleFromIframe: true,
+			resizable: false,
+			autoSizable: false,
+			width:700,
+			height:620,
+			sizes:{
+				initW: 600,    // Initial width
+                initH: 600,    // Initial height
+                w: 600,        // width
+                h: 600,        // height
+                minW: 800,    // minimum Width这个会生效
+                minH: 800,    // minimum height这个会生效
+                wMargin: 1,    // Horizontal margin
+                hMargin: 1// Vertical margin
+			},
+			closeOnClick: true,
+			showCloseButton: true,
+			closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>'				
 		});
 	});
+	$("#handleGameOver").nm({modal:true});
+});
 </script>
 </head>
 <body>
-
-</body>
+<div id="rooms">
+</div>
 <textarea id="model" style="display:none">
 {for e in arrDesk}
 	<div style="border:1px solid blue;width:80px;float:left;margin:0 0 10px 10px;">
@@ -68,4 +75,6 @@ $(function(){
 	</div>
 {/for}
 </textarea>
+<a href="jsp/game.jsp" id="handleGameOver" rev="modal" target="_blank" style="display:none;" ></a>
+</body>
 </html>

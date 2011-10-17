@@ -32,7 +32,7 @@ $(function(){
 			},
 			complete:function(xhr,status){
 				ajaxing =false;
-				$.nmTop().close();
+				top.enterRoom(10);
 			}
 		});
 	}
