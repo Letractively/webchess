@@ -6,23 +6,28 @@
 <jsp:include page="common/jsp/commonhead.jsp"></jsp:include>
 <title>Welcome to web chess</title>
 <script>
+var message = "";
+var deskCount = 20;
 function fixHref(num,type){
 	$("#room_"+num).attr("href",config.webroot+"/HandleSelectBoard?room="+num+"&type="+type);
-}
+};
 function desk(num)
 {
 	this.number = num;
-}
+};
 function getSeatType(num){
 	return $(":radio:checked[name=qp"+num+"]").val();
-}
+};
 function enterRoom(num){
+	$.nmTop().close();
 	$("#room_"+num).click();
-}
+};
 function gameoverHandle(num,msg){
-	
-}
-var deskCount = 20;
+	$.nmTop().close();
+	message=msg;
+	$("#handleGameOver").attr("href","jsp/game.jsp?room="+num).click();
+};
+
 $(function(){
 	var arrDesk = [];
 	for(var i=1;i<=deskCount;i++){
@@ -75,6 +80,6 @@ $(function(){
 	</div>
 {/for}
 </textarea>
-<a href="jsp/game.jsp" id="handleGameOver" rev="modal" target="_blank" style="display:none;" ></a>
+<a href="jsp/game.jsp" id="handleGameOver" rev="modal" target="_blank" style="display:none;" >game over</a>
 </body>
 </html>
