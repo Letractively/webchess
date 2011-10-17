@@ -179,36 +179,34 @@ ChessBoard.prototype.HandleEventList = function(eventList){
 		self[eventName](ev);
 	});
 };
-
-ChessBoard.prototype.CHECKRESULT_NEEDUPDATE = function(ev){
+ChessBoard.prototype.EventCommonHandle = function(ev){
 	this.msg.text(ev.message);	
-	this.SetBoardByData2(this.data,ev.chessBoardData);
-	this.data=ev.chessBoardData;	
 	this.from = ev.fromNode;
 	this.to = ev.toNode;
 	this.successHold=ev.isSuccessHold;
 	this.successMove=ev.isSuccessMove;
 	this.SetSelectedNode();
 };
+ChessBoard.prototype.CHECKRESULT_NEEDUPDATE = function(ev){	
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;	
+	this.EventCommonHandle(ev);
+};
 
 ChessBoard.prototype.CHECKRESULT_NEEDWAITOPPONENT_RED = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_NEEDWAITOPPONENT_BLACK = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_RED = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_BLACK = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){
@@ -256,18 +254,15 @@ ChessBoard.prototype.CHECKRESULT_DOGFALL = function(ev){
 };
 
 ChessBoard.prototype.CHECKRESULT_DENYPLAY_RED = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_DENYPLAY_BLACK = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_INIT_CHECK = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_UNDO_RED = function(ev){
@@ -315,13 +310,11 @@ ChessBoard.prototype.CHECKRESULT_REDO_BLACK = function(ev){
 };
 
 ChessBoard.prototype.CHECKRESULT_TOKILLKING_RED = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_TOKILLKING_BLACK = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.EventCommonHandle(ev);
 };
 
 
