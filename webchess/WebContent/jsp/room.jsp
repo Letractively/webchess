@@ -115,9 +115,12 @@ $(function(){
 	nyroIframe_grandfather.css({"background-color":config.qpBackgroundColor});
 	
 	chessBoard.HandleGameOver = function(){
-		
+		var msg = chessBoard.msg.text();
+		var num = config.roomNum;
+		setTimeout(function(){
+			top.gameoverHandle(num,msg);
+		},1);		
 	};
-	
 });
 </script>
 </head>

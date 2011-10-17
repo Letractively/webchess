@@ -244,17 +244,15 @@ ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.HandleGameOver();
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_BLACK = function(ev){
-	this.msg.text(ev.message);
+	this.HandleGameOver();
 };
 
 ChessBoard.prototype.CHECKRESULT_DOGFALL = function(ev){
-	this.msg.text(ev.message);
-	this.SetSelectedNode();
+	this.HandleGameOver();
 };
 
 ChessBoard.prototype.CHECKRESULT_DENYPLAY_RED = function(ev){

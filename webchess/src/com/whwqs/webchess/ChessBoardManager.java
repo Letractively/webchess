@@ -140,4 +140,13 @@ public class ChessBoardManager {
 			forTransfer(boardFile,storeFile);
 		}
 	}
+	
+	public static void DeleteChessBoard(String key){
+		String file = GetFileName(key);
+		java.io.File boardFile = new java.io.File(file);
+		synchronized(LockManager.GetLock(key))
+		{
+			boardFile.delete();
+		}
+	}
 }
