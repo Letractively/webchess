@@ -339,6 +339,7 @@ public class ChessBoard implements IPublisher,Serializable {
 			ev.setChessBoardData(ToString());
 			ev.setIsSuccessHold(true);
 			ev.setIsSuccessMove(false);
+			GetEventList().add(ev);
 			Notify(evtName,ev);
 		}
 	}
@@ -361,6 +362,7 @@ public class ChessBoard implements IPublisher,Serializable {
 			ev.setChessBoardData(ToString());
 			ev.setIsSuccessHold(false);
 			ev.setIsSuccessMove(true);
+			GetEventList().add(ev);
 			Notify(evtName,ev);
 		}
 	}
