@@ -84,6 +84,14 @@ $(function(){
 		};
 		chessBoard.ChangeRoom();
 	});
+	$("#undo").click(function(e){
+		e.preventDefault();
+		chessBoard.Undo();
+	});
+	$("#redo").click(function(e){
+		e.preventDefault();
+		chessBoard.Redo();
+	});
 	
 	var nyroIframe = parent.$("iframe[id*='nyromodal-iframe-']");
 	var nyroIframe_father = nyroIframe.parent();
@@ -134,6 +142,8 @@ $(function(){
 </div>
 <div id="funcList2" style="position:absolute;top:5px;right:10px;font-size:large;">
 	<a href="#" id="changeSeat">changeSeat</a>&nbsp;
+	<a href="#" id="undo">undo</a>&nbsp;
+	<a href="#" id="redo">redo</a>&nbsp;
 </div>
 </body>
 </html>
