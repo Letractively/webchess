@@ -171,6 +171,14 @@ ChessBoard.prototype.ChangeRoom = function(){
 	this.ajaxtype="changeroom";
 	this.Ajax();
 };
+ChessBoard.prototype.Undo = function(){
+	this.ajaxtype = "undo";
+	this.Ajax();
+};
+ChessBoard.prototype.Redo = function(){
+	this.ajaxtype="redo";
+	this.Ajax();
+};
 ChessBoard.prototype.AfterChangeRoom = function(){};
 ChessBoard.prototype.HandleEventList = function(eventList){
 	var self = this;

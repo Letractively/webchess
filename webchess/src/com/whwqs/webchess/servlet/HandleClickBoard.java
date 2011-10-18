@@ -9,6 +9,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.whwqs.util.EventBase;
+import com.whwqs.util.ISubscriber;
 import com.whwqs.util.LockManager;
 import com.whwqs.webchess.ChessBoardManager;
 import com.whwqs.webchess.core.*;
@@ -89,6 +92,14 @@ public class HandleClickBoard extends HttpServlet {
     		List<ChessEvent> newList = new ArrayList<ChessEvent>();
     		newList.add(ev);
     		data = GenerateEventJson(newList);
+    	}
+    	else if(type.equals("undo")){
+    		board.UnDo();
+    		data = GenerateEventJson();
+    	}
+    	else if(type.equals("redo")){
+    		board.ReDo();
+    		data = GenerateEventJson();
     	}
     	
     	try {
