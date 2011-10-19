@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.whwqs.util.EventBase;
-import com.whwqs.util.ISubscriber;
 import com.whwqs.util.LockManager;
 import com.whwqs.webchess.ChessBoardManager;
 import com.whwqs.webchess.core.*;
