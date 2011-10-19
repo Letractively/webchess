@@ -191,8 +191,8 @@ ChessBoard.prototype.EventCommonHandle = function(ev){
 	this.msg.text(ev.message);	
 	this.from = ev.fromNode;
 	this.to = ev.toNode;
-	this.successHold=ev.isSuccessHold;
-	this.successMove=ev.isSuccessMove;
+	this.successHold=(ev.isSuccessHold=="true");
+	this.successMove=(ev.isSuccessMove=="true");
 	this.SetSelectedNode();
 };
 ChessBoard.prototype.CHECKRESULT_NEEDUPDATE = function(ev){	
