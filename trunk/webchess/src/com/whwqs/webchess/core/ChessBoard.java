@@ -316,6 +316,7 @@ public class ChessBoard implements IPublisher,Serializable {
 	
 	private void Play(int from,int to)
 	{
+		ReDoStack.clear();
 		UnDoStack.push(new PlayAction(from,to));
 	}
 	
