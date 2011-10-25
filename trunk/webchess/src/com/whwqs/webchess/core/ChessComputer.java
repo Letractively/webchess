@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.acerge.engine.*;
 
 import com.whwqs.util.LockManager;
+import com.whwqs.webchess.ChessBoardManager;
 
 public class ChessComputer {
 	
@@ -92,8 +93,12 @@ public class ChessComputer {
 		return n;
 	}
 	
+	public static MoveNode Compute(String computerNumber) throws IOException, LostException{
+		ChessBoard board = ChessBoardManager.GetChessBoard(computerNumber);
+		return Compute(board);
+	}
+	
 	public static void main(String[] args) throws IOException, LostException{
-		String s = ChessBoard.GetString(ChessBoard.GetNormalBoardData());
-		Compute(new ChessBoard(s));
+				Compute("1");
 	}
 }

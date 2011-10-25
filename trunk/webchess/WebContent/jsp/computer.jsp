@@ -31,6 +31,7 @@ else
 <title>desk<%=roomNumber %>_<%=typeString[Integer.valueOf(manType)] %></title>
 <script type="text/javascript" src="../js/chessboard.js"></script>
 <script type="text/javascript">
+config.isVsComputer = true;
 config.roomNum = '<%=roomNumber %>';
 config.seatType = <%=manType %>;
 config.qpBackgroundColor = "rgb(100,200,200)";
@@ -43,19 +44,14 @@ $(function(){
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();	
 	chessBoard.data = '<%=board.ToString()%>';
-	chessBoard.SetBoardByData();
-	chessBoard.setTimer();
-	
-	$(window).unload(function(){
-		chessBoard.KillTimer();
-	});	
+	chessBoard.SetBoardByData();	
 	
 	$("#preRoom").click(function(e){
 		e.preventDefault();
-		var room = (config.roomNum+deskCount-1)%deskCount;
+		var room = (config.roomNum.substring(1)-0+deskCount-1)%deskCount;
 		if(room==0)room=deskCount;
-		config.roomNum =room;
-		config.seatType = parent.getSeatType2(config.roomNum);
+		config.roomNum ="c"+room;
+		config.seatType = parent.getSeatType2(config.roomNum.substring(1));
 		chessBoard.AfterChangeRoom = function(){
 			SetIframe();
 			chessBoard.roomNum.text("computer: "+config.roomNum+" ");
@@ -64,10 +60,11 @@ $(function(){
 	});
 	$("#nextRoom").click(function(e){
 		e.preventDefault();
-		var room = (config.roomNum+1)%deskCount;
+		var num = config.roomNum.substring(1)-0;
+		var room = (num+1)%deskCount;
 		if(room==0)room=deskCount;
-		config.roomNum =room;
-		config.seatType = parent.getSeatType2(config.roomNum);
+		config.roomNum ="c"+room;
+		config.seatType = parent.getSeatType2(config.roomNum.substring(1));
 		chessBoard.AfterChangeRoom = function(){
 			SetIframe();
 			chessBoard.roomNum.text("computer: "+config.roomNum+" ");
@@ -78,8 +75,8 @@ $(function(){
 		e.preventDefault();
 		config.seatType = (config.seatType+1)%3;
 		chessBoard.AfterChangeRoom = function(){
-			parent.$("#computer"+config.roomNum+""+config.seatType).attr("checked",true);
-			parent.fixHref2(config.roomNum,config.seatType);
+			parent.$("#computer"+config.roomNum.substring(1)+""+config.seatType).attr("checked",true);
+			parent.fixHref2(config.roomNum.substring(1),config.seatType);
 			SetIframe();
 		};
 		chessBoard.ChangeRoom();

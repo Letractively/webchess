@@ -127,11 +127,14 @@ ChessBoard.prototype.Ajax = function(){
 		cache:false,
 		url:config.webroot+"/HandleClickBoard",
 		data:(function(){
-			return {"type":self.ajaxtype,
+			return {
+				"type":self.ajaxtype,
 				"room":config.roomNum,
 				"clickNode":self.click,
 				"isRed":config.seatType==1,
-				"data":self.data};
+				"data":self.data,
+				"isVsComputer":config.isVsComputer
+				};
 		})(),
 		success:function(json){			
 			eval("var json="+json);
