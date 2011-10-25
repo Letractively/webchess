@@ -11,6 +11,9 @@ var deskCount = 20;
 function fixHref(num,type){
 	$("#room_"+num).attr("href",config.webroot+"/HandleSelectBoard?room="+num+"&type="+type);
 };
+function fixHref2(num,type){
+	$("#computer_"+num).attr("href",config.webroot+"/HandleSelectComputer?room="+num+"&type="+type);
+};
 function desk(num)
 {
 	this.number = num;
@@ -18,17 +21,29 @@ function desk(num)
 function getSeatType(num){
 	return $(":radio:checked[name=qp"+num+"]").val();
 };
+function getSeatType2(num){
+	return $(":radio:checked[name=computer"+num+"]").val();
+};
 function enterRoom(num){
 	$.nmTop().close();
 	$("#room_"+num).click();
+};
+function enterRoom2(num){
+	$.nmTop().close();
+	$("#computer_"+num).click();
 };
 function gameoverHandle(num,msg){
 	$.nmTop().close();
 	message=msg;
 	$("#handleGameOver").attr("href","jsp/game.jsp?room="+num).click();
 };
+function gameoverHandle2(num,msg){
+	$.nmTop().close();
+	message=msg;
+	$("#handleGameOver").attr("href","jsp/game.jsp?computer="+num).click();
+};
 
-$(function(){
+function InitRoom(){
 	var arrDesk = [];
 	for(var i=1;i<=deskCount;i++){
 		arrDesk.push(new desk(i));
@@ -36,6 +51,21 @@ $(function(){
 	var d = {arrDesk:arrDesk};
 	var html = TrimPath.processDOMTemplate("model",d);
 	$("#rooms").html(html);	
+};
+
+function InitComputer(){
+	var arrDesk = [];
+	for(var i=1;i<=deskCount;i++){
+		arrDesk.push(new desk(i));
+	}
+	var d = {arrDesk:arrDesk};
+	var html = TrimPath.processDOMTemplate("computermodel",d);
+	$("#computers").html(html);	
+};
+
+$(function(){
+	InitRoom();
+	InitComputer();
 	$(".nyroModal").each(function(){
 		$(this).nm({
 			titleFromIframe: true,
@@ -63,7 +93,13 @@ $(function(){
 </script>
 </head>
 <body>
+pepole vs pepole:
 <div id="rooms">
+</div>
+<div style="clear:both;"></div>
+<br/>
+pepole vs computer:
+<div id="computers">
 </div>
 <textarea id="model" style="display:none">
 {for e in arrDesk}
@@ -77,6 +113,21 @@ $(function(){
 	<input type="radio" id="qp\${e.number}0" name="qp\${e.number}" value="0" onclick=";fixHref(\${e.number},0);" />look
 	<br/>
 	<a href="HandleSelectBoard?room=\${e.number}&type=1" id="room_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
+	</div>
+{/for}
+</textarea>
+<textarea id="computermodel" style="display:none">
+{for e in arrDesk}
+	<div style="border:1px solid blue;width:80px;float:left;margin:0 0 10px 10px;">
+	computer:\${e.number}
+	<br/>
+	<input type="radio" id="computer\${e.number}1"  name="computer\${e.number}" value="1" checked onclick=";fixHref2(\${e.number},1);" />red
+	<br/>
+	<input type="radio" id="computer\${e.number}2" name="computer\${e.number}" value="2" onclick=";fixHref2(\${e.number},2);" />black
+	<br/>
+	<input type="radio" id="computer\${e.number}0" name="computer\${e.number}" value="0" onclick=";fixHref2(\${e.number},0);" />look
+	<br/>
+	<a href="HandleSelectComputer?room=c\${e.number}&type=1" id="computer_\${e.number}" class="nyroModal"  target="_blank" >enter</a>
 	</div>
 {/for}
 </textarea>
