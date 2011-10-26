@@ -44,7 +44,8 @@ $(function(){
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();	
 	chessBoard.data = '<%=board.ToString()%>';
-	chessBoard.SetBoardByData();	
+	chessBoard.SetBoardByData();
+	//chessBoard.setTimer();	
 	
 	$("#preRoom").click(function(e){
 		e.preventDefault();
@@ -70,6 +71,10 @@ $(function(){
 			chessBoard.roomNum.text("computer: "+config.roomNum+" ");
 		};
 		chessBoard.ChangeRoom();
+	});
+	$("#exit").click(function(){
+		chessBoard.KillTimer();
+		parent.$.nmTop().close();
 	});
 	$("#changeSeat").click(function(e){
 		e.preventDefault();
@@ -136,6 +141,7 @@ $(function(){
 <div id="funcList1" style="position:absolute;top:5px;left:10px;font-size:large;">
 	&nbsp;<a href="#" id="preRoom">preRoom</a>
 	&nbsp;<a href="#" id="nextRoom">nextRoom</a>
+	&nbsp;<a href="#" id="exit">exit</a>
 </div>
 <div id="funcList2" style="position:absolute;top:5px;right:10px;font-size:large;">
 	<a href="#" id="changeSeat">changeSeat</a>&nbsp;
