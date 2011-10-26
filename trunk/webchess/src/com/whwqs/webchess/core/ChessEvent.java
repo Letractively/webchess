@@ -48,6 +48,7 @@ public class ChessEvent extends  com.whwqs.util.EventBase implements Serializabl
 	private ChessType fromType = ChessType.Пе;
 	private ChessType toType = ChessType.Пе;
 	private String message = "";
+	private Boolean isComputerMove = false;
 	
 	private Boolean isRedToGo = true;
 	private Boolean isRedWin = false;
@@ -62,6 +63,7 @@ public class ChessEvent extends  com.whwqs.util.EventBase implements Serializabl
 		  return "{\"eventName\":\""+eventName+"\",\"wrongNodesPositionData\":\""+wrongNodesPositionData		 
 				+"\",\"chessBoardData\":\""+chessBoardData+"\",\"gameStartAt\":\""+gameStartAt.toString()
 				+"\",\"gameEndAt\":\""+gameEndAt.toString()+"\",\"isRedWin\":\""+isRedWin.toString()
+				+"\",\"isComputerMove\":\""+isComputerMove.toString()
 				+"\",\"isBlackWin\":\""+isBlackWin.toString()
 				+"\",\"isDogfall\":\""+isDogfall.toString()+"\",\"playAt\":\""+playAt.toString()
 				+"\",\"isRedToGo\":\""+isRedToGo.toString()+"\",\"fromNode\":"+fromNode
@@ -196,6 +198,12 @@ public class ChessEvent extends  com.whwqs.util.EventBase implements Serializabl
 	}
 	public void setIsBlackWin(Boolean isBlackWin) {
 		this.isBlackWin = isBlackWin;
+	}
+	public Boolean getIsComputerMove() {
+		return isComputerMove;
+	}
+	public void setIsComputerMove(Boolean isComputerMove) {
+		this.isComputerMove = isComputerMove;
 	}
 	
 }

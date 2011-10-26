@@ -72,7 +72,7 @@ $(function(){
 			resizable: false,
 			autoSizable: false,
 			width:700,
-			height:620,
+			height:620,			
 			sizes:{
 				initW: 600,    // Initial width
                 initH: 600,    // Initial height
@@ -84,8 +84,7 @@ $(function(){
                 hMargin: 1// Vertical margin
 			},
 			closeOnClick: true,
-			showCloseButton: true,
-			closeButton: '<a href="#" class="nyroModalClose nyroModalCloseButton nmReposition" title="close">Close</a>'				
+			modal:true
 		});
 	});
 	$("#handleGameOver").nm({modal:true});

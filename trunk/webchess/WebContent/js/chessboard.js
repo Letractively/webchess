@@ -33,8 +33,22 @@ ChessBoard.prototype.HandleGameOver = function(){
 	
 };
 
+ChessBoard.prototype.setTimer = function(){
+	var self = this;
+	this.timer = setInterval(function(){
+		if(!self.timerPause){
+			self.ajaxtype="timer";
+			try{
+				self.Ajax();
+			}catch(ex){};
+		}
+	},this.timespan);
+};
+
 ChessBoard.prototype.KillTimer = function(){
-	window.clearInterval(this.timer);
+	if(this.timer){
+		window.clearInterval(this.timer);
+	}
 };
 
 ChessBoard.prototype.PauseTimer = function(){
@@ -153,17 +167,13 @@ ChessBoard.prototype.Ajax = function(){
 		}
 	});
 };
-ChessBoard.prototype.setTimer = function(){
-	var self = this;
-	this.timer = setInterval(function(){
-		if(!self.timerPause){
-			self.ajaxtype="timer";
-			try{
-				self.Ajax();
-			}catch(ex){};
-		}
-	},this.timespan);
+
+ChessBoard.prototype.ComputerPlay = function(){
+	this.ajaxtype = "computer";
+	this.enable = true;
+	this.Ajax();
 };
+
 ChessBoard.prototype.HandleClick = function(id){
 	this.ajaxtype = "click";
 	this.click = id.replace("n","");
@@ -246,10 +256,16 @@ ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_BLACK = function(ev){
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
 	this.Move(ev);
+	if(config.isVsComputer && ev.isComputerMove=="false"){
+		this.ComputerPlay();
+	}
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
 	this.Move(ev);
+	if(config.isVsComputer && ev.isComputerMove=="false"){
+		this.ComputerPlay();
+	}
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){

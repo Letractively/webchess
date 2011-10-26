@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.acerge.engine.LostException;
+import org.acerge.engine.MoveNode;
+
 import com.whwqs.util.LockManager;
 import com.whwqs.webchess.ChessBoardManager;
 import com.whwqs.webchess.core.*;
@@ -28,11 +31,13 @@ public class HandleClickBoard extends HttpServlet {
     }   
     
     private ChessBoard board = null;  
+    private Boolean isComputerMove = false;
     
     private String GenerateEventJson(){
     	List<ChessEvent> list = board.GetEventList();
     	String s = "";
     	for(ChessEvent ev:list){
+    		ev.setIsComputerMove(isComputerMove);
     		s+=ev.ToJSON()+",";
     	}
     	if(!s.isEmpty()){
@@ -52,7 +57,7 @@ public class HandleClickBoard extends HttpServlet {
     	return "["+s+"]";
     }
     
-    private void ProcessHandle(HttpServletRequest request,  HttpServletResponse response)
+    private void ProcessHandle(HttpServletRequest request,  HttpServletResponse response) throws IOException, LostException
     {
     	String roomNumber = request.getParameter("room");
     	board =ChessBoardManager.GetChessBoard(roomNumber);
@@ -99,6 +104,16 @@ public class HandleClickBoard extends HttpServlet {
     		board.ReDo();
     		data = GenerateEventJson();
     	}
+    	else if(type.equals("computer")){
+    		MoveNode node = ChessComputer.Compute(board);
+    		synchronized(LockManager.GetLock(roomNumber)){
+	    		 board.HandleClicked(node.src, board.IsRedToGo(), board.ToString());
+	    		 board = ChessBoardManager.GetChessBoard(roomNumber);
+	    		 board.HandleClicked(node.dst, board.IsRedToGo(), board.ToString());	    		 
+	    	}
+    		isComputerMove = true;
+    		data = GenerateEventJson();
+    	}
     	
     	try {
 			response.getWriter().write("{\"type\":\""+type+"\",\"data\":"+data+"}");
@@ -114,7 +129,15 @@ public class HandleClickBoard extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
 		// TODO Auto-generated method stub
-		ProcessHandle(request,response);
+		try {
+			ProcessHandle(request,response);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (LostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -122,7 +145,15 @@ public class HandleClickBoard extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
 		// TODO Auto-generated method stub
-		ProcessHandle(request,response);
+		try {
+			ProcessHandle(request,response);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (LostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
