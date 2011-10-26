@@ -15,9 +15,9 @@ import java.io.RandomAccessFile;
 import java.util.Calendar;
 import java.util.Random;
 
-import org.apache.commons.logging.*;
+//import org.apache.commons.logging.*;
 public class SearchEngine {
-	private static Log log = LogFactory.getLog( SearchEngine.class );
+	//private static Log log = LogFactory.getLog( SearchEngine.class );
 	public static final int MaxBookMove = 40;//使用开局库的最大步数
 	public static final int MaxKiller = 4;//搜索杀着的最大步数
 	private static final int BookUnique = 1;//指示结点类型，下同
@@ -647,7 +647,7 @@ public class SearchEngine {
 			if (ponder && System.currentTimeMillis() > minTimer && value + CCEvalue.InadequateValue > lastScore) {
 				stop = true;
 			}
-			if(log.isDebugEnabled()) log.debug(logString);
+			//if(log.isDebugEnabled()) log.debug(logString);
 		}
 	}
 	
@@ -725,13 +725,13 @@ public class SearchEngine {
 				}
 			}
 			if (MoveNum==0) {
-				if(log.isDebugEnabled())
-					log.debug("score " + -CCEvalue.MaxValue +"\n");
+				//if(log.isDebugEnabled())
+					//log.debug("score " + -CCEvalue.MaxValue +"\n");
 			}
 			if (MoveNum == 1) {
 				MoveStr = UniqueMove.location();
-				if(log.isDebugEnabled())
-					log.debug("bestmove " + String.copyValueOf(MoveStr) + "\n");
+				//if(log.isDebugEnabled())
+					//log.debug("bestmove " + String.copyValueOf(MoveStr) + "\n");
 				bestMove = new MoveNode(String.copyValueOf(MoveStr));
 				return;
 			}
@@ -742,8 +742,8 @@ public class SearchEngine {
 			return;
 		}
 		for (i = 4; i <= depth; i ++) {
-			if(log.isDebugEnabled())
-				log.debug("info depth " + i +"\n");
+			//if(log.isDebugEnabled())
+				//log.debug("info depth " + i +"\n");
 			SubKillerTab.moveNum = 0;
 			ThisValue = search(SubKillerTab, -CCEvalue.MaxValue, CCEvalue.MaxValue, i);
 			popInfo(ThisValue,depth);
@@ -766,16 +766,16 @@ public class SearchEngine {
 		if (pvLineNum!=0) {
 			MoveStr = pvLine[0].location();
 			bestMove = new MoveNode(String.copyValueOf(MoveStr));
-			if(log.isDebugEnabled())
-				log.debug("bestmove: " + String.copyValueOf(MoveStr) + "\n");
+			//if(log.isDebugEnabled())
+				//log.debug("bestmove: " + String.copyValueOf(MoveStr) + "\n");
 			if (pvLineNum > 1) {
 				MoveStr = pvLine[1].location();
-				if(log.isDebugEnabled())
-					log.debug("ponder:" + String.copyValueOf(MoveStr) + "\n");
+				//if(log.isDebugEnabled())
+					//log.debug("ponder:" + String.copyValueOf(MoveStr) + "\n");
 			}
 		} else {
-			if(log.isDebugEnabled())
-				log.info("score:" + ThisValue);
+			//if(log.isDebugEnabled())
+				//log.info("score:" + ThisValue);
 		}		
 	}
 
@@ -789,7 +789,7 @@ public class SearchEngine {
 	public static void main(String[] args) throws IOException {
 		long start,end;
 		RandomAccessFile testResult;
-		log.info("begin search, please wait......");
+		//log.info("begin search, please wait......");
 		start = System.currentTimeMillis();
 		int steps = 8;
 		ActiveBoard cp= new ActiveBoard();
@@ -799,7 +799,7 @@ public class SearchEngine {
 		searchMove.loadBook("./data/BOOK.DAT");
 		//System.out.println(cp.AllPieces);
 		//searchMove.Control(steps,CLOCK_M*2,CLOCK_M*4);
-		log.info(FenStr);
+		//log.info(FenStr);
 		end = System.currentTimeMillis();
 		long second=(end - start)/1000;
 		long minutes=second/60;

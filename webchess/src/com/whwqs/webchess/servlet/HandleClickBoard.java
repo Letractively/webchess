@@ -59,6 +59,7 @@ public class HandleClickBoard extends HttpServlet {
     
     private void ProcessHandle(HttpServletRequest request,  HttpServletResponse response) throws IOException, LostException
     {
+    	isComputerMove=false;
     	String roomNumber = request.getParameter("room");
     	board =ChessBoardManager.GetChessBoard(roomNumber);
     	String type=request.getParameter("type");
@@ -105,11 +106,13 @@ public class HandleClickBoard extends HttpServlet {
     		data = GenerateEventJson();
     	}
     	else if(type.equals("computer")){
-    		MoveNode node = ChessComputer.Compute(board);
+    		String bookPath = request.getSession().getServletContext().getRealPath("data/book.txt");
+    		MoveNode node = ChessComputer.Compute(board,bookPath);
     		synchronized(LockManager.GetLock(roomNumber)){
-	    		 board.HandleClicked(node.src, board.IsRedToGo(), board.ToString());
+	    		 board.HandleClicked(ChessComputer.EngineCoordinateConvertTo(node.src), board.IsRedToGo(), board.ToString());
+	    		 data = GenerateEventJson();
 	    		 board = ChessBoardManager.GetChessBoard(roomNumber);
-	    		 board.HandleClicked(node.dst, board.IsRedToGo(), board.ToString());	    		 
+	    		 board.HandleClicked(ChessComputer.EngineCoordinateConvertTo(node.dst), board.IsRedToGo(), board.ToString());	    		 
 	    	}
     		isComputerMove = true;
     		data = GenerateEventJson();

@@ -12,14 +12,14 @@ public class ChessComputer {
 	
 	private static HashMap<String,SearchEngine> EngineHash = new HashMap<String,SearchEngine>();
 	
-	public static SearchEngine getSearchEngine(String roomNumber) throws IOException {
+	public static SearchEngine getSearchEngine(String roomNumber,String bookPath) throws IOException {
 		if(!EngineHash.containsKey(roomNumber)){
 			synchronized (LockManager.GetLock(roomNumber)) {
 				if(!EngineHash.containsKey(roomNumber)){
 					SearchEngine searchEngine = new SearchEngine();
 					searchEngine.setupControl(6, SearchEngine.CLOCK_S * 20,
 							SearchEngine.CLOCK_M * 10);
-					searchEngine.loadBook("./data/book.txt");
+					searchEngine.loadBook(bookPath);
 					EngineHash.put(roomNumber, searchEngine);
 				}
 			}
@@ -30,6 +30,7 @@ public class ChessComputer {
 	private final static  HashMap<ChessType, String> BoardHash = new HashMap<ChessType, String>();
 	
 	//rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR
+	//rnbakabnr/9/4c2c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR b
 	static{
 		BoardHash.put(ChessType.³µ, "r");
 		BoardHash.put(ChessType.Âí, "n");
@@ -84,8 +85,8 @@ public class ChessComputer {
 		return ab;
 	}
 	
-	public static MoveNode Compute(ChessBoard board) throws IOException, LostException{
-		SearchEngine engine = getSearchEngine(board.getBoardNumber());
+	public static MoveNode Compute(ChessBoard board,String bookPath) throws IOException, LostException{
+		SearchEngine engine = getSearchEngine(board.getBoardNumber(),bookPath);
 		engine.setActiveBoard(Convert(board));
 		MoveNode n = engine.getBestMove();
 		System.out.println(n.dst);
@@ -93,12 +94,24 @@ public class ChessComputer {
 		return n;
 	}
 	
-	public static MoveNode Compute(String computerNumber) throws IOException, LostException{
+	public static MoveNode Compute(String computerNumber,String bookPath) throws IOException, LostException{
 		ChessBoard board = ChessBoardManager.GetChessBoard(computerNumber);
-		return Compute(board);
+		return Compute(board,bookPath);
 	}
 	
 	public static void main(String[] args) throws IOException, LostException{
-				Compute("1");
+				Compute("1","./data/book.txt");
+	}
+	
+	public static int EngineCoordinateConvertTo(int engineCoor){
+		int x = engineCoor/10;
+		int y = engineCoor%10;
+		return y*9+8-x;
+	}
+	
+	public static int CoordinateConvertToEngine(int chessCoor){
+		int x = chessCoor/9;
+		int y = chessCoor%9;
+		return (8-y)*10+x;
 	}
 }
