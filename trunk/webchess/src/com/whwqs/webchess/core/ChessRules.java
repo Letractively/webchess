@@ -683,7 +683,7 @@ public class ChessRules implements Serializable {
 			ChessType oldType = GetNodeType(nodeClicked);
 			Move(holdNode,nodeClicked);
 			String s=currentChessRule.GetAllMoveableNodes(nodeClicked);
-			if(s.indexOf("|"+king+"|")>=0){				
+			if(s!=null && s.indexOf("|"+king+"|")>=0){				
 				if(isRedClicked){
 					isBlackWillKillKing=false;
 					isRedWillKillKing=true;

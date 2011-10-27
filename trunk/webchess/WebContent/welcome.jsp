@@ -93,14 +93,14 @@ $(function(){
 </head>
 <body>
 <div id="rContainer" style="border:1px solid green;background:green;text-align:center;margin-bottom:10px;">
-<font size="6px">大众厅：</font>
+<font size="6px">大众厅</font>
 </div>
 <div id="rooms">
 </div>
 <div style="clear:both;"></div>
 <br/>
 <div id="cContainer" style="border:1px solid green;background:green;text-align:center;margin-bottom:10px;">
-<font size="6px">电脑厅：</font>
+<font size="6px">电脑厅</font>
 </div>
 <div id="computers">
 </div>

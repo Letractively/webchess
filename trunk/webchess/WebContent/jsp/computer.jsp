@@ -50,6 +50,7 @@ function ComputerPlay(isRedToGo){
 	}
 };
 $(function(){	
+	
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();	
 	chessBoard.data = '<%=board.ToString()%>';

@@ -635,14 +635,14 @@ public class SearchEngine {
 	public void stopSearch(){this.stop=true;}
 	private void popInfo(int value, int depth) {
 		int i;
-		char[] moveStr;
+		//char[] moveStr;
 		if (depth!=0) {
-			String logString="PVNode:  depth=" + depth + ",score=" + value +",Move: "+"\n";
+			//String logString="PVNode:  depth=" + depth + ",score=" + value +",Move: "+"\n";
 			pvLineNum = 0;
 			GetPvLine();
 			for (i = 0; i < pvLineNum; i ++) {
-				moveStr = pvLine[i].location();
-				logString+=" " + String.copyValueOf(moveStr)+"\n";
+				//moveStr = pvLine[i].location();
+				//logString+=" " + String.copyValueOf(moveStr)+"\n";
 			}
 			if (ponder && System.currentTimeMillis() > minTimer && value + CCEvalue.InadequateValue > lastScore) {
 				stop = true;

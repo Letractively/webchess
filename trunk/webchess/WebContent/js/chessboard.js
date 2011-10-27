@@ -165,13 +165,19 @@ ChessBoard.prototype.Ajax = function(){
 				self.AfterRedo();
 			}	
 			self.HandleEventList(json.data);
-			if(config.isVsdComputer){
-				if(config.seatType==1 || config.seatType==2){
-					if((config.seatType==1 && self.isRedToGo==false)||(config.seatType==2 && self.isRedToGo==true)){						
+			if(config.isVsComputer){	
+				var bcp1 = (
+						config.seatType==1 && !Boolean(self.isRedToGo)
+				);
+				var bcp2=
+				(
+						config.seatType==2 && Boolean(self.isRedToGo)
+				);alert(bcp1+" "+bcp2)
+					if(true)
+					{						
 						self.ComputerPlay();
 					}
-				}
-			}
+				}			
 		},
 		error:function(ex){
 			self.msg.text("error and try again later!");
@@ -283,7 +289,7 @@ ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
 	this.data=ev.chessBoardData;
 	this.EventCommonHandle(ev);
 	if(config.isVsComputer && ev.isComputerMove=="false"){
-		this.ComputerPlay();
+		//this.ComputerPlay();
 	}
 };
 
@@ -293,7 +299,7 @@ ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
 	this.data=ev.chessBoardData;
 	this.EventCommonHandle(ev);
 	if(config.isVsComputer && ev.isComputerMove=="false"){
-		this.ComputerPlay();
+		//this.ComputerPlay();
 	}
 };
 
