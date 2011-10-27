@@ -36,30 +36,30 @@ public class ChessComputer {
 	//rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR
 	//rnbakabnr/9/4c2c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR b
 	static{
-		BoardHash.put(ChessType.车, "r");
-		BoardHash.put(ChessType.马, "n");
-		BoardHash.put(ChessType.相, "b");
-		BoardHash.put(ChessType.士, "a");
-		BoardHash.put(ChessType.帅, "k");
-		BoardHash.put(ChessType.炮, "c");
-		BoardHash.put(ChessType.兵, "p");
+		BoardHash.put(ChessType.车, "R");
+		BoardHash.put(ChessType.马, "N");
+		BoardHash.put(ChessType.相, "B");
+		BoardHash.put(ChessType.士, "A");
+		BoardHash.put(ChessType.帅, "K");
+		BoardHash.put(ChessType.炮, "C");
+		BoardHash.put(ChessType.兵, "P");
 		
-		BoardHash.put(ChessType.車, "R");
-		BoardHash.put(ChessType.馬, "N");
-		BoardHash.put(ChessType.象, "B");
-		BoardHash.put(ChessType.仕, "A");
-		BoardHash.put(ChessType.将, "K");
-		BoardHash.put(ChessType.砲, "C");
-		BoardHash.put(ChessType.卒, "P");
+		BoardHash.put(ChessType.車, "r");
+		BoardHash.put(ChessType.馬, "n");
+		BoardHash.put(ChessType.象, "b");
+		BoardHash.put(ChessType.仕, "a");
+		BoardHash.put(ChessType.将, "k");
+		BoardHash.put(ChessType.砲, "c");
+		BoardHash.put(ChessType.卒, "p");
 		
 		BoardHash.put(ChessType.空, "1");
 	}
 	
 	public static String ConvertToFenString(ChessBoard board){
 		String s = "";
-		for(int i=0;i<=9;i++){
+		for(int i=9;i>=0;i--){
 			int kCount=0;
-			for(int j=0;j<=8;j++){
+			for(int j=8;j>=0;j--){
 				String v = BoardHash.get(board.getBoardData()[i][j]);
 				if(!v.equals("1")){
 					if(kCount>0){
@@ -75,7 +75,7 @@ public class ChessComputer {
 			if(kCount>0){
 				s+=String.valueOf(kCount);
 			}
-			if(i<9){
+			if(i>0){
 				s+="/";
 			}
 		}
@@ -85,7 +85,9 @@ public class ChessComputer {
 	
 	public static ActiveBoard Convert(ChessBoard board){
 		ActiveBoard ab = new ActiveBoard();
-		ab.loadFen(ConvertToFenString(board));
+		String s = ConvertToFenString(board);
+		ab.loadFen(s);
+		//System.out.println(s);
 		return ab;
 	}
 	
@@ -93,8 +95,8 @@ public class ChessComputer {
 		SearchEngine engine = getSearchEngine(board.getBoardNumber(),bookPath);
 		engine.setActiveBoard(Convert(board));
 		MoveNode n = engine.getBestMove();
-		System.out.println(n.dst);
-		System.out.println(n.src);
+		//System.out.println("from: "+n.src);
+		//System.out.println("to: "+n.dst);
 		return n;
 	}
 	
