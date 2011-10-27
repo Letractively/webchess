@@ -27,6 +27,7 @@ function ChessBoard(container){
 	this.gameover = false;
 	this.win = -1;
 	this.timerPause = false;
+	this.isRedToGo = true;
 };
 
 ChessBoard.prototype.HandleGameOver = function(){
@@ -151,13 +152,26 @@ ChessBoard.prototype.Ajax = function(){
 				};
 		})(),
 		success:function(json){			
-			eval("var json="+json);
+			eval("var json="+json);	
 			if(self.ajaxtype=="changeroom"){
 				self.container.empty();
 				self.DrawBoard();
 				self.AfterChangeRoom();
+			}	
+			else if(self.ajaxtype=="undo"){
+				self.AfterUndo();
 			}
+			else if(self.ajaxtype=="redo"){
+				self.AfterRedo();
+			}	
 			self.HandleEventList(json.data);
+			if(config.isVsdComputer){
+				if(config.seatType==1 || config.seatType==2){
+					if((config.seatType==1 && self.isRedToGo==false)||(config.seatType==2 && self.isRedToGo==true)){						
+						self.ComputerPlay();
+					}
+				}
+			}
 		},
 		error:function(ex){
 			self.msg.text("error and try again later!");
@@ -192,6 +206,8 @@ ChessBoard.prototype.Redo = function(){
 	this.ajaxtype="redo";
 	this.Ajax();
 };
+ChessBoard.prototype.AfterUndo = function(){};
+ChessBoard.prototype.AfterRedo = function(){};
 ChessBoard.prototype.AfterChangeRoom = function(){};
 ChessBoard.prototype.HandleEventList = function(eventList){
 	var self = this;
@@ -202,6 +218,7 @@ ChessBoard.prototype.HandleEventList = function(eventList){
 };
 ChessBoard.prototype.EventCommonHandle = function(ev){
 	this.msg.text(ev.message);	
+	this.isRedToGo = ev.isRedToGo;
 	this.from = ev.fromNode;
 	this.to = ev.toNode;
 	this.successHold=(ev.isSuccessHold=="true");
@@ -231,38 +248,50 @@ ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_BLACK = function(ev){
 };
 
 ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){
-	this.Hold(ev);
+	//this.Hold(ev);
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_BLACK = function(ev){
-	this.Hold(ev);
+	//this.Hold(ev);
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_RED = function(ev){
-	this.Hold(ev);
+	//this.Hold(ev);
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_BLACK = function(ev){
-	this.Hold(ev);
+	//this.Hold(ev);
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_RED = function(ev){
-	this.Hold(ev);
+	//this.Hold(ev);
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_BLACK = function(ev){
-	this.Hold(ev);
+	//this.Hold(ev);
+	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
-	this.Move(ev);
+	//this.Move(ev);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;
+	this.EventCommonHandle(ev);
 	if(config.isVsComputer && ev.isComputerMove=="false"){
 		this.ComputerPlay();
 	}
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
-	this.Move(ev);
+	//this.Move(ev);
+	this.SetBoardByData2(this.data,ev.chessBoardData);
+	this.data=ev.chessBoardData;
+	this.EventCommonHandle(ev);
 	if(config.isVsComputer && ev.isComputerMove=="false"){
 		this.ComputerPlay();
 	}
