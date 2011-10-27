@@ -13,10 +13,11 @@ public class ChessComputer {
 	private static HashMap<String,SearchEngine> EngineHash = new HashMap<String,SearchEngine>();
 	
 	public static SearchEngine getSearchEngine(String roomNumber,String bookPath) throws IOException {
+		SearchEngine searchEngine;
 		if(!EngineHash.containsKey(roomNumber)){
 			synchronized (LockManager.GetLock(roomNumber)) {
 				if(!EngineHash.containsKey(roomNumber)){
-					SearchEngine searchEngine = new SearchEngine();
+					searchEngine = new SearchEngine();
 					searchEngine.setupControl(6, SearchEngine.CLOCK_S * 20,
 							SearchEngine.CLOCK_M * 10);
 					searchEngine.loadBook(bookPath);
@@ -24,7 +25,10 @@ public class ChessComputer {
 				}
 			}
 		}		
-		return EngineHash.get(roomNumber);
+		searchEngine = EngineHash.get(roomNumber);
+		searchEngine.clearHash();
+		searchEngine.clearHistTab();
+		return searchEngine;
 	}
 	
 	private final static  HashMap<ChessType, String> BoardHash = new HashMap<ChessType, String>();
