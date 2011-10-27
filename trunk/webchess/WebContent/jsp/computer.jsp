@@ -8,6 +8,7 @@
 	String roomNumber = null;
 	String manType = null;
 	String[] typeString = new String[]{"look","red","black"};
+	Boolean isRedToGo = true;
 %>
 <% 
 Object n = request.getSession().getAttribute("room"); 
@@ -22,6 +23,7 @@ else
 	roomNumber = n.toString();
 	manType = t.toString();
 	board = ChessBoardManager.GetChessBoard(roomNumber);
+	isRedToGo = board.IsRedToGo();
 }
 %>
 
@@ -39,13 +41,19 @@ config.qpLineColor = "#003663";
 config.qpColor = "rgb(201,199,224)";
 var deskCount = parent.deskCount;
 var chessBoard = {};
-
+var isRedToGo = <%=isRedToGo%>;
+function ComputerPlay(isRedToGo){
+	if(config.seatType==1 || config.seatType==2){
+		if((config.seatType==1 && isRedToGo==false)||(config.seatType==2 && isRedToGo==true)){
+			chessBoard.ComputerPlay();
+		}
+	}
+};
 $(function(){	
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();	
 	chessBoard.data = '<%=board.ToString()%>';
 	chessBoard.SetBoardByData();
-	//chessBoard.setTimer();	
 	
 	$("#preRoom").click(function(e){
 		e.preventDefault();
@@ -131,6 +139,8 @@ $(function(){
 			top.gameoverHandle2(num,msg);
 		},1);		
 	};
+	
+	ComputerPlay(isRedToGo);
 });
 </script>
 </head>

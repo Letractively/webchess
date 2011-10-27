@@ -91,8 +91,9 @@ public class HandleClickBoard extends HttpServlet {
 	    		ev.setToNode(lastEvent.getToNode());
 	    		ev.setChessBoardData(lastEvent.getChessBoardData());
 	    		ev.setIsSuccessHold(lastEvent.getIsSuccessHold());
-	    		ev.setIsSuccessMove(lastEvent.getIsSuccessMove());
+	    		ev.setIsSuccessMove(lastEvent.getIsSuccessMove());	    		
     		}
+    		ev.setIsRedToGo(board.IsRedToGo());
     		List<ChessEvent> newList = new ArrayList<ChessEvent>();
     		newList.add(ev);
     		data = GenerateEventJson(newList);

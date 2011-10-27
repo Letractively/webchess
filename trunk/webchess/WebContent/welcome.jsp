@@ -7,7 +7,7 @@
 <title>Welcome to web chess</title>
 <script>
 var message = "";
-var deskCount = 20;
+var deskCount = 30;
 function fixHref(num,type){
 	$("#room_"+num).attr("href",config.webroot+"/HandleSelectBoard?room="+num+"&type="+type);
 };
@@ -50,7 +50,7 @@ function InitRoom(){
 	}
 	var d = {arrDesk:arrDesk};
 	var html = TrimPath.processDOMTemplate("model",d);
-	$("#rooms").html(html);	
+	$("#rooms").html(html);		
 };
 
 function InitComputer(){
@@ -92,14 +92,19 @@ $(function(){
 </script>
 </head>
 <body>
-pepole vs pepole:
+<div id="rContainer" style="border:1px solid green;background:green;text-align:center;margin-bottom:10px;">
+<font size="6px">大众厅：</font>
+</div>
 <div id="rooms">
 </div>
 <div style="clear:both;"></div>
 <br/>
-pepole vs computer:
+<div id="cContainer" style="border:1px solid green;background:green;text-align:center;margin-bottom:10px;">
+<font size="6px">电脑厅：</font>
+</div>
 <div id="computers">
 </div>
+
 <textarea id="model" style="display:none">
 {for e in arrDesk}
 	<div style="border:1px solid blue;width:80px;float:left;margin:0 0 10px 10px;">
