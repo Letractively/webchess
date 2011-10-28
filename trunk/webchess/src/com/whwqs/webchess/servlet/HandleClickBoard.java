@@ -120,7 +120,11 @@ public class HandleClickBoard extends HttpServlet {
     	}
     	
     	try {
-			response.getWriter().write("{\"type\":\""+type+"\",\"data\":"+data+"}");
+			response.getWriter().write("{" +
+					"\"type\":\""+type+"\""
+					+",\"isRedToGo\":"+board.IsRedToGo()
+					+",\"data\":"+data
+					+"}");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

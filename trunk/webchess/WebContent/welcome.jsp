@@ -12,7 +12,7 @@ function fixHref(num,type){
 	$("#room_"+num).attr("href",config.webroot+"/HandleSelectBoard?room="+num+"&type="+type);
 };
 function fixHref2(num,type){
-	$("#computer_"+num).attr("href",config.webroot+"/HandleSelectComputer?room="+num+"&type="+type);
+	$("#computer_"+num).attr("href",config.webroot+"/HandleSelectComputer?room=c"+num+"&type="+type);
 };
 function desk(num)
 {

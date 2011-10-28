@@ -153,31 +153,22 @@ ChessBoard.prototype.Ajax = function(){
 		})(),
 		success:function(json){			
 			eval("var json="+json);	
+			self.isRedToGo = json.isRedToGo;
 			if(self.ajaxtype=="changeroom"){
 				self.container.empty();
-				self.DrawBoard();
+				self.DrawBoard();				
+			}
+			self.HandleEventList(json.data);
+			if(self.ajaxtype=="changeroom"){
 				self.AfterChangeRoom();
-			}	
-			else if(self.ajaxtype=="undo"){
+			}
+			if(self.ajaxtype=="undo"){
 				self.AfterUndo();
 			}
-			else if(self.ajaxtype=="redo"){
+			if(self.ajaxtype=="redo"){
 				self.AfterRedo();
-			}	
-			self.HandleEventList(json.data);
-			if(config.isVsComputer){	
-				var bcp1 = (
-						config.seatType==1 && !Boolean(self.isRedToGo)
-				);
-				var bcp2=
-				(
-						config.seatType==2 && Boolean(self.isRedToGo)
-				);alert(bcp1+" "+bcp2)
-					if(true)
-					{						
-						self.ComputerPlay();
-					}
-				}			
+			}
+			self.ComputerPlayHandle();
 		},
 		error:function(ex){
 			self.msg.text("error and try again later!");
@@ -186,6 +177,20 @@ ChessBoard.prototype.Ajax = function(){
 			self.enable = true;
 		}
 	});
+};
+
+ChessBoard.prototype.ComputerPlayHandle = function(){
+	if(config.isVsComputer===true){	
+		if(config.isComputerAuto===true){
+			this.ComputerPlay();
+		}
+		else{
+			if(((config.seatType==1) && (this.isRedToGo===false))
+					||((config.seatType==2) && (this.isRedToGo===true))){
+				this.ComputerPlay();
+			}
+		}
+	}
 };
 
 ChessBoard.prototype.ComputerPlay = function(){
@@ -224,7 +229,6 @@ ChessBoard.prototype.HandleEventList = function(eventList){
 };
 ChessBoard.prototype.EventCommonHandle = function(ev){
 	this.msg.text(ev.message);	
-	this.isRedToGo = ev.isRedToGo;
 	this.from = ev.fromNode;
 	this.to = ev.toNode;
 	this.successHold=(ev.isSuccessHold=="true");
@@ -253,54 +257,42 @@ ChessBoard.prototype.CHECKRESULT_CLICKWRONGNODE_BLACK = function(ev){
 	this.EventCommonHandle(ev);
 };
 
-ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){
-	//this.Hold(ev);
+ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_RED = function(ev){	
 	this.EventCommonHandle(ev);
 };
 
-ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_BLACK = function(ev){
-	//this.Hold(ev);
+ChessBoard.prototype.CHECKRESULT_FIRSTHOLDNODE_BLACK = function(ev){	
 	this.EventCommonHandle(ev);
 };
 
-ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_RED = function(ev){
-	//this.Hold(ev);
+ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_RED = function(ev){	
 	this.EventCommonHandle(ev);
 };
 
-ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_BLACK = function(ev){
-	//this.Hold(ev);
+ChessBoard.prototype.CHECKRESULT_CHANGEHOLDNODE_BLACK = function(ev){	
 	this.EventCommonHandle(ev);
 };
 
-ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_RED = function(ev){
-	//this.Hold(ev);
+ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_RED = function(ev){	
 	this.EventCommonHandle(ev);
 };
 
-ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_BLACK = function(ev){
-	//this.Hold(ev);
+ChessBoard.prototype.CHECKRESULT_HOLDSAMENODE_BLACK = function(ev){	
 	this.EventCommonHandle(ev);
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
-	//this.Move(ev);
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;
 	this.EventCommonHandle(ev);
-	if(config.isVsComputer && ev.isComputerMove=="false"){
-		//this.ComputerPlay();
-	}
+	//this.ComputerPlayHandle();
 };
 
-ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){
-	//this.Move(ev);
+ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;
 	this.EventCommonHandle(ev);
-	if(config.isVsComputer && ev.isComputerMove=="false"){
-		//this.ComputerPlay();
-	}
+	//this.ComputerPlayHandle();
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){

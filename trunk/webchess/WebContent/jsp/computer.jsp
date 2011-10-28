@@ -41,20 +41,14 @@ config.qpLineColor = "#003663";
 config.qpColor = "rgb(201,199,224)";
 var deskCount = parent.deskCount;
 var chessBoard = {};
-var isRedToGo = <%=isRedToGo%>;
-function ComputerPlay(isRedToGo){
-	if(config.seatType==1 || config.seatType==2){
-		if((config.seatType==1 && isRedToGo==false)||(config.seatType==2 && isRedToGo==true)){
-			chessBoard.ComputerPlay();
-		}
-	}
-};
+var isRedToGo = !!<%=isRedToGo%>;
 $(function(){	
 	
 	chessBoard = new ChessBoard($("#qp"));
 	chessBoard.DrawBoard();	
 	chessBoard.data = '<%=board.ToString()%>';
 	chessBoard.SetBoardByData();
+	chessBoard.isRedToGo = isRedToGo;
 	
 	$("#preRoom").click(function(e){
 		e.preventDefault();
@@ -96,11 +90,11 @@ $(function(){
 		chessBoard.ChangeRoom();
 	});
 	$("#undo").click(function(e){
-		e.preventDefault();
+		e.preventDefault();		
 		chessBoard.Undo();
 	});
 	$("#redo").click(function(e){
-		e.preventDefault();
+		e.preventDefault();		
 		chessBoard.Redo();
 	});
 	
@@ -141,7 +135,7 @@ $(function(){
 		},1);		
 	};
 	
-	ComputerPlay(isRedToGo);
+	chessBoard.ComputerPlayHandle();
 });
 </script>
 </head>
@@ -156,6 +150,7 @@ $(function(){
 </div>
 <div id="funcList2" style="position:absolute;top:5px;right:10px;font-size:large;">
 	<a href="#" id="changeSeat">changeSeat</a>&nbsp;
+	<a href="#" id="computerauto">start computer auto</a>
 	<a href="#" id="undo">undo</a>&nbsp;
 	<a href="#" id="redo">redo</a>&nbsp;
 </div>

@@ -21,6 +21,7 @@ webRoot = request.getRequestURL().toString().replace(request.getServletPath(), "
 <!--
 config.webroot = "<%=webRoot%>";
 config.imgroot = "<%=webRoot%>"+"/images";
-config.isVsdComputer = false;
+config.isVsComputer = false;
+config.isComputerAuto = false;
 //-->
 </script>
