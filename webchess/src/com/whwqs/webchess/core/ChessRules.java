@@ -86,6 +86,15 @@ public class ChessRules implements Serializable {
 		return message;
 	}
 	
+	public void setIsSuccessMove(Boolean isSuccessMove ) {
+		this.isSuccessMove = isSuccessMove;
+	}	
+	
+	public void setIsSuccessHold(Boolean isSuccessHold)
+	{
+		this.isSuccessHold = isSuccessHold;
+	}	
+	
 	public Boolean getIsSuccessMove() {
 		return isSuccessMove;
 	}	
@@ -164,6 +173,10 @@ public class ChessRules implements Serializable {
 		this.isDogfall = isDogfall;
 	}
 
+	public void setHoldNode(int holdNode) {
+		this.holdNode = holdNode;
+	}
+
 	private abstract class Rule implements Serializable
 	{
 		/**
@@ -240,9 +253,9 @@ public class ChessRules implements Serializable {
 			
 			ev.setChessBoardData(chessBoard.ToString());
 			ev.setMessage(message);
-			ev.setFromNode(holdNode);
-			if(holdNode!=-1){
-				ev.setFromType(GetNodeType(holdNode));
+			ev.setFromNode(getHoldNode());
+			if(getHoldNode()!=-1){
+				ev.setFromType(GetNodeType(getHoldNode()));
 			}
 			ev.setToNode(moveToNode);
 			if(moveToNode!=-1){
@@ -372,7 +385,7 @@ public class ChessRules implements Serializable {
 			// TODO Auto-generated method stub
 			
 			if(
-					(holdNode==-1 || NodeType(holdNode)==0)
+					(getHoldNode()==-1 || NodeType(getHoldNode())==0)
 					&&
 					(
 							(isRedClicked&&NodeType(nodeClicked)!=1&&IsRedToGo())
@@ -430,10 +443,10 @@ public class ChessRules implements Serializable {
 				String clickManCurrentBoard) {
 			
 			
-			if(holdNode==-1 || NodeType(holdNode)==0){
+			if(getHoldNode()==-1 || NodeType(getHoldNode())==0){
 				isSuccessHold = true;
 				isSuccessMove = false;
-				holdNode = nodeClicked;				
+				setHoldNode(nodeClicked);				
 				if(isRedClicked)
 				{
 					message = generateMessage(ChessEvent.CHECKRESULT_FIRSTHOLDNODE_RED);				
@@ -481,12 +494,12 @@ public class ChessRules implements Serializable {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {
 			
-			if(NodeType(holdNode)!=0&&NodeType(holdNode)==NodeType(nodeClicked)){
+			if(NodeType(getHoldNode())!=0&&NodeType(getHoldNode())==NodeType(nodeClicked)){
 				isSuccessHold = true;
 				isSuccessMove=false;	
-				if(holdNode!=nodeClicked)
+				if(getHoldNode()!=nodeClicked)
 				{
-					holdNode = nodeClicked;
+					setHoldNode(nodeClicked);
 					if(isRedClicked){
 						message = generateMessage(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);				
 						createEvent(ChessEvent.CHECKRESULT_CHANGEHOLDNODE_RED);
@@ -542,7 +555,7 @@ public class ChessRules implements Serializable {
 		public void Apply(int nodeClicked, Boolean isRedClicked,
 				String clickManCurrentBoard) {		
 			
-			ChessType fromType = GetNodeType(holdNode);
+			ChessType fromType = GetNodeType(getHoldNode());
 			int n = fromType.getIndex()/3;
 			Rule r = null;
 			switch(n)
@@ -572,8 +585,8 @@ public class ChessRules implements Serializable {
 			currentChessRule= r;
 			int row = nodeClicked/9;
 			int col = nodeClicked%9;
-			int fromRow = holdNode/9;
-			int fromCol = holdNode%9;
+			int fromRow = getHoldNode()/9;
+			int fromCol = getHoldNode()%9;
 			if(r.CanMove(fromRow,fromCol,row,col)){
 				isSuccessHold=false;
 				isSuccessMove = true;			
@@ -681,7 +694,7 @@ public class ChessRules implements Serializable {
 			String[] arr = KingPosition.split(",");
 			int king =  Integer.valueOf(arr[0])*9+Integer.valueOf(arr[1]);
 			ChessType oldType = GetNodeType(nodeClicked);
-			Move(holdNode,nodeClicked);
+			Move(getHoldNode(),nodeClicked);
 			String s=currentChessRule.GetAllMoveableNodes(nodeClicked);
 			if(s!=null && s.indexOf("|"+king+"|")>=0){				
 				if(isRedClicked){
@@ -697,7 +710,7 @@ public class ChessRules implements Serializable {
 					createEvent(ChessEvent.CHECKRESULT_TOKILLKING_BLACK);
 				}
 			}
-			UndoMove(holdNode,nodeClicked,oldType);
+			UndoMove(getHoldNode(),nodeClicked,oldType);
 		}
 
 		@Override
