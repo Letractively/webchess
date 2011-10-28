@@ -326,7 +326,9 @@ public class ChessBoard implements IPublisher,Serializable {
 		{
 			PlayAction undoAction = ReDoStack.push(UnDoStack.pop());
 			undoAction.UnDo();	
-			
+			rule.setHoldNode(-1);
+			rule.setIsSuccessHold(false);
+			rule.setIsSuccessMove(false);
 			String evtName = ChessEvent.CHECKRESULT_UNDO_BLACK;
 			if(undoAction.fromType.getIndex()%2==1){
 				evtName = ChessEvent.CHECKRESULT_UNDO_RED;
@@ -351,6 +353,7 @@ public class ChessBoard implements IPublisher,Serializable {
 		{
 			PlayAction redoAction = UnDoStack.push(ReDoStack.pop());
 			redoAction.ReDo();
+			
 			String evtName = ChessEvent.CHECKRESULT_REDO_BLACK;
 			if(redoAction.ToType.getIndex()%2==1){
 				evtName = ChessEvent.CHECKRESULT_REDO_RED;

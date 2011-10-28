@@ -26,8 +26,8 @@ public class ChessComputer {
 			}
 		}		
 		searchEngine = EngineHash.get(roomNumber);
-		searchEngine.clearHash();
-		searchEngine.clearHistTab();
+		//searchEngine.clearHash();
+		//searchEngine.clearHistTab();
 		return searchEngine;
 	}
 	
