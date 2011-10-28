@@ -55,11 +55,11 @@ $(function(){
 		var room = (config.roomNum.substring(1)-0+deskCount-1)%deskCount;
 		if(room==0)room=deskCount;
 		config.roomNum ="c"+room;
-		config.seatType = parent.getSeatType2(config.roomNum.substring(1));
-		chessBoard.AfterChangeRoom = function(){
+		config.seatType = parent.getSeatType2(config.roomNum.substring(1));		
+		chessBoard.unbind(chessBoard.eChangeRoom).bind(chessBoard.eChangeRoom,function(){
 			SetIframe();
 			chessBoard.roomNum.text("computer: "+config.roomNum+" ");
-		};
+		});
 		chessBoard.ChangeRoom();
 	});
 	$("#nextRoom").click(function(e){
@@ -69,10 +69,10 @@ $(function(){
 		if(room==0)room=deskCount;
 		config.roomNum ="c"+room;
 		config.seatType = parent.getSeatType2(config.roomNum.substring(1));
-		chessBoard.AfterChangeRoom = function(){
+		chessBoard.unbind(chessBoard.eChangeRoom).bind(chessBoard.eChangeRoom,function(){
 			SetIframe();
 			chessBoard.roomNum.text("computer: "+config.roomNum+" ");
-		};
+		});
 		chessBoard.ChangeRoom();
 	});
 	$("#exit").click(function(){
@@ -82,11 +82,11 @@ $(function(){
 	$("#changeSeat").click(function(e){
 		e.preventDefault();
 		config.seatType = (config.seatType+1)%3;
-		chessBoard.AfterChangeRoom = function(){
+		chessBoard.unbind(chessBoard.eChangeRoom).bind(chessBoard.eChangeRoom,function(){
 			parent.$("#computer"+config.roomNum.substring(1)+""+config.seatType).attr("checked",true);
 			parent.fixHref2(config.roomNum.substring(1),config.seatType);
 			SetIframe();
-		};
+		});
 		chessBoard.ChangeRoom();
 	});
 	$("#undo").click(function(e){
@@ -97,7 +97,14 @@ $(function(){
 		e.preventDefault();		
 		chessBoard.Redo();
 	});
-	
+	$("#computerauto").toggle(function(){
+		$(this).text("stop autoplay");
+		config.isComputerAuto = true;
+		chessBoard.ComputerPlay();
+	},function(){
+		$(this).text("start autoplay");
+		config.isComputerAuto = false;
+	});
 	var nyroIframe = parent.$("iframe[id*='nyromodal-iframe-']");
 	var nyroIframe_father = nyroIframe.parent();
 	var nyroIframe_grandfather = nyroIframe.parent().parent();
@@ -150,7 +157,7 @@ $(function(){
 </div>
 <div id="funcList2" style="position:absolute;top:5px;right:10px;font-size:large;">
 	<a href="#" id="changeSeat">changeSeat</a>&nbsp;
-	<a href="#" id="computerauto">start computer auto</a>
+	<a href="#" id="computerauto">start autoplay</a>
 	<a href="#" id="undo">undo</a>&nbsp;
 	<a href="#" id="redo">redo</a>&nbsp;
 </div>

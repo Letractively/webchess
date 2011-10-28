@@ -80,7 +80,7 @@ public class SearchEngine {
 		histTab=new int[90][90];;
 		nodes=nullNodes=hashNodes=killerNodes=betaNodes=alphaNodes=leafNodes=0;
 		selectMask=0;//1<<10-1;//Ëæ»úÐÔ
-		style=EngineOption.Normal;
+		style=EngineOption.Solid;
 		wideQuiesc=style==EngineOption.Solid;
 		futility=style==EngineOption.Risky;
 		nullMove=true;

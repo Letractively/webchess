@@ -28,6 +28,7 @@ function ChessBoard(container){
 	this.win = -1;
 	this.timerPause = false;
 	this.isRedToGo = true;
+	this.pauseComputer = false;
 };
 
 ChessBoard.prototype.HandleGameOver = function(){
@@ -95,28 +96,6 @@ ChessBoard.prototype.SetBoardByData2 = function(data,newdata){
 	}
 };
 
-ChessBoard.prototype.Move = function(ev)
-{
-	this.msg.text(ev.message);
-	this.SetBoardByData2(this.data,ev.chessBoardData);
-	this.data=ev.chessBoardData;	
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=false;
-	this.successMove=true;
-	this.SetSelectedNode();	
-};
-
-ChessBoard.prototype.Hold = function(ev){
-	
-	this.msg.text(ev.message);
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
-};
-
 ChessBoard.prototype.SetSelectedNode = function(){
 	this.container.find("img").each(function(){
 		jQuery(this).css({border:"0px"});
@@ -157,17 +136,9 @@ ChessBoard.prototype.Ajax = function(){
 			if(self.ajaxtype=="changeroom"){
 				self.container.empty();
 				self.DrawBoard();				
+				self.trigger(self.eChangeRoom);
 			}
-			self.HandleEventList(json.data);
-			if(self.ajaxtype=="changeroom"){
-				self.AfterChangeRoom();
-			}
-			if(self.ajaxtype=="undo"){
-				self.AfterUndo();
-			}
-			if(self.ajaxtype=="redo"){
-				self.AfterRedo();
-			}
+			self.HandleEventList(json.data);			
 			self.ComputerPlayHandle();
 		},
 		error:function(ex){
@@ -181,13 +152,18 @@ ChessBoard.prototype.Ajax = function(){
 
 ChessBoard.prototype.ComputerPlayHandle = function(){
 	if(config.isVsComputer===true){	
-		if(config.isComputerAuto===true){
+		if(config.isComputerAuto===true){			
 			this.ComputerPlay();
 		}
 		else{
 			if(((config.seatType==1) && (this.isRedToGo===false))
 					||((config.seatType==2) && (this.isRedToGo===true))){
-				this.ComputerPlay();
+				if(!this.pauseComputer){
+					this.ComputerPlay();
+				}
+				else{
+					this.pauseComputer = false;
+				}
 			}
 		}
 	}
@@ -217,9 +193,23 @@ ChessBoard.prototype.Redo = function(){
 	this.ajaxtype="redo";
 	this.Ajax();
 };
-ChessBoard.prototype.AfterUndo = function(){};
-ChessBoard.prototype.AfterRedo = function(){};
-ChessBoard.prototype.AfterChangeRoom = function(){};
+
+ChessBoard.prototype.bind = function(name,handle){
+	$(this).bind(name,handle);
+	return this;
+};
+
+ChessBoard.prototype.unbind = function(name){
+	$(this).unbind(name);
+	return this;
+};
+
+ChessBoard.prototype.trigger = function(name){
+	$(this).trigger(name,this);
+	return this;
+};
+
+ChessBoard.prototype.eChangeRoom = "ChangeRoom";
 ChessBoard.prototype.HandleEventList = function(eventList){
 	var self = this;
 	jQuery.each(eventList,function(i,ev){
@@ -285,14 +275,12 @@ ChessBoard.prototype.CHECKRESULT_PLAYOK_RED = function(ev){
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;
 	this.EventCommonHandle(ev);
-	//this.ComputerPlayHandle();
 };
 
 ChessBoard.prototype.CHECKRESULT_PLAYOK_BLACK = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;
 	this.EventCommonHandle(ev);
-	//this.ComputerPlayHandle();
 };
 
 ChessBoard.prototype.CHECKRESULT_WIN_RED = function(ev){
@@ -320,47 +308,32 @@ ChessBoard.prototype.CHECKRESULT_INIT_CHECK = function(ev){
 };
 
 ChessBoard.prototype.CHECKRESULT_UNDO_RED = function(ev){
-	this.msg.text(ev.message);
+	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.EventCommonHandle(ev);
+	this.pauseComputer = true;
 };
 
-ChessBoard.prototype.CHECKRESULT_UNDO_BLACK = function(ev){
-	this.msg.text(ev.message);
+ChessBoard.prototype.CHECKRESULT_UNDO_BLACK = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=true;
-	this.successMove=false;
-	this.SetSelectedNode();	
+	this.EventCommonHandle(ev);
+	this.pauseComputer = true;
 };
 
-ChessBoard.prototype.CHECKRESULT_REDO_RED = function(ev){
-	this.msg.text(ev.message);
+ChessBoard.prototype.CHECKRESULT_REDO_RED = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=false;
-	this.successMove=true;
-	this.SetSelectedNode();	
+	this.EventCommonHandle(ev);
+	this.pauseComputer = true;
 };
 
-ChessBoard.prototype.CHECKRESULT_REDO_BLACK = function(ev){
-	this.msg.text(ev.message);
+ChessBoard.prototype.CHECKRESULT_REDO_BLACK = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
-	this.from = ev.fromNode;
-	this.to = ev.toNode;
-	this.successHold=false;
-	this.successMove=true;
-	this.SetSelectedNode();	
+	this.EventCommonHandle(ev);
+	this.pauseComputer = true;
 };
 
 ChessBoard.prototype.CHECKRESULT_TOKILLKING_RED = function(ev){
