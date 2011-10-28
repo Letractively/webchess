@@ -52,10 +52,10 @@ $(function(){
 		if(room==0)room=deskCount;
 		config.roomNum =room;
 		config.seatType = parent.getSeatType(config.roomNum);
-		chessBoard.AfterChangeRoom = function(){
+		chessBoard.unbind(chessBoard.eChangeRoom).bind(chessBoard.eChangeRoom,function(){
 			SetIframe();
 			chessBoard.roomNum.text("room: "+config.roomNum+" ");
-		};
+		});
 		chessBoard.ChangeRoom();
 	});
 	$("#nextRoom").click(function(e){
@@ -64,10 +64,10 @@ $(function(){
 		if(room==0)room=deskCount;
 		config.roomNum =room;
 		config.seatType = parent.getSeatType(config.roomNum);
-		chessBoard.AfterChangeRoom = function(){
+		chessBoard.unbind(chessBoard.eChangeRoom).bind(chessBoard.eChangeRoom,function(){
 			SetIframe();
 			chessBoard.roomNum.text("room: "+config.roomNum+" ");
-		};
+		});
 		chessBoard.ChangeRoom();
 	});
 	$("#exit").click(function(){
@@ -77,11 +77,11 @@ $(function(){
 	$("#changeSeat").click(function(e){
 		e.preventDefault();
 		config.seatType = (config.seatType+1)%3;
-		chessBoard.AfterChangeRoom = function(){
+		chessBoard.unbind(chessBoard.eChangeRoom).bind(chessBoard.eChangeRoom,function(){
 			parent.$("#qp"+config.roomNum+""+config.seatType).attr("checked",true);
 			parent.fixHref(config.roomNum,config.seatType);
 			SetIframe();
-		};
+		});
 		chessBoard.ChangeRoom();
 	});
 	$("#undo").click(function(e){

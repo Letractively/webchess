@@ -16,7 +16,7 @@ public class ChessBoardManager {
 	private static String root = "c:/chess";	
 	
 	private static void CreateDirectory(){
-		java.io.File rootDir = new java.io.File(root);
+		java.io.File rootDir = new java.io.File(getRoot());
 		if(!rootDir.exists())
 		{
 			rootDir.mkdirs();
@@ -25,10 +25,8 @@ public class ChessBoardManager {
 	
 	private static String GetFileName(String key)
 	{
-		return root + "/"+key;
+		return getRoot() + "/"+key;
 	}
-	
-	
 	
 	public static ChessBoard GetChessBoard(String key) 
 	{
@@ -148,5 +146,13 @@ public class ChessBoardManager {
 		{
 			boardFile.delete();
 		}
+	}
+
+	public static String getRoot() {
+		return root;
+	}
+
+	public static void setRoot(String root) {
+		ChessBoardManager.root = root;
 	}
 }
