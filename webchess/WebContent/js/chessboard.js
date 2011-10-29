@@ -150,20 +150,31 @@ ChessBoard.prototype.Ajax = function(){
 	});
 };
 
+ChessBoard.prototype.IsComputePlay = function(){
+	if(config.isComputerAuto){
+		return true;
+	}
+	if(config.isVsComputer ){
+		if(((config.seatType==1) && (this.isRedToGo===false))
+				||((config.seatType==2) && (this.isRedToGo===true))){
+			return true;
+		}
+	}
+	return false;
+};
+
 ChessBoard.prototype.ComputerPlayHandle = function(){
 	if(config.isVsComputer===true){	
 		if(config.isComputerAuto===true){			
 			this.ComputerPlay();
 		}
 		else{
-			if(((config.seatType==1) && (this.isRedToGo===false))
-					||((config.seatType==2) && (this.isRedToGo===true))){
-				if(!this.pauseComputer){
-					this.ComputerPlay();
-				}
-				else{
-					this.pauseComputer = false;
-				}
+			if(this.pauseComputer){
+				this.pauseComputer = false;
+				return;
+			}
+			if(this.IsComputePlay()){
+				this.ComputerPlay();
 			}
 		}
 	}
@@ -312,28 +323,36 @@ ChessBoard.prototype.CHECKRESULT_UNDO_RED = function(ev){
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
 	this.EventCommonHandle(ev);
-	this.pauseComputer = true;
+	if(this.IsComputePlay()){
+		this.pauseComputer = true;
+	}
 };
 
 ChessBoard.prototype.CHECKRESULT_UNDO_BLACK = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
 	this.EventCommonHandle(ev);
-	this.pauseComputer = true;
+	if(this.IsComputePlay()){
+		this.pauseComputer = true;
+	}
 };
 
 ChessBoard.prototype.CHECKRESULT_REDO_RED = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
 	this.EventCommonHandle(ev);
-	this.pauseComputer = true;
+	if(this.IsComputePlay()){
+		this.pauseComputer = false;
+	}
 };
 
 ChessBoard.prototype.CHECKRESULT_REDO_BLACK = function(ev){	
 	this.SetBoardByData2(this.data,ev.chessBoardData);
 	this.data=ev.chessBoardData;	
 	this.EventCommonHandle(ev);
-	this.pauseComputer = true;
+	if(this.IsComputePlay()){
+		this.pauseComputer = false;
+	}
 };
 
 ChessBoard.prototype.CHECKRESULT_TOKILLKING_RED = function(ev){
