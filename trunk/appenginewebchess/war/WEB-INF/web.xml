@@ -8,12 +8,62 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>webchess.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>webchess.server.GreetingServiceImpl</servlet-class>    
   </servlet>
   
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/appenginewebchess/greet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  <servlet-name>HandleClickBoard</servlet-name>
+    <servlet-class>com.whwqs.webchess.servlet.HandleClickBoard</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>HandleClickBoard</servlet-name>
+    <url-pattern>/HandleClickBoard</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  <servlet-name>HandleSelectBoard</servlet-name>
+    <servlet-class>com.whwqs.webchess.servlet.HandleSelectBoard</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>HandleSelectBoard</servlet-name>
+    <url-pattern>/HandleSelectBoard</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  <servlet-name>HandleSelectBoard</servlet-name>
+    <servlet-class>com.whwqs.webchess.servlet.HandleSelectBoard</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>HandleSelectBoard</servlet-name>
+    <url-pattern>/HandleSelectBoard</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  <servlet-name>HandleSelectComputer</servlet-name>
+    <servlet-class>com.whwqs.webchess.servlet.HandleSelectComputer</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>HandleSelectComputer</servlet-name>
+    <url-pattern>/HandleSelectComputer</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  <servlet-name>HandleCommon</servlet-name>
+    <servlet-class>com.whwqs.webchess.servlet.HandleCommon</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>HandleCommon</servlet-name>
+    <url-pattern>/HandleCommon</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
