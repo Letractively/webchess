@@ -95,7 +95,7 @@ public class ChessBoard implements IPublisher,Serializable {
 		ChessBoardManager.SetChessBoard(boardNumber, this);
 	}
 
-	private void init()
+	public void init()
 	{		
 		subscriberList = new Hashtable<String,List<ISubscriber>>();
 		AddSubscriber(ChessEvent.CHECKRESULT_INIT_CHECK,new ISubscriber(){
