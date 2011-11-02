@@ -36,15 +36,7 @@
     <url-pattern>/HandleSelectBoard</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-  <servlet-name>HandleSelectBoard</servlet-name>
-    <servlet-class>com.whwqs.webchess.servlet.HandleSelectBoard</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>HandleSelectBoard</servlet-name>
-    <url-pattern>/HandleSelectBoard</url-pattern>
-  </servlet-mapping>
+ 
   
   <servlet>
   <servlet-name>HandleSelectComputer</servlet-name>
